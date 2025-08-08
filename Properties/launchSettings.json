@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "GamiAutoClicker (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "GamiAutoClicker (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
