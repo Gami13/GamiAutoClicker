@@ -1,50 +1,86 @@
 using Microsoft.UI;
+using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Graphics;
 using Windows.UI;
+using Windows.UI.ApplicationSettings;
+using WinRT.Interop;
 
 namespace GamiAutoClicker;
 
+
+public enum ThemeType {
+	Mica,
+	Acrylic,
+	None
+}
+public struct ThemeSettings {
+	public ThemeType type;
+	public MicaKind micaKind;
+	public DesktopAcrylicKind acrylicKind;
+	public SystemBackdropTheme theme;
+
+	public bool shouldOverride;
+	public Color fallbackColor;
+	public Color tintColor;
+	public float tintOpacity;
+	public float luminosityOpacity;
+}
+
 public sealed partial class MainWindow : Window {
+	public static ThemeController mainWindowTheme = new();
+	public static ThemeController settingsWindowTheme = new();
+	public static ThemeSettings themeSettings = new() {
+		type = ThemeType.Acrylic,
+		micaKind = MicaKind.Base,
+		acrylicKind = DesktopAcrylicKind.Default,
+		theme = SystemBackdropTheme.Default,
+		shouldOverride = false,
+		fallbackColor = Colors.Transparent,
+		tintColor = Colors.Transparent,
+		tintOpacity = 0.0f,
+		luminosityOpacity = 0.0f
+	};
 
-	private void applyWindowStyle(MainWindow context) {
-		IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(context);
-		AppWindow appWindow = AppWindow.GetFromWindowId(Win32Interop.GetWindowIdFromWindow(hWnd));
 
-		// Set a fixed size
-		SizeInt32 windowSize = new SizeInt32 { Width = 370, Height = 290 };
-		appWindow.Resize(windowSize);
+	private async void OpenSettingsWindow(object sender, RoutedEventArgs e) {
 
-		// Optional: prevent resizing
-		var presenter = appWindow.Presenter as OverlappedPresenter;
-		if (presenter != null) {
-			presenter.IsResizable = false;
-		}
-		appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-		appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-		appWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Standard;
+		var win = new Window();
+		var frame = new Frame();
+		frame.Navigate(typeof(SettingsPage));
+		win.Content = frame;
 
-		SystemBackdrop = new DesktopAcrylicBackdrop();
+
+		settingsWindowTheme.TrySetTheme(win);
+
+
+		var hwnd = WindowNative.GetWindowHandle(win);
+		var windowId = Win32Interop.GetWindowIdFromWindow(hwnd);
+		var appWindow = AppWindow.GetFromWindowId(windowId);
+
+
+		appWindow.Resize(new Windows.Graphics.SizeInt32(400, 300));
+		appWindow.Move(new Windows.Graphics.PointInt32(200, 200));
+
+
+		appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
+		//applyWindowStyle(win);
+		win.Activate();
+
 	}
 
 
 	public MainWindow() {
 		InitializeComponent();
-		applyWindowStyle(this);
+
+
+
+		mainWindowTheme.TrySetTheme(this);
+		OpenSettingsWindow(null, null);
 	}
 }
 
