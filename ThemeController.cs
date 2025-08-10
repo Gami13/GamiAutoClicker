@@ -14,6 +14,7 @@ using Windows.UI;
 using WinRT;
 
 namespace GamiAutoClicker;
+
 public class ThemeController {
 	WindowsSystemDispatcherQueueHelper? wsdqHelper; // See the helper class sample for the implementation
 	MicaController? micaController;
@@ -23,6 +24,7 @@ public class ThemeController {
 
 	public bool TrySetTheme(Window newWindow) {
 		window = newWindow;
+		//TODO: Dont block if no mica
 		if (!MicaController.IsSupported()) return false;
 
 		wsdqHelper = new WindowsSystemDispatcherQueueHelper();

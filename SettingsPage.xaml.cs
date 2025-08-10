@@ -17,19 +17,16 @@ using Microsoft.UI.Composition.SystemBackdrops;
 
 namespace GamiAutoClicker;
 
-public sealed partial class SettingsPage : Page
-{
-    public SettingsPage()
-    {
-        InitializeComponent();
-		
-    }
-	public void OnMaterialChange(object sender, RoutedEventArgs e)
-	{
+public sealed partial class SettingsPage : Page {
+	public SettingsPage() {
+		InitializeComponent();
+
+	}
+	public void OnMaterialChange(object sender, SelectionChangedEventArgs e) {
 		var comboBox = (ComboBox)sender;
-		var selectedItem = (String)comboBox.SelectedItem;
-		switch (selectedItem)
-		{
+		var selectedItem = comboBox.SelectedItem;
+		
+		switch (selectedItem) {
 			case "Acrylic":
 				ThemeHelper.SetType(ThemeType.Acrylic);
 				ThemeHelper.SetAcrylicKind(DesktopAcrylicKind.Base);
@@ -51,52 +48,41 @@ public sealed partial class SettingsPage : Page
 		}
 	}
 
-	public void OnThemeChange(object sender, RoutedEventArgs e) {
+	public void OnThemeChange(object sender, SelectionChangedEventArgs e) {
 		var comboBox = (ComboBox)sender;
-		var selectedItem = (String)comboBox.SelectedItem;
+		var selectedItem = comboBox.SelectedItem;
+
 		switch (selectedItem) {
 			case "Dark":
 				ThemeHelper.SetTheme(SystemBackdropTheme.Dark);
 				break;
 			case "Light":
 				ThemeHelper.SetTheme(SystemBackdropTheme.Light);
-
 				break;
 			case "Default":
 				ThemeHelper.SetTheme(SystemBackdropTheme.Default);
-
 				break;
 			default:
 				break;
 		}
 	}
-
 	public void OnOverridesChange(object sender, RoutedEventArgs e) {
-		//Simple toggle
 		var toggleSwitch = (ToggleSwitch)sender;
 		ThemeHelper.SetOverrides(toggleSwitch.IsOn);
 
 	}
 	public void OnFallbackColorChange(object sender, ColorChangedEventArgs e) {
-		//ColorPicker
-		var colorPicker = (ColorPicker)sender;
-		ThemeHelper.SetFallbackColor(colorPicker.Color);
+		ThemeHelper.SetFallbackColor(e.NewColor);
 	}
 	public void OnTintColorChange(object sender, ColorChangedEventArgs e) {
-		//ColorPicker
-		var colorPicker = (ColorPicker)sender;
-		ThemeHelper.SetTintColor(colorPicker.Color);
-	}
-	public void OnTintOpacityChange(object sender, RoutedEventArgs e) {
-		//Slider
-		var slider = (Slider)sender;
-		ThemeHelper.SetTintOpacity((float)slider.Value);
-		//ThemeHelper.SetTintColor(TintColorPicker.Color);
-	}
-	public void OnLuminosityOpacityChange(object sender, RoutedEventArgs e) {
-		//Slider
-		var slider = (Slider)sender;
-		ThemeHelper.SetLuminosityOpacity((float)slider.Value);
+		ThemeHelper.SetTintColor(e.NewColor);
 	}
 
+	public void OnTintOpacityChange(object sender, RangeBaseValueChangedEventArgs e) {
+		ThemeHelper.SetTintOpacity((float)e.NewValue);
+	}
+
+	public void OnLuminosityOpacityChange(object sender, RangeBaseValueChangedEventArgs e) {
+		ThemeHelper.SetLuminosityOpacity((float)e.NewValue);
+	}
 }
