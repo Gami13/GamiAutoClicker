@@ -32,8 +32,8 @@ public struct ThemeSettings {
 }
 
 public sealed partial class MainWindow : Window {
-	public static ThemeController mainWindowTheme = new();
-	public static ThemeController settingsWindowTheme = new();
+	public static ThemeController? mainWindowTheme;
+	public static ThemeController? settingsWindowTheme;
 	public static ThemeSettings themeSettings = new() {
 		type = ThemeType.Acrylic,
 		micaKind = MicaKind.Base,
@@ -47,7 +47,7 @@ public sealed partial class MainWindow : Window {
 	};
 
 
-	private async void OpenSettingsWindow(object sender, RoutedEventArgs e) {
+	private void OpenSettingsWindow(object? sender, RoutedEventArgs? e) {
 
 		var win = new Window();
 		var frame = new Frame();
@@ -55,7 +55,7 @@ public sealed partial class MainWindow : Window {
 		win.Content = frame;
 
 
-		settingsWindowTheme.TrySetTheme(win);
+		settingsWindowTheme = new ThemeController(win);
 
 
 		var hwnd = WindowNative.GetWindowHandle(win);
@@ -79,7 +79,7 @@ public sealed partial class MainWindow : Window {
 
 
 
-		mainWindowTheme.TrySetTheme(this);
+		mainWindowTheme = new ThemeController(this);
 		OpenSettingsWindow(null, null);
 	}
 }

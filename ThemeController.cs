@@ -4,11 +4,7 @@ using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics.CodeAnalysis;
 using Windows.Graphics;
 using Windows.UI;
 using WinRT;
@@ -16,16 +12,23 @@ using WinRT;
 namespace GamiAutoClicker;
 
 public class ThemeController {
-	WindowsSystemDispatcherQueueHelper? wsdqHelper; // See the helper class sample for the implementation
-	MicaController? micaController;
-	DesktopAcrylicController? acrylicController;
+	WindowsSystemDispatcherQueueHelper wsdqHelper;
 	SystemBackdropConfiguration? configurationSource;
-	Window? window;
+	Window window;
 
-	public bool TrySetTheme(Window newWindow) {
+	ISystemBackdropController? controller;
+
+
+	private Action<Color>? _setFallbackColor;
+	private Action<Color>? _setTintColor;
+	private Action<float>? _setTintOpacity;
+	private Action<float>? _setLuminosityOpacity;
+	private Func<Color>? _getTintColor; 
+
+	public ThemeController(Window newWindow) {
 		window = newWindow;
 		//TODO: Dont block if no mica
-		if (!MicaController.IsSupported()) return false;
+		//if (!MicaController.IsSupported());
 
 		wsdqHelper = new WindowsSystemDispatcherQueueHelper();
 		wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
@@ -43,116 +46,62 @@ public class ThemeController {
 		IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
 		AppWindow appWindow = AppWindow.GetFromWindowId(Win32Interop.GetWindowIdFromWindow(hWnd));
 		applyWindowStyle(appWindow);
-
-
-		return true;
-
-
-
 	}
-	public void SetOverrides() {
-		createController();
-	}
-	public void SetType() {
-		createController();
-	}
+
+	public void SetOverrides() => createController();
+	public void SetType() => createController();
+
 	public void SetTheme() {
-		if (configurationSource != null) {
-
-			if (window?.Content is FrameworkElement root) {
-				var desired = MainWindow.themeSettings.theme switch {
-					SystemBackdropTheme.Light => ElementTheme.Light,
-					SystemBackdropTheme.Dark => ElementTheme.Dark,
-					_ => ElementTheme.Default
-				};
-				root.RequestedTheme = desired;
-
-
-			}
+		if (configurationSource != null && window?.Content is FrameworkElement root) {
+			root.RequestedTheme = MainWindow.themeSettings.theme switch {
+				SystemBackdropTheme.Light => ElementTheme.Light,
+				SystemBackdropTheme.Dark => ElementTheme.Dark,
+				_ => ElementTheme.Default
+			};
 		}
 	}
+
 	public void SetMicaKind() {
-		if (micaController != null) {
-			micaController.Kind = MainWindow.themeSettings.micaKind;
+		if (controller is MicaController mc) {
+			mc.Kind = MainWindow.themeSettings.micaKind;
 		}
 	}
+
 	public void SetAcrylicKind() {
-		if (acrylicController != null) {
-			acrylicController.Kind = MainWindow.themeSettings.acrylicKind;
+		if (controller is DesktopAcrylicController ac) {
+			ac.Kind = MainWindow.themeSettings.acrylicKind;
 		}
 	}
 
 	public void SetFallbackColor() {
 		if (!MainWindow.themeSettings.shouldOverride) return;
-		if (micaController != null) {
-			micaController.FallbackColor = MainWindow.themeSettings.fallbackColor;
-		}
-		if (acrylicController != null) {
-			acrylicController.FallbackColor = MainWindow.themeSettings.fallbackColor;
-		}
+		_setFallbackColor?.Invoke(MainWindow.themeSettings.fallbackColor);
 	}
+
 	public void SetTintColor() {
 		if (!MainWindow.themeSettings.shouldOverride) return;
-
-		if (micaController != null) {
-			micaController.TintColor = MainWindow.themeSettings.tintColor;
-		}
-		if (acrylicController != null) {
-			acrylicController.TintColor = MainWindow.themeSettings.tintColor;
-		}
-
+		_setTintColor?.Invoke(MainWindow.themeSettings.tintColor);
 	}
+
 	public void SetTintOpacity() {
 		if (!MainWindow.themeSettings.shouldOverride) return;
+		_setTintOpacity?.Invoke(MainWindow.themeSettings.tintOpacity);
 
-		if (micaController != null) {
-			micaController.TintOpacity = MainWindow.themeSettings.tintOpacity;
+		//! Workaround for https://github.com/microsoft/microsoft-ui-xaml/issues/10717
+		if (_getTintColor == null || _setTintColor == null) return;
 
+		var currentColor = _getTintColor();
+		var tempColor = currentColor;
+		if (tempColor.A < 255) tempColor.A = (byte)(tempColor.A + 1);
+		else if (tempColor.A > 0) tempColor.A = (byte)(tempColor.A - 1);
 
-			//! Workaround for https://github.com/microsoft/microsoft-ui-xaml/issues/10717
-			var currentColor = micaController.TintColor;
-			var tempColor = currentColor;
-			if (tempColor.A < 255) {
-				tempColor.A = (byte)(tempColor.A + 1);
-			}
-			else if (tempColor.A > 0) {
-				tempColor.A = (byte)(tempColor.A - 1);
-
-			}
-			micaController.TintColor = tempColor;
-			micaController.TintColor = currentColor;
-
-		}
-		if (acrylicController != null) {
-			acrylicController.TintOpacity = MainWindow.themeSettings.tintOpacity;
-
-
-			//! Workaround for https://github.com/microsoft/microsoft-ui-xaml/issues/10717
-			var currentColor = acrylicController.TintColor;
-			var tempColor = currentColor;
-			if (tempColor.A < 255) {
-				tempColor.A = (byte)(tempColor.A + 1);
-			}
-			else if (tempColor.A > 0) {
-				tempColor.A = (byte)(tempColor.A - 1);
-
-			}
-			acrylicController.TintColor = tempColor;
-			acrylicController.TintColor = currentColor;
-		}
-
-
-
+		_setTintColor(tempColor);
+		_setTintColor(currentColor);
 	}
+
 	public void SetLuminosityOpacity() {
 		if (!MainWindow.themeSettings.shouldOverride) return;
-
-		if (micaController != null) {
-			micaController.LuminosityOpacity = MainWindow.themeSettings.luminosityOpacity;
-		}
-		if (acrylicController != null) {
-			acrylicController.LuminosityOpacity = MainWindow.themeSettings.luminosityOpacity;
-		}
+		_setLuminosityOpacity?.Invoke(MainWindow.themeSettings.luminosityOpacity);
 	}
 
 	private void createController() {
@@ -163,42 +112,69 @@ public class ThemeController {
 			createAcrylicController();
 		}
 	}
+
 	private void destroyController() {
-		if (micaController != null) {
-			micaController.Dispose();
-			micaController = null;
+		if (controller is IDisposable disposable) {
+			disposable.Dispose();
 		}
-		if (acrylicController != null) {
-			acrylicController.Dispose();
-			acrylicController = null;
-		}
+		controller = null;
+		_setFallbackColor = null;
+		_setTintColor = null;
+		_setTintOpacity = null;
+		_setLuminosityOpacity = null;
+		_getTintColor = null;
 	}
 
 	private void createMicaController() {
 		destroyController();
-		micaController = new MicaController();
-		micaController.AddSystemBackdropTarget(window.As<ICompositionSupportsSystemBackdrop>());
-		micaController.SetSystemBackdropConfiguration(configurationSource);
-		micaController.Kind = MainWindow.themeSettings.micaKind;
-		if (MainWindow.themeSettings.shouldOverride) {
-			micaController.FallbackColor = MainWindow.themeSettings.fallbackColor;
-			micaController.TintColor = MainWindow.themeSettings.tintColor;
-			micaController.TintOpacity = MainWindow.themeSettings.tintOpacity;
-			micaController.LuminosityOpacity = MainWindow.themeSettings.luminosityOpacity;
-		}
+		var mc = new MicaController();
+		mc.Kind = MainWindow.themeSettings.micaKind;
+
+		// Assign delegates for MicaController
+		_setFallbackColor = color => mc.FallbackColor = color;
+		_setTintColor = color => mc.TintColor = color;
+		_setTintOpacity = opacity => mc.TintOpacity = opacity;
+		_setLuminosityOpacity = opacity => mc.LuminosityOpacity = opacity;
+		_getTintColor = () => mc.TintColor;
+
+		initializeController(mc);
+		controller = mc;
 	}
 
 	private void createAcrylicController() {
 		destroyController();
-		acrylicController = new DesktopAcrylicController();
-		acrylicController.AddSystemBackdropTarget(window.As<ICompositionSupportsSystemBackdrop>());
-		acrylicController.SetSystemBackdropConfiguration(configurationSource);
-		acrylicController.Kind = MainWindow.themeSettings.acrylicKind;
+		var ac = new DesktopAcrylicController();
+		ac.Kind = MainWindow.themeSettings.acrylicKind;
+
+		// Assign delegates for DesktopAcrylicController
+		_setFallbackColor = color => ac.FallbackColor = color;
+		_setTintColor = color => ac.TintColor = color;
+		_setTintOpacity = opacity => ac.TintOpacity = opacity;
+		_setLuminosityOpacity = opacity => ac.LuminosityOpacity = opacity;
+		_getTintColor = () => ac.TintColor;
+
+		initializeController(ac);
+		controller = ac;
+	}
+
+	private void initializeController(MicaController controller) {
+		controller.AddSystemBackdropTarget(window.As<ICompositionSupportsSystemBackdrop>());
+		controller.SetSystemBackdropConfiguration(configurationSource);
 		if (MainWindow.themeSettings.shouldOverride) {
-			acrylicController.FallbackColor = MainWindow.themeSettings.fallbackColor;
-			acrylicController.TintColor = MainWindow.themeSettings.tintColor;
-			acrylicController.TintOpacity = MainWindow.themeSettings.tintOpacity;
-			acrylicController.LuminosityOpacity = MainWindow.themeSettings.luminosityOpacity;
+			controller.FallbackColor = MainWindow.themeSettings.fallbackColor;
+			controller.TintColor = MainWindow.themeSettings.tintColor;
+			controller.TintOpacity = MainWindow.themeSettings.tintOpacity;
+			controller.LuminosityOpacity = MainWindow.themeSettings.luminosityOpacity;
+		}
+	}
+	private void initializeController(DesktopAcrylicController controller) {
+		controller.AddSystemBackdropTarget(window.As<ICompositionSupportsSystemBackdrop>());
+		controller.SetSystemBackdropConfiguration(configurationSource);
+		if (MainWindow.themeSettings.shouldOverride) {
+			controller.FallbackColor = MainWindow.themeSettings.fallbackColor;
+			controller.TintColor = MainWindow.themeSettings.tintColor;
+			controller.TintOpacity = MainWindow.themeSettings.tintOpacity;
+			controller.LuminosityOpacity = MainWindow.themeSettings.luminosityOpacity;
 		}
 	}
 
@@ -213,24 +189,22 @@ public class ThemeController {
 		appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 		appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
 		appWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Standard;
-
 	}
 
 	private void Window_Activated(object sender, WindowActivatedEventArgs args) {
-		configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+		if (configurationSource != null)
+			configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
 	}
 
 	private void Window_Closed(object sender, WindowEventArgs args) {
-		// Make sure any Mica/Acrylic controller is disposed
-		if (micaController != null) {
-			micaController.Dispose();
-			micaController = null;
+		destroyController();
+		if (window != null) {
+			window.Activated -= Window_Activated;
+			window.Closed -= Window_Closed;
+			if (window.Content is FrameworkElement root) {
+				root.ActualThemeChanged -= Window_ThemeChanged;
+			}
 		}
-		if (acrylicController != null) {
-			acrylicController.Dispose();
-			acrylicController = null;
-		}
-		window.Activated -= Window_Activated;
 		configurationSource = null;
 	}
 
@@ -241,10 +215,12 @@ public class ThemeController {
 	}
 
 	private void SetConfigurationSourceTheme() {
-		switch (((FrameworkElement)window.Content).ActualTheme) {
-			case ElementTheme.Dark: configurationSource.Theme = SystemBackdropTheme.Dark; break;
-			case ElementTheme.Light: configurationSource.Theme = SystemBackdropTheme.Light; break;
-			case ElementTheme.Default: configurationSource.Theme = SystemBackdropTheme.Default; break;
+		if (configurationSource != null && window?.Content is FrameworkElement root) {
+			configurationSource.Theme = root.ActualTheme switch {
+				ElementTheme.Dark => SystemBackdropTheme.Dark,
+				ElementTheme.Light => SystemBackdropTheme.Light,
+				_ => SystemBackdropTheme.Default
+			};
 		}
 	}
 }
