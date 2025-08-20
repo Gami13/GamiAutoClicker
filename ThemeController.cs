@@ -100,7 +100,6 @@ public class ThemeController {
 		if (acrylicController != null) {
 			acrylicController.TintColor = MainWindow.themeSettings.tintColor;
 		}
-		Debug.WriteLine("Updating tint color to: " + MainWindow.themeSettings.tintColor);
 
 	}
 	public void SetTintOpacity() {
@@ -108,12 +107,42 @@ public class ThemeController {
 
 		if (micaController != null) {
 			micaController.TintOpacity = MainWindow.themeSettings.tintOpacity;
+
+
+			//! Workaround for https://github.com/microsoft/microsoft-ui-xaml/issues/10717
+			var currentColor = micaController.TintColor;
+			var tempColor = currentColor;
+			if (tempColor.A < 255) {
+				tempColor.A = (byte)(tempColor.A + 1);
+			}
+			else if (tempColor.A > 0) {
+				tempColor.A = (byte)(tempColor.A - 1);
+
+			}
+			micaController.TintColor = tempColor;
+			micaController.TintColor = currentColor;
+
 		}
 		if (acrylicController != null) {
 			acrylicController.TintOpacity = MainWindow.themeSettings.tintOpacity;
+
+
+			//! Workaround for https://github.com/microsoft/microsoft-ui-xaml/issues/10717
+			var currentColor = acrylicController.TintColor;
+			var tempColor = currentColor;
+			if (tempColor.A < 255) {
+				tempColor.A = (byte)(tempColor.A + 1);
+			}
+			else if (tempColor.A > 0) {
+				tempColor.A = (byte)(tempColor.A - 1);
+
+			}
+			acrylicController.TintColor = tempColor;
+			acrylicController.TintColor = currentColor;
 		}
-		SetTintColor();
-		Debug.WriteLine("Updating tint opacity to: " + MainWindow.themeSettings.tintOpacity);
+
+
+
 	}
 	public void SetLuminosityOpacity() {
 		if (!MainWindow.themeSettings.shouldOverride) return;

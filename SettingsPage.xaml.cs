@@ -25,7 +25,7 @@ public sealed partial class SettingsPage : Page {
 	public void OnMaterialChange(object sender, SelectionChangedEventArgs e) {
 		var comboBox = (ComboBox)sender;
 		var selectedItem = comboBox.SelectedItem;
-		
+
 		switch (selectedItem) {
 			case "Acrylic":
 				ThemeHelper.SetType(ThemeType.Acrylic);
@@ -85,4 +85,5 @@ public sealed partial class SettingsPage : Page {
 	public void OnLuminosityOpacityChange(object sender, RangeBaseValueChangedEventArgs e) {
 		ThemeHelper.SetLuminosityOpacity((float)e.NewValue);
 	}
+
 }
