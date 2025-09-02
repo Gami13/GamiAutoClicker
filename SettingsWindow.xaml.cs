@@ -17,8 +17,8 @@ using Microsoft.UI.Composition.SystemBackdrops;
 
 namespace GamiAutoClicker;
 
-public sealed partial class SettingsPage : Page {
-	public SettingsPage() {
+public sealed partial class SettingsWindow : Window {
+	public SettingsWindow() {
 		InitializeComponent();
 
 	}

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.UI;
 
 namespace GamiAutoClicker;
+
 static class ThemeHelper {
 	public static void SetOverrides(bool state) {
 		MainWindow.themeSettings.shouldOverride = state;

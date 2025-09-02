@@ -5,7 +5,7 @@
     <None Update="App.xaml">
       <SubType>Designer</SubType>
     </None>
-    <Page Update="SettingsPage.xaml">
+    <Page Update="SettingsWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
     <None Update="MainWindow.xaml">
