@@ -54,6 +54,9 @@ public sealed partial class MainWindow : Window {
 
 
 	private void OpenSettingsWindow(object? sender, RoutedEventArgs? e) {
+		if (settingsWindowInstance != null) {
+			return;
+		}
 
 		var settingsWindow = new SettingsWindow();
 		settingsWindowTheme = new ThemeController(settingsWindow);
@@ -62,11 +65,12 @@ public sealed partial class MainWindow : Window {
 		var windowId = Win32Interop.GetWindowIdFromWindow(hwnd);
 		var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 
-		appWindow.Resize(new Windows.Graphics.SizeInt32(400, 300));
-		appWindow.Move(new Windows.Graphics.PointInt32(200, 200));
+		appWindow.Resize(new SizeInt32(400, 300));
+		appWindow.Move(new PointInt32(200, 200));
 
 		appWindow.SetPresenter(AppWindowPresenterKind.Overlapped);
 		settingsWindow.Activate();
+		settingsWindowInstance = settingsWindow;
 	}
 
 
@@ -82,6 +86,7 @@ public sealed partial class MainWindow : Window {
 		AppTitleBar.Loaded += AppTitleBar_Loaded;
 		AppTitleBar.SizeChanged += AppTitleBar_SizeChanged;
 		Activated += MainWindow_Activated;
+		Closed += MainWindow_Closed;
 		ExtendsContentIntoTitleBar = true;
 		TitleBarTextBlock.Text = AppInfo.Current.DisplayInfo.DisplayName;
 		AppTitleBar.Height = 32;
@@ -148,5 +153,16 @@ public sealed partial class MainWindow : Window {
 		);
 	}
 
+	private void MainWindow_Closed(object? sender, WindowEventArgs args) {
+		mainWindowTheme?.Dispose();
+		settingsWindowTheme?.Dispose();
+		settingsWindowInstance?.Close();
+		mainWindowTheme = null;
+		settingsWindowTheme = null;
+		settingsWindowInstance = null;
+		Application.Current.Exit();
+
+
+	}
 }
 

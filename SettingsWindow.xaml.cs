@@ -20,7 +20,7 @@ namespace GamiAutoClicker;
 public sealed partial class SettingsWindow : Window {
 	public SettingsWindow() {
 		InitializeComponent();
-
+		this.Closed += SettingsWindow_Closed;
 	}
 	public void OnMaterialChange(object sender, SelectionChangedEventArgs e) {
 		var comboBox = (ComboBox)sender;
@@ -84,6 +84,11 @@ public sealed partial class SettingsWindow : Window {
 
 	public void OnLuminosityOpacityChange(object sender, RangeBaseValueChangedEventArgs e) {
 		ThemeHelper.SetLuminosityOpacity((float)e.NewValue);
+	}
+	private void SettingsWindow_Closed(object sender, WindowEventArgs args) {
+		MainWindow.settingsWindowTheme?.Dispose();
+		MainWindow.settingsWindowTheme = null;
+		MainWindow.settingsWindowInstance = null;
 	}
 
 }

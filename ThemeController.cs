@@ -12,18 +12,18 @@ using WinRT;
 namespace GamiAutoClicker;
 
 public class ThemeController {
-	WindowsSystemDispatcherQueueHelper wsdqHelper;
+	WindowsSystemDispatcherQueueHelper? wsdqHelper;
 	SystemBackdropConfiguration? configurationSource;
-	Window window;
+	Window? window;
 
 	ISystemBackdropController? controller;
 
-
+	private bool _disposed = false;
 	private Action<Color>? _setFallbackColor;
 	private Action<Color>? _setTintColor;
 	private Action<float>? _setTintOpacity;
 	private Action<float>? _setLuminosityOpacity;
-	private Func<Color>? _getTintColor; 
+	private Func<Color>? _getTintColor;
 
 	public ThemeController(Window newWindow) {
 		window = newWindow;
@@ -222,5 +222,30 @@ public class ThemeController {
 				_ => SystemBackdropTheme.Default
 			};
 		}
+	}
+
+	public void Dispose() {
+		if (_disposed) return;
+
+		destroyController();
+
+		if (window != null) {
+			window.Activated -= Window_Activated;
+			window.Closed -= Window_Closed;
+			if (window.Content is FrameworkElement root) {
+				root.ActualThemeChanged -= Window_ThemeChanged;
+			}
+		}
+
+		configurationSource = null;
+
+		if (wsdqHelper is IDisposable disposableHelper) {
+			disposableHelper.Dispose();
+		}
+		wsdqHelper = null;
+
+		// Mark as disposed and remove references
+		_disposed = true;
+		window = null;
 	}
 }
