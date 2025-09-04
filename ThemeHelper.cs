@@ -11,48 +11,59 @@ namespace GamiAutoClicker;
 static class ThemeHelper {
 	public static void SetOverrides(bool state) {
 		MainWindow.themeSettings.shouldOverride = state;
-		MainWindow.mainWindowTheme?.SetOverrides();
-		MainWindow.settingsWindowTheme?.SetOverrides();
+		foreach (var theme in MainWindow.windowThemes.Values) {
+			theme.SetOverrides();
+		}
 	}
 	public static void SetType(ThemeType type) {
 		MainWindow.themeSettings.type = type;
-		MainWindow.mainWindowTheme?.SetType();
-		MainWindow.settingsWindowTheme?.SetType();
+		foreach (var theme in MainWindow.windowThemes.Values) {
+			theme.SetType();
+		}
+
 	}
 	public static void SetTheme(SystemBackdropTheme theme) {
 		MainWindow.themeSettings.theme = theme;
-		MainWindow.mainWindowTheme?.SetTheme();
-		MainWindow.settingsWindowTheme?.SetTheme();
+		foreach (var t in MainWindow.windowThemes.Values) {
+			t.SetTheme();
+		}
 	}
 	public static void SetMicaKind(MicaKind kind) {
 		MainWindow.themeSettings.micaKind = kind;
-		MainWindow.mainWindowTheme?.SetMicaKind();
-		MainWindow.settingsWindowTheme?.SetMicaKind();
+		foreach (var theme in MainWindow.windowThemes.Values) {
+			theme.SetMicaKind();
+		}
 	}
 	public static void SetAcrylicKind(DesktopAcrylicKind kind) {
 		MainWindow.themeSettings.acrylicKind = kind;
-		MainWindow.mainWindowTheme?.SetAcrylicKind();
-		MainWindow.settingsWindowTheme?.SetAcrylicKind();
+		foreach (var theme in MainWindow.windowThemes.Values) {
+			theme.SetAcrylicKind();
+		}
 	}
 	public static void SetFallbackColor(Color color) {
 		MainWindow.themeSettings.fallbackColor = color;
-		MainWindow.mainWindowTheme?.SetFallbackColor();
-		MainWindow.settingsWindowTheme?.SetFallbackColor();
+		foreach (var theme in MainWindow.windowThemes.Values) {
+			theme.SetFallbackColor();
+		}
 	}
 	public static void SetTintColor(Color color) {
 		MainWindow.themeSettings.tintColor = color;
-		MainWindow.mainWindowTheme?.SetTintColor();
-		MainWindow.settingsWindowTheme?.SetTintColor();
+		foreach (var theme in MainWindow.windowThemes.Values) {
+			theme.SetTintColor();
+		}
 	}
 	public static void SetTintOpacity(float opacity) {
 		MainWindow.themeSettings.tintOpacity = opacity;
-		MainWindow.mainWindowTheme?.SetTintOpacity();
-		MainWindow.settingsWindowTheme?.SetTintOpacity();
+		foreach (var theme in MainWindow.windowThemes.Values) {
+			theme.SetTintOpacity();
+		}
+
 	}
 	public static void SetLuminosityOpacity(float opacity) {
 		MainWindow.themeSettings.luminosityOpacity = opacity;
-		MainWindow.mainWindowTheme?.SetLuminosityOpacity();
-		MainWindow.settingsWindowTheme?.SetLuminosityOpacity();
+		foreach (var theme in MainWindow.windowThemes.Values) {
+			theme.SetLuminosityOpacity();
+		}
 	}
 
 }

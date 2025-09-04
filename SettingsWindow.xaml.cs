@@ -20,9 +20,8 @@ namespace GamiAutoClicker;
 public sealed partial class SettingsWindow : Window {
 	public SettingsWindow() {
 		InitializeComponent();
-		this.Closed += SettingsWindow_Closed;
 	}
-	public void OnMaterialChange(object sender, SelectionChangedEventArgs e) {
+	private void OnMaterialChange(object sender, SelectionChangedEventArgs e) {
 		var comboBox = (ComboBox)sender;
 		var selectedItem = comboBox.SelectedItem;
 
@@ -48,7 +47,7 @@ public sealed partial class SettingsWindow : Window {
 		}
 	}
 
-	public void OnThemeChange(object sender, SelectionChangedEventArgs e) {
+	private void OnThemeChange(object sender, SelectionChangedEventArgs e) {
 		var comboBox = (ComboBox)sender;
 		var selectedItem = comboBox.SelectedItem;
 
@@ -66,29 +65,25 @@ public sealed partial class SettingsWindow : Window {
 				break;
 		}
 	}
-	public void OnOverridesChange(object sender, RoutedEventArgs e) {
+	private void OnOverridesChange(object sender, RoutedEventArgs e) {
 		var toggleSwitch = (ToggleSwitch)sender;
 		ThemeHelper.SetOverrides(toggleSwitch.IsOn);
 
 	}
-	public void OnFallbackColorChange(object sender, ColorChangedEventArgs e) {
+	private void OnFallbackColorChange(object sender, ColorChangedEventArgs e) {
 		ThemeHelper.SetFallbackColor(e.NewColor);
 	}
-	public void OnTintColorChange(object sender, ColorChangedEventArgs e) {
+	private void OnTintColorChange(object sender, ColorChangedEventArgs e) {
 		ThemeHelper.SetTintColor(e.NewColor);
 	}
 
-	public void OnTintOpacityChange(object sender, RangeBaseValueChangedEventArgs e) {
-		ThemeHelper.SetTintOpacity((float)e.NewValue);
+	private void OnTintOpacityChange(object sender, RangeBaseValueChangedEventArgs e) {
+		ThemeHelper.SetTintOpacity(Math.Clamp((float)e.NewValue, 0f, 1f));
 	}
 
-	public void OnLuminosityOpacityChange(object sender, RangeBaseValueChangedEventArgs e) {
-		ThemeHelper.SetLuminosityOpacity((float)e.NewValue);
+	private void OnLuminosityOpacityChange(object sender, RangeBaseValueChangedEventArgs e) {
+		ThemeHelper.SetLuminosityOpacity(Math.Clamp((float)e.NewValue, 0f, 1f));
 	}
-	private void SettingsWindow_Closed(object sender, WindowEventArgs args) {
-		MainWindow.settingsWindowTheme?.Dispose();
-		MainWindow.settingsWindowTheme = null;
-		MainWindow.settingsWindowInstance = null;
-	}
+
 
 }

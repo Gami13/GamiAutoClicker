@@ -1,8 +1,11 @@
+using GamiAutoClicker.Components;
 using Microsoft.UI;
 using Microsoft.UI.Composition;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Windows.Graphics;
@@ -11,12 +14,13 @@ using WinRT;
 
 namespace GamiAutoClicker;
 
-public class ThemeController {
+public class WindowController {
 	WindowsSystemDispatcherQueueHelper? wsdqHelper;
 	SystemBackdropConfiguration? configurationSource;
 	Window? window;
-
+	WindowKey windowKey;
 	ISystemBackdropController? controller;
+	TopWindowBar topWindowBar;
 
 	private bool _disposed = false;
 	private Action<Color>? _setFallbackColor;
@@ -25,7 +29,8 @@ public class ThemeController {
 	private Action<float>? _setLuminosityOpacity;
 	private Func<Color>? _getTintColor;
 
-	public ThemeController(Window newWindow) {
+	public WindowController(Window newWindow, WindowKey windowKey) {
+		this.windowKey = windowKey;
 		window = newWindow;
 		//TODO: Dont block if no mica
 		//if (!MicaController.IsSupported());
@@ -42,10 +47,20 @@ public class ThemeController {
 
 		SetConfigurationSourceTheme();
 		createController();
+		var config = Constants.WindowConfigs[windowKey];
 
+		topWindowBar = new TopWindowBar(windowKey);
+		if (window != null) {
+			if (window.Content is Grid rootGrid) {
+				rootGrid.Children.Insert(0, topWindowBar);
+				window.SetTitleBar(topWindowBar);
+			}
+		}
 		IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
 		AppWindow appWindow = AppWindow.GetFromWindowId(Win32Interop.GetWindowIdFromWindow(hWnd));
+		appWindow.SetPresenter(config.presenterKind);
 		applyWindowStyle(appWindow);
+
 	}
 
 	public void SetOverrides() => createController();
@@ -130,7 +145,6 @@ public class ThemeController {
 		var mc = new MicaController();
 		mc.Kind = MainWindow.themeSettings.micaKind;
 
-		// Assign delegates for MicaController
 		_setFallbackColor = color => mc.FallbackColor = color;
 		_setTintColor = color => mc.TintColor = color;
 		_setTintOpacity = opacity => mc.TintOpacity = opacity;
@@ -146,7 +160,6 @@ public class ThemeController {
 		var ac = new DesktopAcrylicController();
 		ac.Kind = MainWindow.themeSettings.acrylicKind;
 
-		// Assign delegates for DesktopAcrylicController
 		_setFallbackColor = color => ac.FallbackColor = color;
 		_setTintColor = color => ac.TintColor = color;
 		_setTintOpacity = opacity => ac.TintOpacity = opacity;
@@ -179,13 +192,17 @@ public class ThemeController {
 	}
 
 	private void applyWindowStyle(AppWindow appWindow) {
-		SizeInt32 windowSize = new SizeInt32 { Width = 370, Height = 290 };
-		appWindow.Resize(windowSize);
+		var config = Constants.WindowConfigs[windowKey];
 
-		var presenter = appWindow.Presenter as OverlappedPresenter;
-		if (presenter != null) {
-			//presenter.IsResizable = false;
+		appWindow.Resize(config.defaultSize);
+
+
+		if (appWindow.Presenter is OverlappedPresenter presenter) {
+			presenter.IsMaximizable = config.isMaximizable;
+			presenter.IsMinimizable = config.isMinimizable;
+			presenter.IsResizable = config.isResizable;
 		}
+
 		appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 		appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
 		appWindow.TitleBar.PreferredHeightOption = TitleBarHeightOption.Standard;
@@ -194,19 +211,18 @@ public class ThemeController {
 	private void Window_Activated(object sender, WindowActivatedEventArgs args) {
 		if (configurationSource != null)
 			configurationSource.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+
+
+		if (args.WindowActivationState == WindowActivationState.Deactivated) {
+			topWindowBar.Foreground = (SolidColorBrush)App.Current.Resources["WindowCaptionForegroundDisabled"];
+		}
+		else {
+			topWindowBar.Foreground = (SolidColorBrush)App.Current.Resources["WindowCaptionForeground"];
+
+		}
 	}
 
-	private void Window_Closed(object sender, WindowEventArgs args) {
-		destroyController();
-		if (window != null) {
-			window.Activated -= Window_Activated;
-			window.Closed -= Window_Closed;
-			if (window.Content is FrameworkElement root) {
-				root.ActualThemeChanged -= Window_ThemeChanged;
-			}
-		}
-		configurationSource = null;
-	}
+
 
 	private void Window_ThemeChanged(FrameworkElement sender, object args) {
 		if (configurationSource != null) {
@@ -223,19 +239,17 @@ public class ThemeController {
 			};
 		}
 	}
+	private void Window_Closed(object sender, WindowEventArgs args) {
+		Dispose();
+	}
 
 	public void Dispose() {
 		if (_disposed) return;
 
 		destroyController();
 
-		if (window != null) {
-			window.Activated -= Window_Activated;
-			window.Closed -= Window_Closed;
-			if (window.Content is FrameworkElement root) {
-				root.ActualThemeChanged -= Window_ThemeChanged;
-			}
-		}
+
+		MainWindow.windowThemes.Remove(windowKey);
 
 		configurationSource = null;
 
@@ -245,7 +259,18 @@ public class ThemeController {
 		wsdqHelper = null;
 
 		// Mark as disposed and remove references
+		if (window != null) {
+			window.Activated -= Window_Activated;
+			window.Closed -= Window_Closed;
+
+			if (window.Content is FrameworkElement root) {
+				root.ActualThemeChanged -= Window_ThemeChanged;
+			}
+			window.Close();
+
+		}
 		_disposed = true;
 		window = null;
+		GC.SuppressFinalize(this);
 	}
 }

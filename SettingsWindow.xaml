@@ -16,15 +16,6 @@
 		</Grid.RowDefinitions>
 
 
-		<TitleBar
-			x:Name="AppTitleBar"
-			Title="Gami's AutoClicker"
-			Grid.Row="0"
-			Subtitle="Settings">
-			<TitleBar.IconSource>
-				<FontIconSource FontFamily="Segoe Fluent Icons" Glyph="&#xE713;" />
-			</TitleBar.IconSource>
-		</TitleBar>
 
 		<!--
 			I will need:
