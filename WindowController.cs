@@ -15,9 +15,9 @@ using WinRT;
 namespace GamiAutoClicker;
 
 public class WindowController {
+	public Window? window;
 	WindowsSystemDispatcherQueueHelper? wsdqHelper;
 	SystemBackdropConfiguration? configurationSource;
-	Window? window;
 	WindowKey windowKey;
 	ISystemBackdropController? controller;
 	TopWindowBar topWindowBar;

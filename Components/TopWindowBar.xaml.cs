@@ -1,15 +1,19 @@
+using Microsoft.UI;
 using Microsoft.UI.Input;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
 using Windows.Foundation;
 using Windows.Graphics;
+using WinRT.Interop;
 
 
 namespace GamiAutoClicker.Components;
 
 public sealed partial class TopWindowBar : UserControl {
+	private readonly WindowKey windowKey;
 
 
 	public TopWindowBar(WindowKey windowKey) {
@@ -22,6 +26,7 @@ public sealed partial class TopWindowBar : UserControl {
 		this.TitleBarButton.Visibility = config.hasButton ? Visibility.Visible : Visibility.Collapsed;
 		this.TitleBarButtonIcon.Symbol = config.buttonIcon;
 		this.TitleBarButton.Click += config.buttonAction;
+		this.windowKey = windowKey;
 	}
 	private void AppTitleBar_Loaded(object sender, RoutedEventArgs e) {
 		SetRegionsForCustomTitleBar();
@@ -32,13 +37,15 @@ public sealed partial class TopWindowBar : UserControl {
 	}
 
 	private void SetRegionsForCustomTitleBar() {
-		// Specify the interactive regions of the title bar.
-		if (MainWindow.appWindow == null) return;
+		var appWindow = Utilities.GetAppWindowFromKey(windowKey);
+
+
+		if (appWindow == null) return;
 		double scaleAdjustment = AppTitleBar.XamlRoot.RasterizationScale;
 
 
-		RightPaddingColumn.Width = new GridLength(MainWindow.appWindow.TitleBar.RightInset / scaleAdjustment);
-		LeftPaddingColumn.Width = new GridLength(MainWindow.appWindow.TitleBar.LeftInset / scaleAdjustment);
+		RightPaddingColumn.Width = new GridLength(appWindow.TitleBar.RightInset / scaleAdjustment);
+		LeftPaddingColumn.Width = new GridLength(appWindow.TitleBar.LeftInset / scaleAdjustment);
 
 
 		GeneralTransform transform = TitleBarButton.TransformToVisual(null);
@@ -50,7 +57,7 @@ public sealed partial class TopWindowBar : UserControl {
 		var rectArray = new RectInt32[] { settingsButtonRect };
 
 		InputNonClientPointerSource nonClientInputSrc =
-			InputNonClientPointerSource.GetForWindowId(MainWindow.appWindow.Id);
+			InputNonClientPointerSource.GetForWindowId(appWindow.Id);
 		nonClientInputSrc.SetRegionRects(NonClientRegionKind.Passthrough, rectArray);
 
 	}

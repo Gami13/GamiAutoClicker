@@ -21,7 +21,6 @@ namespace GamiAutoClicker;
 
 
 public sealed partial class MainWindow : Window {
-	public static Microsoft.UI.Windowing.AppWindow? appWindow;
 	public static Dictionary<WindowKey,WindowController> windowThemes = new();
 	public static ThemeSettings themeSettings = new() {
 		type = ThemeType.Acrylic,
@@ -39,7 +38,6 @@ public sealed partial class MainWindow : Window {
 	public MainWindow() {
 		InitializeComponent();
 		windowThemes[WindowKey.Main] = new WindowController(this, WindowKey.Main);
-		appWindow = this.AppWindow;
 		Closed += MainWindow_Closed;
 		ExtendsContentIntoTitleBar = true;
 
@@ -49,6 +47,7 @@ public sealed partial class MainWindow : Window {
 	private void MainWindow_Closed(object? sender, WindowEventArgs args) {
 
 		Application.Current.Exit();
+		
 
 
 	}

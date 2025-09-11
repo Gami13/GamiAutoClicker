@@ -27,4 +27,10 @@ public static class Utilities {
 
 
 	}
+	public static AppWindow GetAppWindowFromKey(WindowKey key) {
+		var window = MainWindow.windowThemes[key].window;
+		IntPtr hWnd = WindowNative.GetWindowHandle(window);
+		WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
+		return AppWindow.GetFromWindowId(windowId);
+	}
 }
