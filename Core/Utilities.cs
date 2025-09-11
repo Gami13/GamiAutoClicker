@@ -17,6 +17,10 @@ public static class Utilities {
 		CreateWindow(WindowKey.Settings);
 	}
 	public static void CreateWindow(WindowKey windowKey) {
+		bool isOpen = MainWindow.windowThemes.ContainsKey(windowKey);
+		if (isOpen) {
+			return;
+		}
 		var config = Constants.WindowConfigs[windowKey];
 		var window = config.windowConstructor();
 		var themeController = new WindowController(window, windowKey);
