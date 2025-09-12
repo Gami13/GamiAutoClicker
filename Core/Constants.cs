@@ -22,6 +22,7 @@ public struct ThemeSettings {
 	public SystemBackdropTheme theme;
 
 	public bool shouldOverride;
+	public bool isFirstTimeOverriding;
 	public Color fallbackColor;
 	public Color tintColor;
 	public float tintOpacity;

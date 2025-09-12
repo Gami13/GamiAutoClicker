@@ -28,6 +28,7 @@ public sealed partial class MainWindow : Window {
 		acrylicKind = DesktopAcrylicKind.Default,
 		theme = SystemBackdropTheme.Default,
 		shouldOverride = false,
+		isFirstTimeOverriding = true,
 		fallbackColor = Colors.Transparent,
 		tintColor = Colors.Transparent,
 		tintOpacity = 0.0f,
@@ -38,8 +39,10 @@ public sealed partial class MainWindow : Window {
 	public MainWindow() {
 		InitializeComponent();
 		windowThemes[WindowKey.Main] = new WindowController(this, WindowKey.Main);
+		//windowThemes[WindowKey.Main].SetOverrides();
 		Closed += MainWindow_Closed;
 		ExtendsContentIntoTitleBar = true;
+
 
 	}
 

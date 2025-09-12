@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using Windows.Graphics;
 using Windows.UI;
@@ -23,11 +24,18 @@ public class WindowController {
 	TopWindowBar topWindowBar;
 
 	private bool _disposed = false;
+
+	private Func<Color>? _getFallbackColor;
 	private Action<Color>? _setFallbackColor;
-	private Action<Color>? _setTintColor;
-	private Action<float>? _setTintOpacity;
-	private Action<float>? _setLuminosityOpacity;
+
 	private Func<Color>? _getTintColor;
+	private Action<Color>? _setTintColor;
+
+	private Func<float>? _getTintOpacity;
+	private Action<float>? _setTintOpacity;
+
+	private Func<float>? _getLuminosityOpacity;
+	private Action<float>? _setLuminosityOpacity;
 
 	public WindowController(Window newWindow, WindowKey windowKey) {
 		this.windowKey = windowKey;
@@ -39,10 +47,6 @@ public class WindowController {
 		wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
 
 		configurationSource = new SystemBackdropConfiguration();
-		window.Activated += Window_Activated;
-		window.Closed += Window_Closed;
-		((FrameworkElement)window.Content).ActualThemeChanged += Window_ThemeChanged;
-
 		configurationSource.IsInputActive = true;
 
 		SetConfigurationSourceTheme();
@@ -50,21 +54,42 @@ public class WindowController {
 		var config = Constants.WindowConfigs[windowKey];
 
 		topWindowBar = new TopWindowBar(windowKey);
-		if (window != null) {
-			if (window.Content is Grid rootGrid) {
-				rootGrid.Children.Insert(0, topWindowBar);
-				window.SetTitleBar(topWindowBar);
-			}
+		if (window.Content is Grid rootGrid) {
+			rootGrid.Children.Insert(0, topWindowBar);
+			window.SetTitleBar(topWindowBar);
 		}
+
+
 		IntPtr hWnd = WinRT.Interop.WindowNative.GetWindowHandle(window);
 		AppWindow appWindow = AppWindow.GetFromWindowId(Win32Interop.GetWindowIdFromWindow(hWnd));
 		appWindow.SetPresenter(config.presenterKind);
 		applyWindowStyle(appWindow);
 
+		window.Activated += Window_Activated;
+		window.Closed += Window_Closed;
+		((FrameworkElement)window.Content).ActualThemeChanged += Window_ThemeChanged;
+
 	}
 
-	public void SetOverrides() => createController();
-	public void SetType() => createController();
+	public void SetOverrides() {
+		if (MainWindow.themeSettings.isFirstTimeOverriding) {
+			MainWindow.themeSettings.isFirstTimeOverriding = false;
+			MainWindow.themeSettings.fallbackColor = _getFallbackColor?.Invoke() ?? Colors.Red;
+			MainWindow.themeSettings.tintColor = _getTintColor?.Invoke() ?? Colors.Red;
+			MainWindow.themeSettings.tintOpacity = _getTintOpacity?.Invoke() ?? 0.0f;
+			MainWindow.themeSettings.luminosityOpacity = _getLuminosityOpacity?.Invoke() ?? 0.0f;
+
+		}
+
+		if (MainWindow.windowThemes[WindowKey.Settings].window is SettingsWindow settingsWindow) {
+			settingsWindow.UpdateSwitches();
+		}
+
+		createController();
+	}
+	public void SetType() {
+		createController();
+	}
 
 	public void SetTheme() {
 		if (configurationSource != null && window?.Content is FrameworkElement root) {
@@ -133,11 +158,14 @@ public class WindowController {
 			disposable.Dispose();
 		}
 		controller = null;
+		_getFallbackColor = null;
 		_setFallbackColor = null;
-		_setTintColor = null;
-		_setTintOpacity = null;
-		_setLuminosityOpacity = null;
 		_getTintColor = null;
+		_setTintColor = null;
+		_getTintOpacity = null;
+		_setTintOpacity = null;
+		_getLuminosityOpacity = null;
+		_setLuminosityOpacity = null;
 	}
 
 	private void createMicaController() {
@@ -145,11 +173,17 @@ public class WindowController {
 		var mc = new MicaController();
 		mc.Kind = MainWindow.themeSettings.micaKind;
 
+		_getFallbackColor = () => mc.FallbackColor;
 		_setFallbackColor = color => mc.FallbackColor = color;
-		_setTintColor = color => mc.TintColor = color;
-		_setTintOpacity = opacity => mc.TintOpacity = opacity;
-		_setLuminosityOpacity = opacity => mc.LuminosityOpacity = opacity;
+
 		_getTintColor = () => mc.TintColor;
+		_setTintColor = color => mc.TintColor = color;
+
+		_getTintOpacity = () => mc.TintOpacity;
+		_setTintOpacity = opacity => mc.TintOpacity = opacity;
+
+		_getLuminosityOpacity = () => mc.LuminosityOpacity;
+		_setLuminosityOpacity = opacity => mc.LuminosityOpacity = opacity;
 
 		initializeController(mc);
 		controller = mc;
@@ -160,11 +194,20 @@ public class WindowController {
 		var ac = new DesktopAcrylicController();
 		ac.Kind = MainWindow.themeSettings.acrylicKind;
 
+
+		_getFallbackColor = () => ac.FallbackColor;
 		_setFallbackColor = color => ac.FallbackColor = color;
-		_setTintColor = color => ac.TintColor = color;
-		_setTintOpacity = opacity => ac.TintOpacity = opacity;
-		_setLuminosityOpacity = opacity => ac.LuminosityOpacity = opacity;
+
 		_getTintColor = () => ac.TintColor;
+		_setTintColor = color => ac.TintColor = color;
+
+		_getTintOpacity = () => ac.TintOpacity;
+		_setTintOpacity = opacity => ac.TintOpacity = opacity;
+
+		_getLuminosityOpacity = () => ac.LuminosityOpacity;
+		_setLuminosityOpacity = opacity => ac.LuminosityOpacity = opacity;
+
+
 
 		initializeController(ac);
 		controller = ac;
