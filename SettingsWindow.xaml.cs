@@ -11,7 +11,7 @@ public sealed partial class SettingsWindow : Window {
 	public SettingsWindow() {
 		InitializeComponent();
 
-		UpdateSwitches();
+		//UpdateSwitches();
 
 
 	}
@@ -81,13 +81,13 @@ public sealed partial class SettingsWindow : Window {
 	}
 
 	public void UpdateSwitches() {
-		BackdropMaterialComboBox.SelectedItem = MainWindow.themeSettings.type.ToString();
-		ThemeComboBox.SelectedItem = MainWindow.themeSettings.theme.ToString();
-		OverrideDefaultsToggleSwitch.IsOn = MainWindow.themeSettings.shouldOverride;
-		FallbackColorPicker.Color = MainWindow.themeSettings.fallbackColor;
-		TintColorPicker.Color = MainWindow.themeSettings.tintColor;
-		TintOpacitySlider.Value = MainWindow.themeSettings.tintOpacity;
-		LuminosityOpacitySlider.Value = MainWindow.themeSettings.luminosityOpacity;
+		//BackdropMaterialComboBox.SelectedItem = MainWindow.themeSettings.type.ToString();
+		//ThemeComboBox.SelectedItem = MainWindow.themeSettings.theme.ToString();
+		//OverrideDefaultsToggleSwitch.IsOn = MainWindow.themeSettings.shouldOverride;
+		//FallbackColorPicker.Color = MainWindow.themeSettings.fallbackColor;
+		//TintColorPicker.Color = MainWindow.themeSettings.tintColor;
+		//TintOpacitySlider.Value = MainWindow.themeSettings.tintOpacity;
+		//LuminosityOpacitySlider.Value = MainWindow.themeSettings.luminosityOpacity;
 	}
 
 

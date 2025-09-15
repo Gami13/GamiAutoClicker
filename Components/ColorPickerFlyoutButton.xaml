@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="GamiAutoClicker.Components.ColorPickerFlyoutButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GamiAutoClicker.Components"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <DropDownButton x:Name="ColorButton" Padding="3,3,6,3">
+        <DropDownButton.Flyout>
+            <Flyout
+                x:Name="ColorPickerFlyout"
+                Placement="Bottom"
+                ShouldConstrainToRootBounds="False">
+                <StackPanel>
+                    <ColorPicker
+                        x:Name="ColorPickerControl"
+                        ColorSpectrumShape="Ring"
+                        IsAlphaEnabled="True"
+                        IsColorChannelTextInputVisible="True"
+                        IsColorSliderVisible="True"
+                        IsHexInputVisible="True"
+                        IsMoreButtonVisible="True" />
+                </StackPanel>
+            </Flyout>
+        </DropDownButton.Flyout>
+
+        <!--  TODO: REPLACE THE DEFAULT COLOR  -->
+        <Border
+            x:Name="ColorDisplay"
+            Width="34"
+            Height="24"
+            BorderBrush="{ThemeResource ButtonBorderBrush}"
+            BorderThickness="{ThemeResource ButtonBorderThemeThickness}"
+            CornerRadius="3"
+            Loaded="ColorDisplay_Loaded">
+            <Rectangle x:Name="ColorDisplayFill" Fill="Red" />
+        </Border>
+
+
+
+
+    </DropDownButton>
+</UserControl>
