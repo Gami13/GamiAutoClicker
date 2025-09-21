@@ -92,8 +92,11 @@ public sealed partial class ColorPickerFlyoutButton : UserControl {
 	private void updateHeader() {
 		if (HeaderText != null) {
 			HeaderText.Text = Header;
-			if (Header.Length == 0 ||Header==null) {
+			if (string.IsNullOrEmpty(Header)) {
 				HeaderText.Visibility = Visibility.Collapsed;
+			}
+			else {
+				HeaderText.Visibility = Visibility.Visible;
 			}
 		}
 	}

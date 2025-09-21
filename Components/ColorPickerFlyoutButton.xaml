@@ -18,7 +18,8 @@
             x:Name="HeaderText"
             Grid.Row="0"
             Margin="{StaticResource TextBoxTopHeaderMargin}"
-            Text="Select an item" />
+            AutomationProperties.HeadingLevel="Level3"
+            Text="" />
         <DropDownButton
             x:Name="ColorButton"
             Grid.Row="1"
