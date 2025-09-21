@@ -3,6 +3,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Composition.SystemBackdrops;
+using Windows.UI;
 
 
 namespace GamiAutoClicker;
@@ -11,7 +12,7 @@ public sealed partial class SettingsWindow : Window {
 	public SettingsWindow() {
 		InitializeComponent();
 
-		//UpdateSwitches();
+		UpdateSwitches();
 
 
 	}
@@ -65,11 +66,11 @@ public sealed partial class SettingsWindow : Window {
 		ThemeHelper.SetOverrides(toggleSwitch.IsOn);
 
 	}
-	private void OnFallbackColorChange(object sender, ColorChangedEventArgs e) {
-		ThemeHelper.SetFallbackColor(e.NewColor);
+	private void OnFallbackColorChange(object sender, Color color) {
+		ThemeHelper.SetFallbackColor(color);
 	}
-	private void OnTintColorChange(object sender, ColorChangedEventArgs e) {
-		ThemeHelper.SetTintColor(e.NewColor);
+	private void OnTintColorChange(object sender, Color color) {
+		ThemeHelper.SetTintColor(color);
 	}
 
 	private void OnTintOpacityChange(object sender, RangeBaseValueChangedEventArgs e) {
@@ -81,13 +82,13 @@ public sealed partial class SettingsWindow : Window {
 	}
 
 	public void UpdateSwitches() {
-		//BackdropMaterialComboBox.SelectedItem = MainWindow.themeSettings.type.ToString();
-		//ThemeComboBox.SelectedItem = MainWindow.themeSettings.theme.ToString();
-		//OverrideDefaultsToggleSwitch.IsOn = MainWindow.themeSettings.shouldOverride;
-		//FallbackColorPicker.Color = MainWindow.themeSettings.fallbackColor;
-		//TintColorPicker.Color = MainWindow.themeSettings.tintColor;
-		//TintOpacitySlider.Value = MainWindow.themeSettings.tintOpacity;
-		//LuminosityOpacitySlider.Value = MainWindow.themeSettings.luminosityOpacity;
+		BackdropMaterialComboBox.SelectedItem = MainWindow.themeSettings.type.ToString();
+		ThemeComboBox.SelectedItem = MainWindow.themeSettings.theme.ToString();
+		OverrideDefaultsToggleSwitch.IsOn = MainWindow.themeSettings.shouldOverride;
+		FallbackColorPicker.SelectedColor = MainWindow.themeSettings.fallbackColor;
+		TintColorPicker.SelectedColor = MainWindow.themeSettings.tintColor;
+		TintOpacitySlider.Value = MainWindow.themeSettings.tintOpacity;
+		LuminosityOpacitySlider.Value = MainWindow.themeSettings.luminosityOpacity;
 	}
 
 

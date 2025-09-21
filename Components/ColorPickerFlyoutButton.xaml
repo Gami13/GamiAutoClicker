@@ -8,39 +8,53 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <DropDownButton x:Name="ColorButton" Padding="3,3,6,3">
-        <DropDownButton.Flyout>
-            <Flyout
-                x:Name="ColorPickerFlyout"
-                Placement="Bottom"
-                ShouldConstrainToRootBounds="False">
-                <StackPanel>
-                    <ColorPicker
-                        x:Name="ColorPickerControl"
-                        ColorSpectrumShape="Ring"
-                        IsAlphaEnabled="True"
-                        IsColorChannelTextInputVisible="True"
-                        IsColorSliderVisible="True"
-                        IsHexInputVisible="True"
-                        IsMoreButtonVisible="True" />
-                </StackPanel>
-            </Flyout>
-        </DropDownButton.Flyout>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
 
-        <!--  TODO: REPLACE THE DEFAULT COLOR  -->
-        <Border
-            x:Name="ColorDisplay"
-            Width="34"
-            Height="24"
-            BorderBrush="{ThemeResource ButtonBorderBrush}"
-            BorderThickness="{ThemeResource ButtonBorderThemeThickness}"
-            CornerRadius="3"
-            Loaded="ColorDisplay_Loaded">
-            <Rectangle x:Name="ColorDisplayFill" Fill="Red" />
-        </Border>
+        <TextBlock
+            x:Name="HeaderText"
+            Grid.Row="0"
+            Margin="{StaticResource TextBoxTopHeaderMargin}"
+            Text="Select an item" />
+        <DropDownButton
+            x:Name="ColorButton"
+            Grid.Row="1"
+            Padding="3,3,6,3">
+            <DropDownButton.Flyout>
+                <Flyout
+                    x:Name="ColorPickerFlyout"
+                    Placement="Bottom"
+                    ShouldConstrainToRootBounds="False">
+                    <StackPanel>
+                        <ColorPicker
+                            x:Name="ColorPickerControl"
+                            ColorSpectrumShape="Ring"
+                            IsAlphaEnabled="True"
+                            IsColorChannelTextInputVisible="True"
+                            IsColorSliderVisible="True"
+                            IsHexInputVisible="True"
+                            IsMoreButtonVisible="True" />
+                    </StackPanel>
+                </Flyout>
+            </DropDownButton.Flyout>
+
+            <Border
+                x:Name="ColorDisplay"
+                Width="34"
+                Height="24"
+                BorderBrush="{ThemeResource ButtonBorderBrush}"
+                BorderThickness="{ThemeResource ButtonBorderThemeThickness}"
+                CornerRadius="6"
+                Loaded="ColorDisplay_Loaded">
+                <Rectangle x:Name="ColorDisplayFill" />
+            </Border>
 
 
 
 
-    </DropDownButton>
+        </DropDownButton>
+    </Grid>
 </UserControl>

@@ -34,24 +34,42 @@ public sealed partial class ColorPickerFlyoutButton : UserControl {
 		set => SetValue(SelectedColorProperty, value);
 	}
 
+	public static readonly DependencyProperty HeaderProperty =
+	DependencyProperty.Register(
+		nameof(Header),
+		typeof(string),
+		typeof(ColorPickerFlyoutButton),
+		new PropertyMetadata("", OnHeaderChanged));
+
+	public string Header {
+		get => (string)GetValue(HeaderProperty);
+		set => SetValue(HeaderProperty, value);
+	}
+
 	public event EventHandler<Color>? ColorChanged;
 
 	public ColorPickerFlyoutButton() {
 		InitializeComponent();
 		Loaded += OnLoaded;
+
 	}
 
 	private void OnLoaded(object sender, RoutedEventArgs e) {
 		ColorPickerControl.ColorChanged += OnColorPickerColorChanged;
-		UpdateColorDisplay();
+		updateColorDisplay();
+		HeaderText.Text = Header;
+
 	}
 
 	private static void OnSelectedColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 		if (d is ColorPickerFlyoutButton control) {
-			control.UpdateColorDisplay();
-			if (control.ColorPickerControl != null) {
-				control.ColorPickerControl.Color = (Color)e.NewValue;
-			}
+			control.updateColorDisplay();
+		}
+	}
+
+	private static void OnHeaderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+		if (d is ColorPickerFlyoutButton control) {
+			control.updateHeader();	
 		}
 	}
 
@@ -60,9 +78,23 @@ public sealed partial class ColorPickerFlyoutButton : UserControl {
 		ColorChanged?.Invoke(this, args.NewColor);
 	}
 
-	private void UpdateColorDisplay() {
+	private void updateColorDisplay() {
 		if (ColorDisplayFill != null) {
 			ColorDisplayFill.Fill = new SolidColorBrush(SelectedColor);
+
+		}
+		if (ColorPickerControl != null) {
+
+			ColorPickerControl.Color = SelectedColor;
+		}
+	}
+
+	private void updateHeader() {
+		if (HeaderText != null) {
+			HeaderText.Text = Header;
+			if (Header.Length == 0 ||Header==null) {
+				HeaderText.Visibility = Visibility.Collapsed;
+			}
 		}
 	}
 
@@ -70,7 +102,7 @@ public sealed partial class ColorPickerFlyoutButton : UserControl {
 	//Yoinked from Windows Community Toolkit
 	private async void ColorDisplay_Loaded(object sender, RoutedEventArgs e) {
 
-	
+
 		if (sender is Border border) {
 			int width = Convert.ToInt32(border.ActualWidth);
 			int height = Convert.ToInt32(border.ActualHeight);
