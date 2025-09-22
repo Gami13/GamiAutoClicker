@@ -12,10 +12,7 @@ namespace GamiAutoClicker;
 public sealed partial class SettingsWindow : Window {
 	public SettingsWindow() {
 		InitializeComponent();
-
 		UpdateSwitches();
-
-
 	}
 	private void OnMaterialChange(object sender, SelectionChangedEventArgs e) {
 		var comboBox = (ComboBox)sender;

@@ -32,9 +32,11 @@ class WindowsSystemDispatcherQueueHelper {
 			options.threadType = 2;    // DQTYPE_THREAD_CURRENT
 			options.apartmentType = 2; // DQTAT_COM_STA
 
+#pragma warning disable IL2050 // Correctness of COM interop cannot be guaranteed after trimming. Interfaces and interface members might be removed.
 #pragma warning disable CS8601 // Possible null reference assignment.
 			CreateDispatcherQueueController(options, ref m_dispatcherQueueController);
 #pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning restore IL2050 // Correctness of COM interop cannot be guaranteed after trimming. Interfaces and interface members might be removed.
 		}
 	}
 }
