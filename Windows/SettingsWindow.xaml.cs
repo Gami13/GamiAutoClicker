@@ -4,6 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Windows.UI;
+using GamiAutoClicker;
 
 
 namespace GamiAutoClicker;
