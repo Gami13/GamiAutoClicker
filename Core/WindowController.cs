@@ -37,20 +37,22 @@ public class WindowController {
 	private Func<float>? _getLuminosityOpacity;
 	private Action<float>? _setLuminosityOpacity;
 
+
+
+	//Potentially trips when mica isnt supported
 	public WindowController(Window newWindow, WindowKey windowKey) {
 		this.windowKey = windowKey;
 		window = newWindow;
-		//TODO: Dont block if no mica
-		//if (!MicaController.IsSupported());
 
 		wsdqHelper = new WindowsSystemDispatcherQueueHelper();
 		wsdqHelper.EnsureWindowsSystemDispatcherQueueController();
 
 		configurationSource = new SystemBackdropConfiguration();
 		configurationSource.IsInputActive = true;
-
 		SetConfigurationSourceTheme();
+
 		createController();
+
 		var config = Constants.WindowConfigs[windowKey];
 
 		topWindowBar = new TopWindowBar(windowKey);

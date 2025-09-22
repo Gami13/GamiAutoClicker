@@ -51,7 +51,7 @@ public sealed partial class ColorPickerFlyoutButton : UserControl {
 	public ColorPickerFlyoutButton() {
 		InitializeComponent();
 		Loaded += OnLoaded;
-
+		Unloaded += OnUnloaded;
 	}
 
 	private void OnLoaded(object sender, RoutedEventArgs e) {
@@ -59,6 +59,9 @@ public sealed partial class ColorPickerFlyoutButton : UserControl {
 		updateColorDisplay();
 		HeaderText.Text = Header;
 
+	}
+	private void OnUnloaded(object sender, RoutedEventArgs e) {
+		ColorPickerControl.ColorChanged -= OnColorPickerColorChanged;
 	}
 
 	private static void OnSelectedColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
