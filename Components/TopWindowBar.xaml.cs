@@ -8,6 +8,7 @@ using System;
 using Windows.Foundation;
 using Windows.Graphics;
 using WinRT.Interop;
+using GamiAutoClicker.WindowManager;
 
 
 namespace GamiAutoClicker.Components;
@@ -37,7 +38,7 @@ public sealed partial class TopWindowBar : UserControl {
 	}
 
 	private void SetRegionsForCustomTitleBar() {
-		var appWindow = Utilities.GetAppWindowFromKey(windowKey);
+		var appWindow = ThemeHelper.GetAppWindow(windowKey);
 
 
 		if (appWindow == null) return;

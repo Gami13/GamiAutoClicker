@@ -1,19 +1,22 @@
-using System;
+using GamiAutoClicker.WindowManager;
+using Microsoft.UI.Composition.SystemBackdrops;
+using Microsoft.UI.System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Composition.SystemBackdrops;
+using System;
 using Windows.UI;
-using GamiAutoClicker;
-
 
 namespace GamiAutoClicker;
 
-public sealed partial class SettingsWindow : Window {
+public sealed partial class SettingsWindow : ThemedWindow {
+	public override WindowKey WindowKey => WindowKey.Settings;
+
 	public SettingsWindow() {
 		InitializeComponent();
-		UpdateSwitches();
+		UpdateSwitches(WindowController.ThemeSettings);
 	}
+
 	private void OnMaterialChange(object sender, SelectionChangedEventArgs e) {
 		var comboBox = (ComboBox)sender;
 		var selectedItem = comboBox.SelectedItem;
@@ -58,15 +61,18 @@ public sealed partial class SettingsWindow : Window {
 				break;
 		}
 	}
+
 	private void OnOverridesChange(object sender, RoutedEventArgs e) {
 		var toggleSwitch = (ToggleSwitch)sender;
-
 		ThemeHelper.SetOverrides(toggleSwitch.IsOn);
 
+		UpdateSwitches(WindowController.ThemeSettings);
 	}
+
 	private void OnFallbackColorChange(object sender, Color color) {
 		ThemeHelper.SetFallbackColor(color);
 	}
+
 	private void OnTintColorChange(object sender, Color color) {
 		ThemeHelper.SetTintColor(color);
 	}
@@ -79,15 +85,13 @@ public sealed partial class SettingsWindow : Window {
 		ThemeHelper.SetLuminosityOpacity(Math.Clamp((float)e.NewValue, 0f, 1f));
 	}
 
-	public void UpdateSwitches() {
-		BackdropMaterialComboBox.SelectedItem = MainWindow.themeSettings.type.ToString();
-		ThemeComboBox.SelectedItem = MainWindow.themeSettings.theme.ToString();
-		OverrideDefaultsToggleSwitch.IsOn = MainWindow.themeSettings.shouldOverride;
-		FallbackColorPicker.SelectedColor = MainWindow.themeSettings.fallbackColor;
-		TintColorPicker.SelectedColor = MainWindow.themeSettings.tintColor;
-		TintOpacitySlider.Value = MainWindow.themeSettings.tintOpacity;
-		LuminosityOpacitySlider.Value = MainWindow.themeSettings.luminosityOpacity;
+	public void UpdateSwitches(ThemeSettings settings) {
+		BackdropMaterialComboBox.SelectedItem = settings.type.ToString();
+		ThemeComboBox.SelectedItem = settings.theme.ToString();
+		OverrideDefaultsToggleSwitch.IsOn = settings.shouldOverride;
+		FallbackColorPicker.SelectedColor = settings.fallbackColor;
+		TintColorPicker.SelectedColor = settings.tintColor;
+		TintOpacitySlider.Value = settings.tintOpacity;
+		LuminosityOpacitySlider.Value = settings.luminosityOpacity;
 	}
-
-
 }

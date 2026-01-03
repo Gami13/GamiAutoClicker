@@ -13,35 +13,16 @@ using System.Threading.Tasks;
 using Windows.Graphics;
 using Windows.UI;
 using WinRT.Interop;
+using GamiAutoClicker.WindowManager;
 
 namespace GamiAutoClicker;
 
 public static class Utilities {
 
 	public static void OpenSettingsWindow(object _, RoutedEventArgs __) {
-		CreateWindow(WindowKey.Settings);
+		ThemeHelper.CreateWindow(WindowKey.Settings);
 	}
-	public static void CreateWindow(WindowKey windowKey) {
-		bool isOpen = MainWindow.windowThemes.ContainsKey(windowKey);
-		if (isOpen) {
-			return;
-		}
-		var config = Constants.WindowConfigs[windowKey];
-		var window = config.windowConstructor();
-		var themeController = new WindowController(window, windowKey);
 
-		MainWindow.windowThemes[windowKey] = themeController;
-
-		window.Activate();
-
-
-	}
-	public static AppWindow GetAppWindowFromKey(WindowKey key) {
-		var window = MainWindow.windowThemes[key].window;
-		IntPtr hWnd = WindowNative.GetWindowHandle(window);
-		Microsoft.UI.WindowId windowId = Win32Interop.GetWindowIdFromWindow(hWnd);
-		return AppWindow.GetFromWindowId(windowId);
-	}
 
 
 	//Yoinked from Windows Community Toolkit
@@ -64,9 +45,9 @@ public static class Utilities {
 	//Yoinked from Windows Community Toolkit
 
 	internal static readonly Color CheckerBackgroundColor = Color.FromArgb(0x19, 0x80, 0x80, 0x80);
-	
-	
-	
+
+
+
 	//Yoinked from Windows Community Toolkit
 	public static async Task<byte[]> CreateCheckeredBitmapAsync(
 	int width,
