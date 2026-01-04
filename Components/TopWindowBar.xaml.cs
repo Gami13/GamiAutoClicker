@@ -22,7 +22,7 @@ public sealed partial class TopWindowBar : UserControl {
 		this.Loaded += AppTitleBar_Loaded;
 		this.SizeChanged += AppTitleBar_SizeChanged;
 		this.Unloaded += AppTitleBar_Unloaded;
-		var config = Constants.WindowConfigs[windowKey];
+		var config = WindowManager.Configuration.WindowConfigs[windowKey];
 		this.TitleBarTextBlock.Text = config.title;
 		this.TitleBarButton.Visibility = config.hasButton ? Visibility.Visible : Visibility.Collapsed;
 		this.TitleBarButtonIcon.Symbol = config.buttonIcon;
@@ -66,7 +66,7 @@ public sealed partial class TopWindowBar : UserControl {
 		this.Loaded -= AppTitleBar_Loaded;
 		this.SizeChanged -= AppTitleBar_SizeChanged;
 		this.Unloaded -= AppTitleBar_Unloaded;
-		// if (TitleBarButton != null && Constants.WindowConfigs.TryGetValue(windowKey, out var config)) {
+		// if (TitleBarButton != null && WindowManager.Configuration.WindowConfigs.TryGetValue(windowKey, out var config)) {
 		// 	this.TitleBarButton.Click -= config.buttonAction;
 		// }
 	}

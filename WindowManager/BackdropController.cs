@@ -33,63 +33,63 @@ public class BackdropController : IDisposable {
 	public void CreateController() {
 		DisposeController();
 
-		if (WindowController.ThemeSettings.type == ThemeType.Mica) CreateMicaController();
-		else if (WindowController.ThemeSettings.type == ThemeType.Acrylic) CreateAcrylicController();
+		if (Configuration.ThemeSettings.type == ThemeType.Mica) CreateMicaController();
+		else if (Configuration.ThemeSettings.type == ThemeType.Acrylic) CreateAcrylicController();
 	}
 
 	private void CreateMicaController() {
-		var mc = new MicaController { Kind = WindowController.ThemeSettings.micaKind };
+		var mc = new MicaController { Kind = Configuration.ThemeSettings.micaKind };
 		_getFallbackColor = () => mc.FallbackColor; _setFallbackColor = v => mc.FallbackColor = v;
 		_getTintColor = () => mc.TintColor; _setTintColor = v => mc.TintColor = v;
 		_getTintOpacity = () => mc.TintOpacity; _setTintOpacity = v => mc.TintOpacity = v;
 		_getLuminosityOpacity = () => mc.LuminosityOpacity; _setLuminosityOpacity = v => mc.LuminosityOpacity = v;
 		mc.AddSystemBackdropTarget(_window.As<ICompositionSupportsSystemBackdrop>());
 		mc.SetSystemBackdropConfiguration(_configurationSource);
-		if (WindowController.ThemeSettings.shouldOverride) {
-			mc.FallbackColor = WindowController.ThemeSettings.fallbackColor;
-			mc.TintColor = WindowController.ThemeSettings.tintColor;
-			mc.TintOpacity = WindowController.ThemeSettings.tintOpacity;
-			mc.LuminosityOpacity = WindowController.ThemeSettings.luminosityOpacity;
+		if (Configuration.ThemeSettings.shouldOverride) {
+			mc.FallbackColor = Configuration.ThemeSettings.fallbackColor;
+			mc.TintColor = Configuration.ThemeSettings.tintColor;
+			mc.TintOpacity = Configuration.ThemeSettings.tintOpacity;
+			mc.LuminosityOpacity = Configuration.ThemeSettings.luminosityOpacity;
 		}
 		_controller = mc;
 	}
 
 	private void CreateAcrylicController() {
-		var ac = new DesktopAcrylicController { Kind = WindowController.ThemeSettings.acrylicKind };
+		var ac = new DesktopAcrylicController { Kind = Configuration.ThemeSettings.acrylicKind };
 		_getFallbackColor = () => ac.FallbackColor; _setFallbackColor = v => ac.FallbackColor = v;
 		_getTintColor = () => ac.TintColor; _setTintColor = v => ac.TintColor = v;
 		_getTintOpacity = () => ac.TintOpacity; _setTintOpacity = v => ac.TintOpacity = v;
 		_getLuminosityOpacity = () => ac.LuminosityOpacity; _setLuminosityOpacity = v => ac.LuminosityOpacity = v;
 		ac.AddSystemBackdropTarget(_window.As<ICompositionSupportsSystemBackdrop>());
 		ac.SetSystemBackdropConfiguration(_configurationSource);
-		if (WindowController.ThemeSettings.shouldOverride) {
-			ac.FallbackColor = WindowController.ThemeSettings.fallbackColor;
-			ac.TintColor = WindowController.ThemeSettings.tintColor;
-			ac.TintOpacity = WindowController.ThemeSettings.tintOpacity;
-			ac.LuminosityOpacity = WindowController.ThemeSettings.luminosityOpacity;
+		if (Configuration.ThemeSettings.shouldOverride) {
+			ac.FallbackColor = Configuration.ThemeSettings.fallbackColor;
+			ac.TintColor = Configuration.ThemeSettings.tintColor;
+			ac.TintOpacity = Configuration.ThemeSettings.tintOpacity;
+			ac.LuminosityOpacity = Configuration.ThemeSettings.luminosityOpacity;
 		}
 		_controller = ac;
 	}
 
 	public void SetMicaKind() {
-		if (_controller is MicaController mc) mc.Kind = WindowController.ThemeSettings.micaKind;
+		if (_controller is MicaController mc) mc.Kind = Configuration.ThemeSettings.micaKind;
 	}
 	public void SetAcrylicKind() {
-		if (_controller is DesktopAcrylicController ac) ac.Kind = WindowController.ThemeSettings.acrylicKind;
+		if (_controller is DesktopAcrylicController ac) ac.Kind = Configuration.ThemeSettings.acrylicKind;
 	}
 	public void SetFallbackColor() {
-		if (WindowController.ThemeSettings.shouldOverride) _setFallbackColor?.Invoke(WindowController.ThemeSettings.fallbackColor);
+		if (Configuration.ThemeSettings.shouldOverride) _setFallbackColor?.Invoke(Configuration.ThemeSettings.fallbackColor);
 	}
 	public void SetTintColor() {
-		if (WindowController.ThemeSettings.shouldOverride) _setTintColor?.Invoke(WindowController.ThemeSettings.tintColor);
+		if (Configuration.ThemeSettings.shouldOverride) _setTintColor?.Invoke(Configuration.ThemeSettings.tintColor);
 	}
 	public void SetLuminosityOpacity() {
-		if (WindowController.ThemeSettings.shouldOverride) _setLuminosityOpacity?.Invoke(WindowController.ThemeSettings.luminosityOpacity);
+		if (Configuration.ThemeSettings.shouldOverride) _setLuminosityOpacity?.Invoke(Configuration.ThemeSettings.luminosityOpacity);
 	}
 
 	public void SetTintOpacity() {
-		if (!WindowController.ThemeSettings.shouldOverride) return;
-		_setTintOpacity?.Invoke(WindowController.ThemeSettings.tintOpacity);
+		if (!Configuration.ThemeSettings.shouldOverride) return;
+		_setTintOpacity?.Invoke(Configuration.ThemeSettings.tintOpacity);
 		// Workaround for https://github.com/microsoft/microsoft-ui-xaml/issues/10717
 		// Slightly modify the tint color to force a visual update, as changing opacity alone doesn't always work
 		if (_getTintColor == null || _setTintColor == null) return;

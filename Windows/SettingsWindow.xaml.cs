@@ -14,7 +14,7 @@ public sealed partial class SettingsWindow : ThemedWindow {
 
 	public SettingsWindow() {
 		InitializeComponent();
-		UpdateSwitches(WindowController.ThemeSettings);
+		UpdateSwitches(Configuration.ThemeSettings);
 	}
 
 	private void OnMaterialChange(object sender, SelectionChangedEventArgs e) {
@@ -66,7 +66,7 @@ public sealed partial class SettingsWindow : ThemedWindow {
 		var toggleSwitch = (ToggleSwitch)sender;
 		ThemeHelper.SetOverrides(toggleSwitch.IsOn);
 
-		UpdateSwitches(WindowController.ThemeSettings);
+		UpdateSwitches(Configuration.ThemeSettings);
 	}
 
 	private void OnFallbackColorChange(object sender, Color color) {
@@ -85,7 +85,7 @@ public sealed partial class SettingsWindow : ThemedWindow {
 		ThemeHelper.SetLuminosityOpacity(Math.Clamp((float)e.NewValue, 0f, 1f));
 	}
 
-	public void UpdateSwitches(ThemeSettings settings) {
+	public void UpdateSwitches(WindowManager.ThemeSettings settings) {
 		BackdropMaterialComboBox.SelectedItem = settings.type.ToString();
 		ThemeComboBox.SelectedItem = settings.theme.ToString();
 		OverrideDefaultsToggleSwitch.IsOn = settings.shouldOverride;
