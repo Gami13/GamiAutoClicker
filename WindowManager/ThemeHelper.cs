@@ -1,7 +1,10 @@
 using Microsoft.UI;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
+using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Diagnostics;
 using Windows.UI;
 using WinRT.Interop;
 
@@ -19,13 +22,36 @@ public static class ThemeHelper {
 		foreach (var c in Configuration.Windows.Values) action(c);
 	}
 	public static void CreateWindow(WindowKey key) {
+		if (!Configuration.WindowConfigs.TryGetValue(key, out var config)) {
+			throw new ArgumentException($"WindowConfig for {key} not found.");
+		}
 		if (IsWindowOpen(key)) {
 			GetAppWindow(key).MoveInZOrderAtTop();
 			return;
 		}
-		Configuration.WindowConfigs[key].windowConstructor().Activate();
-	}
+	
+		var window = config.windowConstructor();
+		InitializeWindow(window, key);
 
+		window.Activate();
+	}
+	public static void InitializeWindow(Window window, WindowKey key) {
+		if (window.Content is UIElement originalContent) {
+			var rootGrid = new Grid();
+			rootGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+			rootGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+
+			window.Content = null;
+			if (originalContent is FrameworkElement fe) {
+				Grid.SetRow(fe, 1);
+				rootGrid.Children.Add(fe);
+			}
+
+			window.Content = rootGrid;
+		}
+
+		_ = new WindowController(window, key);
+	}
 	public static void SetOverrides(bool state) {
 		Configuration.ThemeSettings.shouldOverride = state;
 		ApplyToAllWindows(theme => theme.SetOverrides());

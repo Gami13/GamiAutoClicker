@@ -9,8 +9,7 @@ using Windows.UI;
 
 namespace GamiAutoClicker;
 
-public sealed partial class SettingsWindow : ThemedWindow {
-	public override WindowKey WindowKey => WindowKey.Settings;
+public sealed partial class SettingsWindow : Window {
 
 	public SettingsWindow() {
 		InitializeComponent();

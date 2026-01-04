@@ -3,8 +3,7 @@ using Microsoft.UI.Xaml;
 
 namespace GamiAutoClicker;
 
-public sealed partial class MainWindow : ThemedWindow {
-	public override WindowKey WindowKey => WindowKey.Main;
+public sealed partial class MainWindow : Window {
 
 	public MainWindow() {
 		InitializeComponent();

@@ -1,22 +1,9 @@
 using GamiAutoClicker;
+using GamiAutoClicker.WindowManager;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using Microsoft.UI.Xaml.Shapes;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.ApplicationModel;
-using Windows.ApplicationModel.Activation;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+
 using Windows.Graphics;
 
 // To learn more about WinUI, the WinUI project structure,
@@ -37,7 +24,7 @@ namespace GamiAutoClicker {
 
 		public App() {
 			InitializeComponent();
-			WindowManager.Configuration.WindowConfigs.Add(WindowKey.Main, new WindowManager.WindowConfig {
+			Configuration.WindowConfigs.Add(WindowKey.Main, new WindowManager.WindowConfig {
 				windowConstructor = () => new MainWindow(),
 				presenterKind = AppWindowPresenterKind.Default,
 				title = "Gami's AutoClicker",
@@ -50,7 +37,7 @@ namespace GamiAutoClicker {
 				defaultSize = new SizeInt32(370, 290),
 				defaultPosition = new SizeInt32(100, 100)
 			});
-			WindowManager.Configuration.WindowConfigs.Add(WindowKey.Settings, new WindowManager.WindowConfig {
+			Configuration.WindowConfigs.Add(WindowKey.Settings, new WindowManager.WindowConfig {
 				windowConstructor = () => new SettingsWindow(),
 				presenterKind = AppWindowPresenterKind.Overlapped,
 				title = "Settings",
@@ -70,8 +57,9 @@ namespace GamiAutoClicker {
 		/// </summary>
 		/// <param name="args">Details about the launch request and process.</param>
 		protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args) {
-			_window = new MainWindow();
-			_window.Activate();
+			ThemeHelper.CreateWindow(WindowKey.Main);
+			_window = Configuration.Windows[WindowKey.Main].Window;
+			
 		}
 	}
 }
