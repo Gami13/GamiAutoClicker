@@ -21,7 +21,7 @@ namespace GamiAutoClicker.WindowManager {
 			tintOpacity = 0.0f,
 			luminosityOpacity = 0.0f
 		};
-		public static Dictionary<WindowKey, WindowController> Windows = new();
-		public static Dictionary<WindowKey, WindowManager.WindowConfig> WindowConfigs = new();
+		public static Dictionary<object, WindowController> Windows = new();
+		public static Dictionary<object, WindowManager.WindowConfig> WindowConfigs = new();
 	}
 }

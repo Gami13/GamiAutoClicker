@@ -10,7 +10,7 @@ namespace GamiAutoClicker.WindowManager {
 	public enum ThemeType {
 		Mica,
 		Acrylic,
-		None
+		//None
 	}
 	public struct ThemeSettings {
 		public ThemeType type;

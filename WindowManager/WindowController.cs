@@ -15,7 +15,7 @@ public class WindowController : IDisposable {
 
 
 
-	private readonly WindowKey _windowKey;
+	private readonly object _windowKey;
 	private readonly WindowsSystemDispatcherQueueHelper _dispatcherHelper;
 	private readonly SystemBackdropConfiguration _backdropConfig;
 	private readonly TopWindowBar _topWindowBar;
@@ -24,7 +24,7 @@ public class WindowController : IDisposable {
 
 	public Window? Window { get; private set; }
 
-	public WindowController(Window window, WindowKey windowKey) {
+	public WindowController(Window window, object windowKey) {
 		if(!Configuration.WindowConfigs.ContainsKey(windowKey)) {
 			throw new ArgumentException($"WindowConfig for {windowKey} not found.");
 		}

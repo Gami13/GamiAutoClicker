@@ -14,10 +14,10 @@ using GamiAutoClicker.WindowManager;
 namespace GamiAutoClicker.Components;
 
 public sealed partial class TopWindowBar : UserControl {
-	private readonly WindowKey windowKey;
+	private readonly object windowKey;
 
 
-	public TopWindowBar(WindowKey windowKey) {
+	public TopWindowBar(object windowKey) {
 		InitializeComponent();
 		this.Loaded += AppTitleBar_Loaded;
 		this.SizeChanged += AppTitleBar_SizeChanged;

@@ -11,8 +11,8 @@ using WinRT.Interop;
 namespace GamiAutoClicker.WindowManager;
 
 public static class ThemeHelper {
-	public static bool IsWindowOpen(WindowKey key) => Configuration.Windows.ContainsKey(key);
-	public static AppWindow GetAppWindow(WindowKey key) {
+	public static bool IsWindowOpen(object key) => Configuration.Windows.ContainsKey(key);
+	public static AppWindow GetAppWindow(object key) {
 		var window = Configuration.Windows.TryGetValue(key, out var c) ? c.Window : null;
 		if (window == null) throw new InvalidOperationException($"Window {key} not registered.");
 		return AppWindow.GetFromWindowId(Win32Interop.GetWindowIdFromWindow(WindowNative.GetWindowHandle(window)));
@@ -21,7 +21,7 @@ public static class ThemeHelper {
 	public static void ApplyToAllWindows(Action<WindowController> action) {
 		foreach (var c in Configuration.Windows.Values) action(c);
 	}
-	public static void CreateWindow(WindowKey key) {
+	public static void CreateWindow(object key) {
 		if (!Configuration.WindowConfigs.TryGetValue(key, out var config)) {
 			throw new ArgumentException($"WindowConfig for {key} not found.");
 		}
@@ -35,7 +35,7 @@ public static class ThemeHelper {
 
 		window.Activate();
 	}
-	public static void InitializeWindow(Window window, WindowKey key) {
+	public static void InitializeWindow(Window window, object key) {
 		if (window.Content is UIElement originalContent) {
 			var rootGrid = new Grid();
 			rootGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
