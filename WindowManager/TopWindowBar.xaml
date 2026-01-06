@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="GamiAutoClicker.Components.TopWindowBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Root"
+    mc:Ignorable="d">
+
+
+    <Grid
+        x:Name="AppTitleBar"
+        Height="32"
+        ColumnSpacing="2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="LeftPaddingColumn" Width="0" />
+            <ColumnDefinition x:Name="IconColumn" Width="Auto" />
+            <ColumnDefinition x:Name="TitleColumn" Width="Auto" />
+            <ColumnDefinition x:Name="DragColumn" Width="*" />
+            <ColumnDefinition x:Name="ButtonColumn" Width="Auto" />
+            <ColumnDefinition x:Name="RightPaddingColumn" Width="0" />
+        </Grid.ColumnDefinitions>
+        <!--<FontIcon  x:Name="TitleBarIcon" FontFamily="Segoe Fluent Icons" Glyph="&#xE962;" Grid.Column="1"/>-->
+        <Button
+            x:Name="TitleBarButton"
+            Grid.Column="1"
+            Width="32"
+            Height="28"
+            Padding="1"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            Foreground="{Binding Foreground, ElementName=Root}"
+            Visibility="Collapsed">
+
+            <SymbolIcon
+                x:Name="TitleBarButtonIcon"
+                Foreground="{Binding Foreground, ElementName=Root}"
+                Symbol="Delete" />
+        </Button>
+        <TextBlock
+            x:Name="TitleBarTextBlock"
+            Grid.Column="2"
+            Padding="4,0,0,0"
+            VerticalAlignment="Center"
+            Foreground="{Binding Foreground, ElementName=Root}"
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="TEXT" />
+
+
+    </Grid>
+
+</UserControl>
