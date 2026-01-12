@@ -1,7 +1,4 @@
-using System;
 using System.Runtime.InteropServices;
-
-
 
 namespace GamiAutoClicker.WindowManager;
 
@@ -13,10 +10,11 @@ internal class WindowsSystemDispatcherQueueHelper {
 		internal int apartmentType;
 	}
 
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA5392:Use DefaultDllImportSearchPaths attribute for P/Invokes", Justification = "DefaultDllImportSearchPaths is not available in .NET 10. CoreMessaging.dll is a system DLL that will be found automatically.")]
 	[DllImport("CoreMessaging.dll")]
 	private static extern int CreateDispatcherQueueController([In] DispatcherQueueOptions options, [In, Out, MarshalAs(UnmanagedType.IUnknown)] ref object dispatcherQueueController);
 
-	object? m_dispatcherQueueController = null;
+	object? m_dispatcherQueueController;
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1806:Do not ignore method results", Justification = "<Pending>")]
 	public void EnsureWindowsSystemDispatcherQueueController() {
 		if (Windows.System.DispatcherQueue.GetForCurrentThread() != null) {

@@ -30,12 +30,12 @@
             Padding="1"
             Background="Transparent"
             BorderBrush="Transparent"
-            Foreground="{Binding Foreground, ElementName=Root}"
+            Foreground="{x:Bind Foreground}"
             Visibility="Collapsed">
 
             <SymbolIcon
                 x:Name="TitleBarButtonIcon"
-                Foreground="{Binding Foreground, ElementName=Root}"
+                Foreground="{x:Bind Foreground}"
                 Symbol="Delete" />
         </Button>
         <TextBlock
@@ -43,7 +43,7 @@
             Grid.Column="2"
             Padding="4,0,0,0"
             VerticalAlignment="Center"
-            Foreground="{Binding Foreground, ElementName=Root}"
+            Foreground="{x:Bind Foreground}"
             Style="{StaticResource CaptionTextBlockStyle}"
             Text="TEXT" />
 

@@ -9,7 +9,7 @@ using Windows.UI;
 
 namespace GamiAutoClicker;
 
-public sealed partial class SettingsWindow : Window {
+internal sealed partial class SettingsWindow : Window {
 
 	public SettingsWindow() {
 		InitializeComponent();
@@ -68,11 +68,11 @@ public sealed partial class SettingsWindow : Window {
 		UpdateSwitches(Configuration.ThemeSettings);
 	}
 
-	private void OnFallbackColorChange(object sender, Color color) {
+	private static void OnFallbackColorChange(object sender, Color color) {
 		ThemeHelper.SetFallbackColor(color);
 	}
 
-	private void OnTintColorChange(object sender, Color color) {
+	private static void OnTintColorChange(object sender, Color color) {
 		ThemeHelper.SetTintColor(color);
 	}
 

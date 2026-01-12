@@ -17,7 +17,7 @@ using GamiAutoClicker.WindowManager;
 
 namespace GamiAutoClicker;
 
-public static class Utilities {
+internal static class Utilities {
 
 	public static void OpenSettingsWindow(object _, RoutedEventArgs __) {
 		ThemeHelper.CreateWindow(WindowKey.Settings);
@@ -32,7 +32,7 @@ public static class Utilities {
 	int height) {
 		var writableBitmap = new WriteableBitmap(width, height);
 		using (Stream stream = writableBitmap.PixelBuffer.AsStream()) {
-			await stream.WriteAsync(bitmap, 0, bitmap.Length);
+			await stream.WriteAsync(bitmap).ConfigureAwait(true);
 		}
 
 		var brush = new ImageBrush() {
@@ -61,7 +61,7 @@ public static class Utilities {
 			return null!;
 		}
 
-		var bitmap = await Task.Run<byte[]>(() => {
+		var bitmap = await Task.Run(() => {
 			int pixelDataIndex = 0;
 			byte[] bgraPixelData;
 
@@ -97,7 +97,7 @@ public static class Utilities {
 			}
 
 			return bgraPixelData;
-		});
+		}).ConfigureAwait(true);
 
 		return bitmap;
 	}

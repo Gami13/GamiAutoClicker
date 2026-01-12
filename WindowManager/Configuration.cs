@@ -4,12 +4,14 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Windows.Graphics;
 
 namespace GamiAutoClicker.WindowManager {
-	public class Configuration {
-		public static ThemeSettings ThemeSettings = new() {
+	[SuppressMessage("Design", "CA1515:Consider making public types internal", Justification = "Will be extracted to separate package")]
+	public static class Configuration {
+		public static ThemeSettings ThemeSettings { get; set; } = new() {
 			type = ThemeType.Acrylic,
 			micaKind = MicaKind.Base,
 			acrylicKind = DesktopAcrylicKind.Default,
@@ -21,7 +23,7 @@ namespace GamiAutoClicker.WindowManager {
 			tintOpacity = 0.0f,
 			luminosityOpacity = 0.0f
 		};
-		public static Dictionary<object, WindowController> Windows = new();
-		public static Dictionary<object, WindowManager.WindowConfig> WindowConfigs = new();
+		public static Dictionary<object, WindowController> Windows { get; } = new();
+		public static Dictionary<object, WindowManager.WindowConfig> WindowConfigs { get;  } = new();
 	}
 }

@@ -17,6 +17,8 @@
 		<PublishSingleFile>true</PublishSingleFile>
 		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+		<AnalysisMode>All</AnalysisMode>
+		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Components\ColorPickerFlyoutButton.xaml" />
@@ -41,13 +43,13 @@
     Tools extension to be activated for this project even if the Windows App SDK Nuget
     package has not yet been restored.
   -->
-	<ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+	<ItemGroup
+		Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<ProjectCapability Include="Msix" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.WinUI.Controls.ColorPicker" Version="8.2.250402" />
-		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4948" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.250814004-preview" />
+		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.1-RTM" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="2.0.0-experimental3" />
 	</ItemGroup>
 	<ItemGroup>
 		<Page Update="Components\ColorPickerFlyoutButton.xaml">
@@ -67,16 +69,28 @@
 	<ItemGroup>
 		<Folder Include="Windows\" />
 	</ItemGroup>
+
 	<PropertyGroup Label="Globals">
 		<WebView2EnableCsWinRTProjection>False</WebView2EnableCsWinRTProjection>
+		<WebView2UseWpfInterop>False</WebView2UseWpfInterop>
+		<WebView2UseWinFormsInterop>False</WebView2UseWinFormsInterop>
+		<!-- Suppress WindowsBase version conflict warning (MSB3277) - it's harmless since WinUI doesn't actually use the WPF assembly -->
+		<NoWarn>$(NoWarn);MSB3277</NoWarn>
 	</PropertyGroup>
+	
+	<!-- Exclude WPF/WinForms WebView2 assemblies that cause WindowsBase conflicts -->
+	<ItemGroup>
+		<Reference Remove="Microsoft.Web.WebView2.Wpf" />
+		<Reference Remove="Microsoft.Web.WebView2.WinForms" />
+	</ItemGroup>
 
 	<!--
     Defining the "HasPackageAndPublishMenuAddedByProject" property here allows the Solution
     Explorer "Package and Publish" context menu entry to be enabled for this project even if
     the Windows App SDK Nuget package has not yet been restored.
   -->
-	<PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
+	<PropertyGroup
+		Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
 		<HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
 	</PropertyGroup>
 

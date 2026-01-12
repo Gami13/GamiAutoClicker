@@ -1,6 +1,3 @@
-# EditorConfig is awesome: https://EditorConfig.org
-
-# top-most EditorConfig file
 root = true
 
 [*]
@@ -12,3 +9,528 @@ trim_trailing_whitespace = false
 insert_final_newline = false
 
 csharp_new_line_before_open_brace = none
+
+
+# --- STRICT PERFORMANCE RULES ---
+
+# Treat all Performance (CA18xx) rules as Build Errors
+dotnet_analyzer_diagnostic.category-Performance.severity = warning
+
+# Treat all Reliability (CA20xx) rules as Build Errors (e.g., IDisposable issues)
+dotnet_analyzer_diagnostic.category-Reliability.severity = warning
+
+# Specific High-Value Performance Checks
+# CA1822: Mark members as static (saves allocation if 'this' isn't used)
+dotnet_diagnostic.CA1822.severity = warning
+# CA1801: Review unused parameters (cleaner stack)
+dotnet_diagnostic.CA1801.severity = warning
+# CA1812: Avoid uninstantiated internal classes (dead code removal)
+dotnet_diagnostic.CA1812.severity = warning
+
+# --- MEMORY & ALLOCATION ---
+
+# Prefer 'var' only when type is apparent (strict typing often helps clarity/perf reviews)
+csharp_style_var_when_type_is_apparent = true:error
+csharp_style_var_elsewhere = false:error
+
+# Force curly braces even for one-liners (prevents control flow errors)
+csharp_prefer_braces = true:error
+
+
+# Language keywords vs BCL types preferences
+dotnet_style_predefined_type_for_locals_parameters_members = true
+dotnet_style_predefined_type_for_member_access = true
+
+# Parentheses preferences
+dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity
+dotnet_style_parentheses_in_other_binary_operators = always_for_clarity
+dotnet_style_parentheses_in_other_operators = always_for_clarity
+dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity
+dotnet_style_collection_initializer = true
+dotnet_style_explicit_tuple_names = true
+dotnet_style_namespace_match_folder = true
+dotnet_style_object_initializer = true
+dotnet_style_prefer_auto_properties = true
+dotnet_style_prefer_compound_assignment = true
+dotnet_style_prefer_simplified_boolean_expressions = true
+dotnet_style_prefer_simplified_interpolation = false
+dotnet_style_prefer_foreach_explicit_cast_in_source = when_strongly_typed
+dotnet_style_readonly_field = true
+dotnet_code_quality_unused_parameters = all:silent
+dotnet_remove_unnecessary_suppression_exclusions = none
+dotnet_style_allow_multiple_blank_lines_experimental = false
+dotnet_style_allow_statement_immediately_after_block_experimental = true
+
+
+
+
+
+### To be decided ####
+
+# ============================================================================
+# VAR PREFERENCES
+# Controls when the 'var' keyword can be used instead of explicit type names.
+# Using explicit types improves code readability and makes type information
+# immediately visible without IDE hover. However, 'var' reduces verbosity.
+# ============================================================================
+
+# When to use 'var' in places where the type is NOT apparent from the right-hand side.
+# false = Prefer explicit type: "string name = GetName();" instead of "var name = GetName();"
+# Helps readers understand the type without needing to check the method signature.
+csharp_style_var_elsewhere = false
+
+# Whether to use 'var' for built-in types like int, string, bool, etc.
+# false = Prefer explicit type: "int count = 5;" instead of "var count = 5;"
+# Built-in types are short enough that 'var' provides no brevity benefit.
+csharp_style_var_for_built_in_types = false
+
+# Whether to use 'var' when the type is obvious from the right-hand expression.
+# false = Prefer explicit type: "Customer c = new Customer();" instead of "var c = new Customer();"
+# true would allow 'var' only when type is clear, e.g., "var c = new Customer();" or "var s = (string)obj;"
+csharp_style_var_when_type_is_apparent = false
+
+# ============================================================================
+# EXPRESSION-BODIED MEMBERS
+# Controls whether to use arrow syntax (=>) for single-expression members.
+# Expression bodies are more concise but can reduce readability for complex logic.
+# These settings control which member types should prefer expression body syntax.
+# ============================================================================
+
+# Property/indexer accessors (get/set): Use "get => _field;" instead of "get { return _field; }"
+# true = Prefer expression body for simple one-liner accessors. Reduces boilerplate.
+csharp_style_expression_bodied_accessors = true
+
+# Constructors: Use "public MyClass(int x) => _x = x;" instead of block body.
+# false = Prefer block body for constructors. Constructors often grow and have side effects,
+# so block bodies are more maintainable and easier to debug.
+csharp_style_expression_bodied_constructors = false
+
+# Indexers: Use "public int this[int i] => _array[i];" instead of block body.
+# true = Prefer expression body for simple indexers that just return a value.
+csharp_style_expression_bodied_indexers = true
+
+# Lambdas: Use "x => x * 2" instead of "x => { return x * 2; }"
+# true = Prefer concise lambda syntax. Almost always preferred for single expressions.
+csharp_style_expression_bodied_lambdas = true
+
+# Local functions: Use "int Add(int a, int b) => a + b;" instead of block body.
+# false = Prefer block body for local functions. They often contain more complex logic
+# and may need to grow, making block bodies more maintainable.
+csharp_style_expression_bodied_local_functions = false
+
+# Methods: Use "public int GetValue() => _value;" instead of block body.
+# false = Prefer block body for methods. Methods tend to evolve and block bodies
+# are easier to extend, debug, and add statements to.
+csharp_style_expression_bodied_methods = false
+
+# Operators (including conversion operators): Use expression body syntax.
+# false = Prefer block body for operators. Operators can have complex logic
+# and block bodies make debugging easier.
+csharp_style_expression_bodied_operators = false
+
+# Properties: Use "public int Value => _value;" instead of "get { return _value; }"
+# true = Prefer expression body for simple read-only properties. Very common pattern.
+csharp_style_expression_bodied_properties = true
+
+# ============================================================================
+# PATTERN MATCHING PREFERENCES
+# Pattern matching (C# 7+) provides concise, type-safe ways to check and extract
+# data from objects. These settings control preferences for various patterns.
+# ============================================================================
+
+# Prefer "if (obj is string s)" over "var s = obj as string; if (s != null)"
+# true = Use 'is' pattern with declaration. Combines null check and cast in one operation,
+# reducing code and preventing null reference bugs from forgotten checks.
+csharp_style_pattern_matching_over_as_with_null_check = true
+
+# Prefer "if (obj is int i)" over "if (obj is int) { var i = (int)obj; }"
+# true = Use 'is' pattern to avoid redundant cast. The pattern combines the type check
+# and extraction into a single, safer operation.
+csharp_style_pattern_matching_over_is_with_cast_check = true
+
+# Prefer extended property patterns: "obj is { Prop.SubProp: value }" (C# 10+)
+# true = Allows nested property access in patterns without intermediate variables.
+# More concise for deep object graph checks.
+csharp_style_prefer_extended_property_pattern = true
+
+# Prefer 'not' pattern: "if (obj is not null)" instead of "if (!(obj is null))"
+# true = The 'not' pattern (C# 9+) is more readable and clearly expresses negation.
+csharp_style_prefer_not_pattern = true
+
+# General preference for pattern matching over traditional if-else type checks.
+# true = Prefer patterns like "is", "switch expressions", "and/or" patterns
+# for cleaner, more declarative code.
+csharp_style_prefer_pattern_matching = true
+
+# Prefer switch expressions over switch statements when returning a value.
+# true = Use "return x switch { 1 => "one", _ => "other" };" instead of switch statement.
+# Switch expressions are more concise and expression-oriented.
+csharp_style_prefer_switch_expression = true
+
+# ============================================================================
+# NULL-CHECKING PREFERENCES
+# Controls null-checking style for delegates and other nullable types.
+# ============================================================================
+
+# Prefer null-conditional delegate invocation: "handler?.Invoke(args)" instead of
+# "if (handler != null) { handler(args); }"
+# true = The ?. operator is thread-safe (captures delegate before null check),
+# more concise, and prevents race conditions with event handlers.
+csharp_style_conditional_delegate_call = true
+
+# ============================================================================
+# MODIFIER PREFERENCES
+# Controls ordering and usage of modifiers (public, static, readonly, etc.)
+# Consistent modifier ordering improves code scanning and maintainability.
+# ============================================================================
+
+# Prefer static local functions when they don't capture enclosing scope variables.
+# true = Static local functions are slightly more performant (no closure allocation)
+# and make it explicit that no external state is modified.
+csharp_prefer_static_local_function = true
+
+# Enforces a specific order for modifiers on members.
+# This ordering follows C# conventions: accessibility first, then static/instance,
+# then other modifiers. Consistent ordering makes code easier to scan.
+csharp_preferred_modifier_order = public,private,protected,internal,file,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,required,volatile,async
+
+# Prefer 'readonly struct' when a struct doesn't modify its state after construction.
+# true = Readonly structs prevent defensive copies and enable compiler optimizations.
+# They also make immutability intent explicit.
+csharp_style_prefer_readonly_struct = true
+
+# Prefer 'readonly' on struct members that don't modify state.
+# true = Marking individual members as readonly enables optimizations and
+# documents which methods are pure/non-mutating.
+csharp_style_prefer_readonly_struct_member = true
+
+# ============================================================================
+# CODE-BLOCK PREFERENCES
+# Controls formatting of code blocks, braces, and structural elements.
+# ============================================================================
+
+# Require braces even for single-line if/for/while statements.
+# true = Always use braces: "if (x) { DoSomething(); }" not "if (x) DoSomething();"
+# Prevents bugs when adding statements and improves consistency.
+csharp_prefer_braces = true
+
+# Prefer simple using declaration: "using var stream = ..." instead of "using (var stream = ...) { }"
+# true = C# 8+ using declarations are more concise and scope to the enclosing block.
+# The resource is disposed at the end of the enclosing scope.
+csharp_prefer_simple_using_statement = true
+
+# Namespace declaration style: block_scoped vs file_scoped.
+# block_scoped = Traditional "namespace X { ... }" with braces.
+# file_scoped = C# 10+ "namespace X;" at top, saving one indentation level.
+csharp_style_namespace_declarations = block_scoped
+
+# Prefer method group over lambda when passing a method as a delegate.
+# true = Use "list.ForEach(Console.WriteLine)" instead of "list.ForEach(x => Console.WriteLine(x))"
+# Method groups are slightly more efficient (no lambda allocation) and more concise.
+csharp_style_prefer_method_group_conversion = true
+
+# Prefer primary constructors (C# 12+): "class Person(string name)" syntax.
+# true = Primary constructors reduce boilerplate for simple initialization patterns.
+# Parameters become available throughout the class body.
+csharp_style_prefer_primary_constructors = true
+
+# Prefer top-level statements for simple programs (no explicit Main method).
+# true = For console apps, allows "Console.WriteLine("Hello");" without class/Main wrapper.
+# Reduces boilerplate for simple scripts and learning scenarios.
+csharp_style_prefer_top_level_statements = true
+
+# ============================================================================
+# EXPRESSION-LEVEL PREFERENCES
+# Controls syntax preferences for expressions, declarations, and common patterns.
+# ============================================================================
+
+# Prefer "default" over "default(T)" when type can be inferred.
+# true = Use "int x = default;" instead of "int x = default(int);"
+# Reduces verbosity when compiler knows the type.
+csharp_prefer_simple_default_expression = true
+
+# Prefer tuple deconstruction: "var (x, y) = GetPoint();" over "var point = GetPoint(); var x = point.Item1;"
+# true = Deconstruction is more readable and directly names the components.
+csharp_style_deconstructed_variable_declaration = true
+
+# Prefer target-typed new: "Person p = new();" instead of "Person p = new Person();"
+# true = C# 9+ feature. Reduces redundancy when type is already specified on the left.
+# Especially useful with long generic type names.
+csharp_style_implicit_object_creation_when_type_is_apparent = true
+
+# Prefer inline out variable declaration: "if (int.TryParse(s, out int result))"
+# instead of declaring 'result' before the call.
+# true = Reduces scope pollution and keeps declaration close to usage.
+csharp_style_inlined_variable_declaration = true
+
+# Prefer index-from-end operator: "arr[^1]" instead of "arr[arr.Length - 1]"
+# true = C# 8+ feature. More concise and readable for accessing elements from the end.
+csharp_style_prefer_index_operator = true
+
+# Prefer local functions over anonymous methods/lambdas for reusable local logic.
+# true = Local functions can be recursive, have clearer names, and don't allocate delegates.
+csharp_style_prefer_local_over_anonymous_function = true
+
+# Prefer "is null" pattern over "== null" for null checks.
+# true = Pattern matching can't be overloaded (safer) and is consistent with other patterns.
+csharp_style_prefer_null_check_over_type_check = true
+
+# Prefer range operator: "arr[1..3]" instead of "arr.Skip(1).Take(2)"
+# true = C# 8+ feature. More concise syntax for slicing arrays and spans.
+csharp_style_prefer_range_operator = true
+
+# Prefer tuple swap: "(a, b) = (b, a);" instead of temp variable swap.
+# true = More concise and idiomatic way to swap values in C# 7+.
+csharp_style_prefer_tuple_swap = true
+
+# Prefer UTF-8 string literals: "u8\"text\"" for byte sequences.
+# true = C# 11+ feature. Creates ReadOnlySpan<byte> directly, avoiding encoding at runtime.
+csharp_style_prefer_utf8_string_literals = true
+
+# Prefer throw expressions: "value ?? throw new ArgumentNullException()"
+# true = Allows throwing in expression contexts (null-coalescing, ternary, etc.)
+# More concise for guard clauses.
+csharp_style_throw_expression = true
+
+# What to do with unused value assignments: discard_variable uses "_" for intent.
+# discard_variable = Use "_ = GetValue();" when intentionally ignoring a return value.
+# Makes it clear the value is deliberately unused.
+csharp_style_unused_value_assignment_preference = discard_variable
+
+# What to do with unused expression statement values.
+# discard_variable = Prefer "_ = SomeExpression;" to show intentional discard.
+csharp_style_unused_value_expression_statement_preference = discard_variable
+
+# ============================================================================
+# 'USING' DIRECTIVE PREFERENCES
+# Controls placement of using directives relative to namespace declarations.
+# ============================================================================
+
+# Where to place using directives: inside or outside the namespace.
+# outside_namespace = "using System; namespace X { }" - Traditional, most common.
+# inside_namespace = "namespace X { using System; }" - Scopes usings to namespace.
+csharp_using_directive_placement = outside_namespace
+
+# ============================================================================
+# NEW LINE / BLANK LINE PREFERENCES (EXPERIMENTAL)
+# Controls where blank lines are allowed or required.
+# These are experimental rules that may change in future versions.
+# ============================================================================
+
+# Allow blank line after colon in constructor initializer.
+# true = Allows: "public Ctor() :\n    base() { }"
+csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental = true
+
+# Allow blank line after => in expression-bodied members.
+# true = Allows newline after arrow for long expressions.
+csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental = true
+
+# Allow blank line after ? or : in conditional (ternary) expressions.
+# true = Allows multi-line ternary expressions with blank lines for readability.
+csharp_style_allow_blank_line_after_token_in_conditional_expression_experimental = true
+
+# Allow blank lines between consecutive closing braces.
+# true = Allows spacing between nested block endings for visual separation.
+csharp_style_allow_blank_lines_between_consecutive_braces_experimental = true
+
+# Allow single-statement embedded statements on same line as control flow.
+# true = Allows: "if (x) return;" on one line.
+csharp_style_allow_embedded_statements_on_same_line_experimental = true
+
+##### C# Formatting Rules ####
+
+## New line preferences
+
+# ============================================================================
+# INDENTATION PREFERENCES
+# Controls how code blocks, braces, and labels are indented.
+# ============================================================================
+
+# Indent the contents inside braces (method bodies, class members, etc.)
+# true = Standard behavior where content inside {} is indented.
+csharp_indent_block_contents = true
+
+# Whether to indent the braces themselves.
+# false = Braces stay at same level as containing statement (standard C# style).
+csharp_indent_braces = false
+
+# Indent case contents in switch statements.
+# true = Code under "case X:" is indented relative to the case label.
+csharp_indent_case_contents = true
+
+# Indent case contents when case contains a block (braces).
+# true = Even when case has braces, indent contents inside.
+csharp_indent_case_contents_when_block = true
+
+# How to indent goto labels.
+# one_less_than_current = Labels are outdented by one level for visibility.
+# Other options: flush_left, no_change
+csharp_indent_labels = one_less_than_current
+
+# Indent switch labels (case/default) relative to switch.
+# true = Case labels are indented inside the switch block.
+csharp_indent_switch_labels = true
+
+# ============================================================================
+# SPACE PREFERENCES
+# Controls whitespace around operators, parentheses, and other syntax elements.
+# ============================================================================
+
+# Space after cast: "(int) x" vs "(int)x"
+# false = No space after cast parentheses (more common style).
+csharp_space_after_cast = false
+
+# Space after colon in inheritance/implementation: "class A : B" vs "class A :B"
+# true = Add space after colon for readability.
+csharp_space_after_colon_in_inheritance_clause = true
+
+# Space after comma in argument/parameter lists: "Method(a, b)" vs "Method(a,b)"
+# true = Standard formatting with space after each comma.
+csharp_space_after_comma = true
+
+# Space after dot in member access: "obj. Member" vs "obj.Member"
+# false = No space after dot (standard style).
+csharp_space_after_dot = false
+
+# Space after keywords in control flow: "if (x)" vs "if(x)"
+# true = Add space between keyword and parentheses for readability.
+csharp_space_after_keywords_in_control_flow_statements = true
+
+# Space after semicolon in for statement: "for (i = 0; i < n; i++)" vs "for (i = 0;i < n;i++)"
+# true = Add space after semicolons for readability.
+csharp_space_after_semicolon_in_for_statement = true
+
+# Space around binary operators: "a + b" vs "a+b"
+# before_and_after = Spaces on both sides of operators (standard style).
+csharp_space_around_binary_operators = before_and_after
+
+# Space around declaration statements (rarely used, controls specific edge cases).
+# false = No extra spaces around declarations.
+csharp_space_around_declaration_statements = false
+
+# Space before colon in inheritance: "class A : B" vs "class A: B"
+# true = Add space before colon for symmetry with after.
+csharp_space_before_colon_in_inheritance_clause = true
+
+# Space before comma: "Method(a , b)" vs "Method(a, b)"
+# false = No space before comma (standard style).
+csharp_space_before_comma = false
+
+# Space before dot: "obj .Member" vs "obj.Member"
+# false = No space before dot (standard style).
+csharp_space_before_dot = false
+
+# Space before opening bracket in indexer: "arr [0]" vs "arr[0]"
+# false = No space before brackets (standard style).
+csharp_space_before_open_square_brackets = false
+
+# Space before semicolon in for: "for (i = 0 ; i < n ; i++)" vs "for (i = 0; i < n; i++)"
+# false = No space before semicolons (standard style).
+csharp_space_before_semicolon_in_for_statement = false
+
+# Space inside empty brackets: "arr[ ]" vs "arr[]"
+# false = No space in empty brackets.
+csharp_space_between_empty_square_brackets = false
+
+# Space in empty parameter list: "Method( )" vs "Method()"
+# false = No space in empty parentheses.
+csharp_space_between_method_call_empty_parameter_list_parentheses = false
+
+# Space between method name and parentheses: "Method ()" vs "Method()"
+# false = No space before opening parenthesis (standard style).
+csharp_space_between_method_call_name_and_opening_parenthesis = false
+
+# Space inside method call parentheses: "Method( a, b )" vs "Method(a, b)"
+# false = No space inside parentheses (standard style).
+csharp_space_between_method_call_parameter_list_parentheses = false
+
+# Space in empty parameter list in declaration: "void Method( )" vs "void Method()"
+# false = No space in empty parentheses for declarations.
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+
+# Space between method name and parentheses in declaration: "void Method ()" vs "void Method()"
+# false = No space before opening parenthesis in declarations.
+csharp_space_between_method_declaration_name_and_open_parenthesis = false
+
+# Space inside method declaration parentheses: "void Method( int a )" vs "void Method(int a)"
+# false = No space inside parameter list parentheses.
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+
+# Space inside any parentheses (control flow, grouping, etc.): "( a + b )" vs "(a + b)"
+# false = No space inside parentheses (standard style).
+csharp_space_between_parentheses = false
+
+# Space inside square brackets: "arr[ 0 ]" vs "arr[0]"
+# false = No space inside brackets (standard style).
+csharp_space_between_square_brackets = false
+
+# ============================================================================
+# WRAPPING PREFERENCES
+# Controls whether code blocks and statements can stay on single lines.
+# ============================================================================
+
+# Allow simple blocks to stay on one line: "public int X { get; set; }"
+# true = Auto-properties and simple blocks can be on one line.
+csharp_preserve_single_line_blocks = true
+
+# Allow simple statements to stay on one line: "if (x) return;"
+# true = Short single statements can share a line with their control flow keyword.
+csharp_preserve_single_line_statements = true
+
+# ============================================================================
+# NAMING STYLES
+# Defines naming conventions for different symbol types.
+# These rules help enforce consistent naming across the codebase.
+# ============================================================================
+
+## Naming rules - Associates symbols with required styles and sets severity
+
+# Interface naming rule: Interfaces must begin with 'I' prefix.
+# suggestion = Shows as hint/suggestion, not error.
+dotnet_naming_rule.interface_should_be_begins_with_i.severity = suggestion
+dotnet_naming_rule.interface_should_be_begins_with_i.symbols = interface
+dotnet_naming_rule.interface_should_be_begins_with_i.style = begins_with_i
+
+# Type naming rule: Classes, structs, interfaces, enums must use PascalCase.
+# This is standard .NET convention for all type names.
+dotnet_naming_rule.types_should_be_pascal_case.severity = suggestion
+dotnet_naming_rule.types_should_be_pascal_case.symbols = types
+dotnet_naming_rule.types_should_be_pascal_case.style = pascal_case
+
+# Non-field member rule: Properties, events, methods must use PascalCase.
+# Standard .NET convention for public-facing members.
+dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = suggestion
+dotnet_naming_rule.non_field_members_should_be_pascal_case.symbols = non_field_members
+dotnet_naming_rule.non_field_members_should_be_pascal_case.style = pascal_case
+
+## Symbol specifications - Defines which symbols each rule applies to
+
+# Interface symbols: Only interface declarations at any accessibility level.
+dotnet_naming_symbols.interface.applicable_kinds = interface
+dotnet_naming_symbols.interface.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
+dotnet_naming_symbols.interface.required_modifiers = 
+
+# Type symbols: Classes, structs, interfaces, and enums at any accessibility.
+dotnet_naming_symbols.types.applicable_kinds = class, struct, interface, enum
+dotnet_naming_symbols.types.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
+dotnet_naming_symbols.types.required_modifiers = 
+
+# Non-field member symbols: Properties, events, methods (not fields).
+dotnet_naming_symbols.non_field_members.applicable_kinds = property, event, method
+dotnet_naming_symbols.non_field_members.applicable_accessibilities = public, internal, private, protected, protected_internal, private_protected
+dotnet_naming_symbols.non_field_members.required_modifiers = 
+
+## Naming styles - Defines the actual naming patterns
+
+# PascalCase style: Each word capitalized, no separators. Example: "MyClassName"
+dotnet_naming_style.pascal_case.required_prefix = 
+dotnet_naming_style.pascal_case.required_suffix = 
+dotnet_naming_style.pascal_case.word_separator = 
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+
+# Interface style: PascalCase with required 'I' prefix. Example: "IMyInterface"
+# This is the universal .NET convention for interfaces.
+dotnet_naming_style.begins_with_i.required_prefix = I
+dotnet_naming_style.begins_with_i.required_suffix = 
+dotnet_naming_style.begins_with_i.word_separator = 
+dotnet_naming_style.begins_with_i.capitalization = pascal_case

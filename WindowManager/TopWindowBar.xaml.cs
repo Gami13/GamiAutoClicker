@@ -13,7 +13,7 @@ using GamiAutoClicker.WindowManager;
 
 namespace GamiAutoClicker.Components;
 
-public sealed partial class TopWindowBar : UserControl {
+internal sealed partial class TopWindowBar : UserControl {
 	private readonly object windowKey;
 
 
@@ -22,7 +22,7 @@ public sealed partial class TopWindowBar : UserControl {
 		this.Loaded += AppTitleBar_Loaded;
 		this.SizeChanged += AppTitleBar_SizeChanged;
 		this.Unloaded += AppTitleBar_Unloaded;
-		var config = WindowManager.Configuration.WindowConfigs[windowKey];
+		WindowConfig config = WindowManager.Configuration.WindowConfigs[windowKey];
 		this.TitleBarTextBlock.Text = config.title;
 		this.TitleBarButton.Visibility = config.hasButton ? Visibility.Visible : Visibility.Collapsed;
 		this.TitleBarButtonIcon.Symbol = config.buttonIcon;
@@ -38,10 +38,10 @@ public sealed partial class TopWindowBar : UserControl {
 	}
 
 	private void SetRegionsForCustomTitleBar() {
-		var appWindow = ThemeHelper.GetAppWindow(windowKey);
+		AppWindow appWindow = ThemeHelper.GetAppWindow(windowKey);
 
 
-		if (appWindow == null) return;
+		if (appWindow == null) { return; }
 		double scaleAdjustment = AppTitleBar.XamlRoot.RasterizationScale;
 
 
@@ -57,7 +57,7 @@ public sealed partial class TopWindowBar : UserControl {
 
 		var rectArray = new RectInt32[] { settingsButtonRect };
 
-		InputNonClientPointerSource nonClientInputSrc =
+		var nonClientInputSrc =
 			InputNonClientPointerSource.GetForWindowId(appWindow.Id);
 		nonClientInputSrc.SetRegionRects(NonClientRegionKind.Passthrough, rectArray);
 
@@ -72,7 +72,7 @@ public sealed partial class TopWindowBar : UserControl {
 	}
 
 
-	private RectInt32 GetRect(Rect bounds, double scale) {
+	private static RectInt32 GetRect(Rect bounds, double scale) {
 		return new Windows.Graphics.RectInt32(
 			_X: (int)Math.Round(bounds.X * scale),
 			_Y: (int)Math.Round(bounds.Y * scale),
