@@ -8,10 +8,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Windows.Graphics;
 
-namespace GamiAutoClicker.WindowManager {
+namespace Gami;
+
+public static partial class EasyWindows {
 	[SuppressMessage("Design", "CA1515:Consider making public types internal", Justification = "Will be extracted to separate package")]
-	public static class Configuration {
-		public static ThemeSettings ThemeSettings { get; set; } = new() {
+	public static partial class Manager {
+		public static ThemeSettings ThemeSettings = new() {
 			type = ThemeType.Acrylic,
 			micaKind = MicaKind.Base,
 			acrylicKind = DesktopAcrylicKind.Default,
@@ -24,6 +26,6 @@ namespace GamiAutoClicker.WindowManager {
 			luminosityOpacity = 0.0f
 		};
 		public static Dictionary<object, WindowController> Windows { get; } = new();
-		public static Dictionary<object, WindowManager.WindowConfig> WindowConfigs { get;  } = new();
+		public static Dictionary<object, WindowConfig> WindowConfigs { get; } = new();
 	}
 }

@@ -8,21 +8,22 @@ using System;
 using Windows.Foundation;
 using Windows.Graphics;
 using WinRT.Interop;
-using GamiAutoClicker.WindowManager;
 
 
-namespace GamiAutoClicker.Components;
+namespace Gami;
 
-internal sealed partial class TopWindowBar : UserControl {
+
+
+internal sealed partial class TitleBar : UserControl {
 	private readonly object windowKey;
 
 
-	public TopWindowBar(object windowKey) {
+	public TitleBar(object windowKey) {
 		InitializeComponent();
 		this.Loaded += AppTitleBar_Loaded;
 		this.SizeChanged += AppTitleBar_SizeChanged;
 		this.Unloaded += AppTitleBar_Unloaded;
-		WindowConfig config = WindowManager.Configuration.WindowConfigs[windowKey];
+		EasyWindows.WindowConfig config = EasyWindows.Manager.WindowConfigs[windowKey];
 		this.TitleBarTextBlock.Text = config.title;
 		this.TitleBarButton.Visibility = config.hasButton ? Visibility.Visible : Visibility.Collapsed;
 		this.TitleBarButtonIcon.Symbol = config.buttonIcon;
@@ -38,10 +39,9 @@ internal sealed partial class TopWindowBar : UserControl {
 	}
 
 	private void SetRegionsForCustomTitleBar() {
-		AppWindow appWindow = ThemeHelper.GetAppWindow(windowKey);
+		AppWindow appWindow = EasyWindows.Manager.GetAppWindow(windowKey);
 
 
-		if (appWindow == null) { return; }
 		double scaleAdjustment = AppTitleBar.XamlRoot.RasterizationScale;
 
 
@@ -66,9 +66,9 @@ internal sealed partial class TopWindowBar : UserControl {
 		this.Loaded -= AppTitleBar_Loaded;
 		this.SizeChanged -= AppTitleBar_SizeChanged;
 		this.Unloaded -= AppTitleBar_Unloaded;
-		// if (TitleBarButton != null && WindowManager.Configuration.WindowConfigs.TryGetValue(windowKey, out var config)) {
-		// 	this.TitleBarButton.Click -= config.buttonAction;
-		// }
+		if (TitleBarButton != null && EasyWindows.Manager.WindowConfigs.TryGetValue(windowKey, out var config)) {
+			this.TitleBarButton.Click -= config.buttonAction;
+		}
 	}
 
 

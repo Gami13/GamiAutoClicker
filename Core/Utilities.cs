@@ -13,14 +13,15 @@ using System.Threading.Tasks;
 using Windows.Graphics;
 using Windows.UI;
 using WinRT.Interop;
-using GamiAutoClicker.WindowManager;
+using Gami;
+using EasyWindows = Gami.EasyWindows;
 
 namespace GamiAutoClicker;
 
 internal static class Utilities {
 
 	public static void OpenSettingsWindow(object _, RoutedEventArgs __) {
-		ThemeHelper.CreateWindow(WindowKey.Settings);
+		EasyWindows.Manager.CreateWindow(WindowKey.Settings);
 	}
 
 

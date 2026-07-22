@@ -1,4 +1,4 @@
-using GamiAutoClicker.WindowManager;
+using Gami;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.System;
 using Microsoft.UI.Xaml;
@@ -13,7 +13,7 @@ internal sealed partial class SettingsWindow : Window {
 
 	public SettingsWindow() {
 		InitializeComponent();
-		UpdateSwitches(Configuration.ThemeSettings);
+		UpdateSwitches(EasyWindows.Manager.ThemeSettings);
 	}
 
 	private void OnMaterialChange(object sender, SelectionChangedEventArgs e) {
@@ -22,20 +22,20 @@ internal sealed partial class SettingsWindow : Window {
 
 		switch (selectedItem) {
 			case "Acrylic":
-				ThemeHelper.SetType(ThemeType.Acrylic);
-				ThemeHelper.SetAcrylicKind(DesktopAcrylicKind.Base);
+				EasyWindows.Manager.SetType(EasyWindows.ThemeType.Acrylic);
+				EasyWindows.Manager.SetAcrylicKind(DesktopAcrylicKind.Base);
 				break;
 			case "AcrylicThin":
-				ThemeHelper.SetType(ThemeType.Acrylic);
-				ThemeHelper.SetAcrylicKind(DesktopAcrylicKind.Thin);
+				EasyWindows.Manager.SetType(EasyWindows.ThemeType.Acrylic);
+				EasyWindows.Manager.SetAcrylicKind(DesktopAcrylicKind.Thin);
 				break;
 			case "Mica":
-				ThemeHelper.SetType(ThemeType.Mica);
-				ThemeHelper.SetMicaKind(MicaKind.Base);
+				EasyWindows.Manager.SetType(EasyWindows.ThemeType.Mica);
+				EasyWindows.Manager.SetMicaKind(MicaKind.Base);
 				break;
 			case "MicaAlt":
-				ThemeHelper.SetType(ThemeType.Mica);
-				ThemeHelper.SetMicaKind(MicaKind.BaseAlt);
+				EasyWindows.Manager.SetType(EasyWindows.ThemeType.Mica);
+				EasyWindows.Manager.SetMicaKind(MicaKind.BaseAlt);
 				break;
 			default:
 				break;
@@ -48,13 +48,13 @@ internal sealed partial class SettingsWindow : Window {
 
 		switch (selectedItem) {
 			case "Dark":
-				ThemeHelper.SetTheme(SystemBackdropTheme.Dark);
+				EasyWindows.Manager.SetTheme(SystemBackdropTheme.Dark);
 				break;
 			case "Light":
-				ThemeHelper.SetTheme(SystemBackdropTheme.Light);
+				EasyWindows.Manager.SetTheme(SystemBackdropTheme.Light);
 				break;
 			case "Default":
-				ThemeHelper.SetTheme(SystemBackdropTheme.Default);
+				EasyWindows.Manager.SetTheme(SystemBackdropTheme.Default);
 				break;
 			default:
 				break;
@@ -63,28 +63,29 @@ internal sealed partial class SettingsWindow : Window {
 
 	private void OnOverridesChange(object sender, RoutedEventArgs e) {
 		var toggleSwitch = (ToggleSwitch)sender;
-		ThemeHelper.SetOverrides(toggleSwitch.IsOn);
+		EasyWindows.Manager.SetOverrides(toggleSwitch.IsOn);
 
-		UpdateSwitches(Configuration.ThemeSettings);
+		UpdateSwitches(EasyWindows.Manager.ThemeSettings);
 	}
 
-	private static void OnFallbackColorChange(object sender, Color color) {
-		ThemeHelper.SetFallbackColor(color);
+#pragma warning disable CA1822 // XAML event handlers must be instance methods
+	private void OnFallbackColorChange(object sender, Color color) {
+		EasyWindows.Manager.SetFallbackColor(color);
 	}
-
-	private static void OnTintColorChange(object sender, Color color) {
-		ThemeHelper.SetTintColor(color);
+	private void OnTintColorChange(object sender, Color color) {
+		EasyWindows.Manager.SetTintColor(color);
 	}
+#pragma warning restore CA1822
 
 	private void OnTintOpacityChange(object sender, RangeBaseValueChangedEventArgs e) {
-		ThemeHelper.SetTintOpacity(Math.Clamp((float)e.NewValue, 0f, 1f));
+		EasyWindows.Manager.SetTintOpacity(Math.Clamp((float)e.NewValue, 0f, 1f));
 	}
 
 	private void OnLuminosityOpacityChange(object sender, RangeBaseValueChangedEventArgs e) {
-		ThemeHelper.SetLuminosityOpacity(Math.Clamp((float)e.NewValue, 0f, 1f));
+		EasyWindows.Manager.SetLuminosityOpacity(Math.Clamp((float)e.NewValue, 0f, 1f));
 	}
 
-	public void UpdateSwitches(WindowManager.ThemeSettings settings) {
+	public void UpdateSwitches(EasyWindows.ThemeSettings settings) {
 		BackdropMaterialComboBox.SelectedItem = settings.type.ToString();
 		ThemeComboBox.SelectedItem = settings.theme.ToString();
 		OverrideDefaultsToggleSwitch.IsOn = settings.shouldOverride;

@@ -1,5 +1,5 @@
 using GamiAutoClicker;
-using GamiAutoClicker.WindowManager;
+using Gami;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -24,7 +24,7 @@ namespace GamiAutoClicker {
 
 		public App() {
 			InitializeComponent();
-			Configuration.WindowConfigs.Add(WindowKey.Main, new WindowManager.WindowConfig {
+			EasyWindows.Manager.WindowConfigs.Add(WindowKey.Main, new EasyWindows.WindowConfig {
 				windowConstructor = () => new MainWindow(),
 				presenterKind = AppWindowPresenterKind.Default,
 				title = "Gami's AutoClicker",
@@ -37,7 +37,7 @@ namespace GamiAutoClicker {
 				defaultSize = new SizeInt32(370, 290),
 				defaultPosition = new SizeInt32(100, 100)
 			});
-			Configuration.WindowConfigs.Add(WindowKey.Settings, new WindowManager.WindowConfig {
+			EasyWindows.Manager.WindowConfigs.Add(WindowKey.Settings, new EasyWindows.WindowConfig {
 				windowConstructor = () => new SettingsWindow(),
 				presenterKind = AppWindowPresenterKind.Overlapped,
 				title = "Settings",
@@ -57,8 +57,8 @@ namespace GamiAutoClicker {
 		/// </summary>
 		/// <param name="args">Details about the launch request and process.</param>
 		protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args) {
-			ThemeHelper.CreateWindow(WindowKey.Main);
-			_window = Configuration.Windows[WindowKey.Main].Window;
+			EasyWindows.Manager.CreateWindow(WindowKey.Main);
+			_window = EasyWindows.Manager.Windows[WindowKey.Main].Window;
 			
 		}
 	}

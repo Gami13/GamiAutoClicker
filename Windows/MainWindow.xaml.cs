@@ -1,4 +1,3 @@
-using GamiAutoClicker.WindowManager;
 using Microsoft.UI.Xaml;
 
 namespace GamiAutoClicker;

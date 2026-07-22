@@ -6,24 +6,27 @@ using System;
 using Windows.Graphics;
 using Windows.UI;
 
-namespace GamiAutoClicker.WindowManager {
+namespace Gami;
+
+public static partial class EasyWindows {
+
 	public enum ThemeType {
 		Mica,
 		Acrylic,
 		//None
 	}
-	public struct ThemeSettings {
-		public ThemeType type;
-		public MicaKind micaKind;
-		public DesktopAcrylicKind acrylicKind;
-		public SystemBackdropTheme theme;
+	public record ThemeSettings {
+		public ThemeType type { get; set; }
+		public MicaKind micaKind { get; set; }
+		public DesktopAcrylicKind acrylicKind { get; set; }
+		public SystemBackdropTheme theme { get; set; }
 
-		public bool shouldOverride;
-		public bool isFirstTimeOverriding;
-		public Color fallbackColor;
-		public Color tintColor;
-		public float tintOpacity;
-		public float luminosityOpacity;
+		public bool shouldOverride { get; set; }
+		public bool isFirstTimeOverriding { get; set; }
+		public Color fallbackColor { get; set; }
+		public Color tintColor { get; set; }
+		public float tintOpacity { get; set; }
+		public float luminosityOpacity { get; set; }
 	}
 
 
@@ -38,6 +41,7 @@ namespace GamiAutoClicker.WindowManager {
 		public bool isMinimizable;
 		public bool isMaximizable;
 		public SizeInt32 defaultSize;
+		//TODO: implement this
 		public SizeInt32 defaultPosition;
 
 	}
