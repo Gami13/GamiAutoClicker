@@ -10,15 +10,20 @@ namespace Gami;
 
 public static partial class EasyWindows {
 
-	public enum ThemeType {
+	public enum BackdropMaterial {
 		Mica,
+		MicaAlt,
 		Acrylic,
-		//None
+		AcrylicThin
 	}
+
+	public sealed class ButtonOptions {
+		public required Symbol Icon { get; init; }
+		public required RoutedEventHandler Action { get; init; }
+	}
+
 	public record ThemeSettings {
-		public ThemeType type { get; set; }
-		public MicaKind micaKind { get; set; }
-		public DesktopAcrylicKind acrylicKind { get; set; }
+		public BackdropMaterial backdropMaterial { get; set; }
 		public SystemBackdropTheme theme { get; set; }
 
 		public bool shouldOverride { get; set; }
@@ -30,20 +35,16 @@ public static partial class EasyWindows {
 	}
 
 
-	public struct WindowConfig {
-		public Func<Window> windowConstructor;
-		public AppWindowPresenterKind presenterKind;
-		public string title;
-		public bool hasButton;
-		public Symbol buttonIcon;
-		public RoutedEventHandler? buttonAction;
-		public bool isResizable;
-		public bool isMinimizable;
-		public bool isMaximizable;
-		public SizeInt32 defaultSize;
-		//TODO: implement this
-		public SizeInt32 defaultPosition;
-
+	public sealed class WindowOptions {
+		public required Func<Window> Factory { get; init; }
+		public required string Title { get; init; }
+		public required SizeInt32 DefaultSize { get; init; }
+		public AppWindowPresenterKind PresenterKind { get; init; } = AppWindowPresenterKind.Default;
+		public ButtonOptions? Button { get; init; }
+		public bool IsResizable { get; init; } = true;
+		public bool IsMinimizable { get; init; } = true;
+		public bool IsMaximizable { get; init; } = true;
+		public PointInt32? DefaultPosition { get; init; }
 	}
 
 }

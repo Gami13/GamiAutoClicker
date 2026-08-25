@@ -21,7 +21,7 @@ namespace GamiAutoClicker;
 internal static class Utilities {
 
 	public static void OpenSettingsWindow(object _, RoutedEventArgs __) {
-		EasyWindows.Manager.CreateWindow(WindowKey.Settings);
+		EasyWindows.CreateWindow(WindowKey.Settings);
 	}
 
 

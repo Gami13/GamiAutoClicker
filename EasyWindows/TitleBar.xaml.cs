@@ -23,11 +23,15 @@ internal sealed partial class TitleBar : UserControl {
 		this.Loaded += AppTitleBar_Loaded;
 		this.SizeChanged += AppTitleBar_SizeChanged;
 		this.Unloaded += AppTitleBar_Unloaded;
-		EasyWindows.WindowConfig config = EasyWindows.Manager.WindowConfigs[windowKey];
-		this.TitleBarTextBlock.Text = config.title;
-		this.TitleBarButton.Visibility = config.hasButton ? Visibility.Visible : Visibility.Collapsed;
-		this.TitleBarButtonIcon.Symbol = config.buttonIcon;
-		this.TitleBarButton.Click += config.buttonAction;
+		EasyWindows.WindowOptions options = EasyWindows.GetWindowOptions(windowKey);
+		this.TitleBarTextBlock.Text = options.Title;
+		if (options.Button is { } button) {
+			this.TitleBarButton.Visibility = Visibility.Visible;
+			this.TitleBarButtonIcon.Symbol = button.Icon;
+			this.TitleBarButton.Click += button.Action;
+		} else {
+			this.TitleBarButton.Visibility = Visibility.Collapsed;
+		}
 		this.windowKey = windowKey;
 	}
 	private void AppTitleBar_Loaded(object sender, RoutedEventArgs e) {
@@ -39,10 +43,17 @@ internal sealed partial class TitleBar : UserControl {
 	}
 
 	private void SetRegionsForCustomTitleBar() {
-		AppWindow appWindow = EasyWindows.Manager.GetAppWindow(windowKey);
+		if (AppTitleBar.XamlRoot is not { } xamlRoot) {
+			return;
+		}
+
+		AppWindow appWindow = EasyWindows.GetAppWindow(windowKey);
 
 
-		double scaleAdjustment = AppTitleBar.XamlRoot.RasterizationScale;
+		double scaleAdjustment = xamlRoot.RasterizationScale;
+		if (scaleAdjustment <= 0) {
+			return;
+		}
 
 
 		RightPaddingColumn.Width = new GridLength(appWindow.TitleBar.RightInset / scaleAdjustment);
@@ -52,8 +63,6 @@ internal sealed partial class TitleBar : UserControl {
 		GeneralTransform transform = TitleBarButton.TransformToVisual(null);
 		Rect bounds = transform.TransformBounds(new Rect(0, 0, TitleBarButton.ActualWidth, TitleBarButton.ActualHeight));
 		RectInt32 settingsButtonRect = GetRect(bounds, scaleAdjustment);
-
-
 
 		var rectArray = new RectInt32[] { settingsButtonRect };
 
@@ -66,11 +75,10 @@ internal sealed partial class TitleBar : UserControl {
 		this.Loaded -= AppTitleBar_Loaded;
 		this.SizeChanged -= AppTitleBar_SizeChanged;
 		this.Unloaded -= AppTitleBar_Unloaded;
-		if (TitleBarButton != null && EasyWindows.Manager.WindowConfigs.TryGetValue(windowKey, out var config)) {
-			this.TitleBarButton.Click -= config.buttonAction;
+		if (EasyWindows.GetWindowOptions(windowKey).Button is { } button) {
+			this.TitleBarButton.Click -= button.Action;
 		}
 	}
-
 
 	private static RectInt32 GetRect(Rect bounds, double scale) {
 		return new Windows.Graphics.RectInt32(

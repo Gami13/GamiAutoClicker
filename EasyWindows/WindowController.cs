@@ -11,7 +11,7 @@ using WinRT.Interop;
 namespace Gami;
 
 public static partial class EasyWindows {
-	public class WindowController : IDisposable {
+	internal sealed class WindowController : IDisposable {
 
 
 
@@ -19,21 +19,22 @@ public static partial class EasyWindows {
 		private readonly WindowsSystemDispatcherQueueHelper _dispatcherHelper;
 		private readonly SystemBackdropConfiguration _backdropConfig;
 		private readonly TitleBar _topWindowBar;
-		public BackdropController? Backdrop { get; private set; }
+		public IBackdropAdapter? Adapter { get; private set; }
 		private bool _disposed;
-		private bool _closing;
+		private bool _windowClosed;
+		private bool _isWindowActive = true;
 
-		public Window? Window { get; private set; }
+		public Window Window { get; }
 
-		// Register creates a WindowController and stores it in Manager.Windows[key].
-		// The constructor itself is the factory — no caller holds the reference;
-		// the dictionary entry is the sole owner of the object's lifetime.
-		public static void Register(Window window, object windowKey) =>
-			new WindowController(window, windowKey);
+		internal static WindowController Register(Window window, object windowKey) {
+			var controller = new WindowController(window, windowKey);
+			Windows[windowKey] = controller;
+			return controller;
+		}
 
 		private WindowController(Window window, object windowKey) {
-			if (!Manager.WindowConfigs.ContainsKey(windowKey)) {
-				throw new ArgumentException($"WindowConfig for {windowKey} not found.");
+			if (!WindowConfigs.TryGetValue(windowKey, out var options)) {
+				throw new ArgumentException($"WindowOptions for {windowKey} not found.");
 			}
 			_windowKey = windowKey;
 			Window = window;
@@ -41,57 +42,88 @@ public static partial class EasyWindows {
 			_dispatcherHelper = new WindowsSystemDispatcherQueueHelper();
 			_dispatcherHelper.EnsureWindowsSystemDispatcherQueueController();
 
+			_topWindowBar = new TitleBar(windowKey);
+			var root = CreateRoot(window, _topWindowBar);
+
 			_backdropConfig = new SystemBackdropConfiguration { IsInputActive = true };
 			UpdateConfigTheme();
 
-			Backdrop = new BackdropController(window, _backdropConfig);
-
-			_topWindowBar = new TitleBar(windowKey);
-			if (window != null && window.Content is Grid grid) {
-				grid.Children.Insert(0, _topWindowBar);
-				window.SetTitleBar(_topWindowBar);
-			}
+			CreateAdapter();
 
 			var appWindow = AppWindow.GetFromWindowId(Win32Interop.GetWindowIdFromWindow(WindowNative.GetWindowHandle(window)));
-			var config = EasyWindows.Manager.WindowConfigs[windowKey];
-			appWindow.SetPresenter(config.presenterKind);
-			appWindow.Resize(config.defaultSize);
-			if ( config.defaultPosition.Width >= 0
-				&& config.defaultPosition.Height >= 0) {
-
-				appWindow.Move(new Windows.Graphics.PointInt32(config.defaultPosition.Width, config.defaultPosition.Height));
+			appWindow.SetPresenter(options.PresenterKind);
+			appWindow.Resize(options.DefaultSize);
+			if (options.DefaultPosition is { } position) {
+				appWindow.Move(position);
 			}
 			appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
 			appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
 
 			if (appWindow.Presenter is OverlappedPresenter presenter) {
-				presenter.IsMaximizable = config.isMaximizable;
-				presenter.IsMinimizable = config.isMinimizable;
-				presenter.IsResizable = config.isResizable;
+				presenter.IsMaximizable = options.IsMaximizable;
+				presenter.IsMinimizable = options.IsMinimizable;
+				presenter.IsResizable = options.IsResizable;
 			}
 
 			window.Activated += OnActivated;
 			window.Closed += OnClosed;
-			if (window.Content is FrameworkElement root) root.ActualThemeChanged += OnThemeChanged;
+			root.ActualThemeChanged += OnThemeChanged;
 
-			Manager.Windows[windowKey] = this;
+		}
+
+		private static Grid CreateRoot(Window window, TitleBar titleBar) {
+			var content = window.Content as UIElement;
+			var root = new Grid();
+			root.RowDefinitions.Add(new RowDefinition {
+				Height = GridLength.Auto
+			});
+			root.RowDefinitions.Add(new RowDefinition {
+				Height = new GridLength(1, GridUnitType.Star)
+			});
+
+			window.Content = null;
+			root.Children.Add(titleBar);
+
+			if (content is not null) {
+				content.SetValue(Grid.RowProperty, 1);
+				root.Children.Add(content);
+			}
+
+			window.Content = root;
+			window.SetTitleBar(titleBar);
+
+			return root;
+		}
+
+		public void CreateAdapter() {
+			IBackdropAdapter? replacement = Theme.backdropMaterial switch {
+				BackdropMaterial.Mica when MicaController.IsSupported() => new MicaAdapter(Window, _backdropConfig, MicaKind.Base),
+				BackdropMaterial.MicaAlt when MicaController.IsSupported() => new MicaAdapter(Window, _backdropConfig, MicaKind.BaseAlt),
+				BackdropMaterial.Acrylic when DesktopAcrylicController.IsSupported() => new AcrylicAdapter(Window, _backdropConfig, DesktopAcrylicKind.Base),
+				BackdropMaterial.AcrylicThin when DesktopAcrylicController.IsSupported() => new AcrylicAdapter(Window, _backdropConfig, DesktopAcrylicKind.Thin),
+				_ => null
+			};
+
+			IBackdropAdapter? previous = Adapter;
+			Adapter = replacement;
+			previous?.Dispose();
 		}
 
 		public void SetOverrides() {
-			if (Manager.ThemeSettings.isFirstTimeOverriding) {
-				Manager.ThemeSettings.isFirstTimeOverriding = false;
+			if (Theme.isFirstTimeOverriding) {
+				Theme.isFirstTimeOverriding = false;
 
-				Manager.ThemeSettings.fallbackColor = Backdrop?.GetFallbackColor() ?? Colors.Red;
-				Manager.ThemeSettings.tintColor = Backdrop?.GetTintColor() ?? Colors.Red;
-				Manager.ThemeSettings.tintOpacity = Backdrop?.GetTintOpacity() ?? 0f;
-				Manager.ThemeSettings.luminosityOpacity = Backdrop?.GetLuminosityOpacity() ?? 0f;
+				Theme.fallbackColor = Adapter?.FallbackColor ?? Colors.Red;
+				Theme.tintColor = Adapter?.TintColor ?? Colors.Red;
+				Theme.tintOpacity = Adapter?.TintOpacity ?? 0f;
+				Theme.luminosityOpacity = Adapter?.LuminosityOpacity ?? 0f;
 			}
-			Backdrop?.CreateController();
+			CreateAdapter();
 		}
 
 		public void SetTheme() {
-			if (Window?.Content is FrameworkElement root)
-				root.RequestedTheme = Manager.ThemeSettings.theme switch {
+			if (Window.Content is FrameworkElement root)
+				root.RequestedTheme = Theme.theme switch {
 					SystemBackdropTheme.Light => ElementTheme.Light,
 					SystemBackdropTheme.Dark => ElementTheme.Dark,
 					_ => ElementTheme.Default
@@ -99,7 +131,7 @@ public static partial class EasyWindows {
 		}
 
 		private void UpdateConfigTheme() {
-			if (Window?.Content is FrameworkElement root)
+			if (Window.Content is FrameworkElement root)
 				_backdropConfig.Theme = root.ActualTheme switch {
 					ElementTheme.Dark => SystemBackdropTheme.Dark,
 					ElementTheme.Light => SystemBackdropTheme.Light,
@@ -108,47 +140,59 @@ public static partial class EasyWindows {
 		}
 
 		private void OnActivated(object sender, WindowActivatedEventArgs args) {
-			_backdropConfig.IsInputActive = args.WindowActivationState != WindowActivationState.Deactivated;
+			_isWindowActive = args.WindowActivationState != WindowActivationState.Deactivated;
+			_backdropConfig.IsInputActive = _isWindowActive;
+			UpdateTitleBarForeground();
+		}
 
-			string resourceKey = args.WindowActivationState == WindowActivationState.Deactivated
-		 ? "WindowCaptionForegroundDisabled"
-		 : "WindowCaptionForeground";
+		private void UpdateTitleBarForeground() {
+			string resourceKey = _isWindowActive
+				? "WindowCaptionForeground"
+				: "WindowCaptionForegroundDisabled";
 
 			if (Application.Current?.Resources[resourceKey] is SolidColorBrush brush) {
 				_topWindowBar.Foreground = brush;
 			}
 		}
 
-		private void OnThemeChanged(FrameworkElement sender, object args) => UpdateConfigTheme();
+		private void OnThemeChanged(FrameworkElement sender, object args) {
+			UpdateConfigTheme();
+			UpdateTitleBarForeground();
+		}
+
 		private void OnClosed(object sender, WindowEventArgs args) {
-			_closing = true;
-			((IDisposable)this).Dispose();
+			_windowClosed = true;
+			DisposeCore();
 		}
 
 		public void Dispose() {
-			Dispose(true);
-			GC.SuppressFinalize(this);
+			if (_disposed) {
+				return;
+			}
+
+			DisposeCore();
+
+			if (!_windowClosed) {
+				Window.Close();
+			}
 		}
 
-		protected virtual void Dispose(bool disposing) {
-			if (_disposed) return;
-
-			if (disposing) {
-				Backdrop?.Dispose();
-				Backdrop = null;
-				Manager.Windows.Remove(_windowKey);
-				(_dispatcherHelper as IDisposable)?.Dispose();
-
-				if (Window != null) {
-					Window.Activated -= OnActivated;
-					Window.Closed -= OnClosed;
-					if (Window.Content is FrameworkElement root) root.ActualThemeChanged -= OnThemeChanged;
-					if (!_closing) Window.Close();
-				}
-				Window = null;
+		private void DisposeCore() {
+			if (_disposed) {
+				return;
 			}
 
 			_disposed = true;
+
+			Window.Activated -= OnActivated;
+			Window.Closed -= OnClosed;
+			if (Window.Content is FrameworkElement root)
+				root.ActualThemeChanged -= OnThemeChanged;
+
+			Adapter?.Dispose();
+			Adapter = null;
+
+			Windows.Remove(_windowKey);
 		}
 	}
 }

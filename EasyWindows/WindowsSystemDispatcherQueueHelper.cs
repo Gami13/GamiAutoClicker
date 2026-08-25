@@ -18,7 +18,7 @@ public static partial class EasyWindows {
 		object? m_dispatcherQueueController;
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1806:Do not ignore method results", Justification = "<Pending>")]
 		public void EnsureWindowsSystemDispatcherQueueController() {
-			if (Windows.System.DispatcherQueue.GetForCurrentThread() != null) {
+			if (global::Windows.System.DispatcherQueue.GetForCurrentThread() != null) {
 				// one already exists, so we'll just use it.
 				return;
 			}
