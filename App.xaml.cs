@@ -33,17 +33,23 @@ namespace GamiAutoClicker {
 				IsResizable = false,
 				IsMinimizable = false,
 				IsMaximizable = false,
-				DefaultSize = new SizeInt32(370, 290),
+				DefaultSize = new SizeInt32(370, 320),
+				MinimumSize = new SizeInt32(370, 320),
+				MaximumSize = new SizeInt32(370, 320),
+
 				DefaultPosition = new PointInt32(100, 100)
 			});
 			EasyWindows.RegisterWindow(WindowKey.Settings, new EasyWindows.WindowOptions {
 				Factory = () => new SettingsWindow(),
 				PresenterKind = AppWindowPresenterKind.Overlapped,
-				Title = "Settings",
+				Title = "Appearance",
 				IsResizable = true,
 				IsMinimizable = true,
 				IsMaximizable = true,
-				DefaultSize = new SizeInt32(400, 300),
+				DefaultSize = new SizeInt32(860, 600),
+				MinimumSize = new SizeInt32(370, 320),
+				MaximumSize = new SizeInt32(1110, 1440),
+
 				DefaultPosition = new PointInt32(200, 200)
 			});
 		}

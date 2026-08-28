@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
-
+using Windows.Graphics;
 using WinRT.Interop;
 
 namespace Gami;
@@ -25,6 +25,7 @@ public static partial class EasyWindows {
 		private bool _isWindowActive = true;
 
 		public Window Window { get; }
+
 
 		internal static WindowController Register(Window window, object windowKey) {
 			var controller = new WindowController(window, windowKey);
@@ -63,10 +64,19 @@ public static partial class EasyWindows {
 				presenter.IsMaximizable = options.IsMaximizable;
 				presenter.IsMinimizable = options.IsMinimizable;
 				presenter.IsResizable = options.IsResizable;
+
+				presenter.PreferredMinimumHeight = options.MinimumSize.Height;
+				presenter.PreferredMinimumWidth = options.MinimumSize.Width;
+				if (options.MaximumSize.Width > 0 && options.MaximumSize.Height > 0) {
+
+					presenter.PreferredMaximumHeight = options.MaximumSize.Height;
+					presenter.PreferredMaximumWidth = options.MaximumSize.Width;
+				}
 			}
 
 			window.Activated += OnActivated;
 			window.Closed += OnClosed;
+
 			root.ActualThemeChanged += OnThemeChanged;
 
 		}

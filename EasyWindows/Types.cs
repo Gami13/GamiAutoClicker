@@ -39,6 +39,8 @@ public static partial class EasyWindows {
 		public required Func<Window> Factory { get; init; }
 		public required string Title { get; init; }
 		public required SizeInt32 DefaultSize { get; init; }
+		public SizeInt32 MinimumSize { get; init; }
+		public SizeInt32 MaximumSize { get; init; }
 		public AppWindowPresenterKind PresenterKind { get; init; } = AppWindowPresenterKind.Default;
 		public ButtonOptions? Button { get; init; }
 		public bool IsResizable { get; init; } = true;
