@@ -22,6 +22,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<None Remove="Components\ColorPickerFlyoutButton.xaml" />
+		<None Remove="Components\LabeledPercentageSlider.xaml" />
 		<Compile Remove="EasyWindows\**" />
 		<EmbeddedResource Remove="EasyWindows\**" />
 		<None Remove="EasyWindows\**" />
@@ -57,6 +58,9 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Page Update="Components\ColorPickerFlyoutButton.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</Page>
+		<Page Update="Components\LabeledPercentageSlider.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</Page>
 	</ItemGroup>

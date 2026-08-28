@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="GamiAutoClicker.Components.LabeledPercentageSlider"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GamiAutoClicker.Components"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid RowSpacing="6">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock
+            x:Name="HeaderText"
+            AutomationProperties.HeadingLevel="Level3"
+            Style="{ThemeResource BodyStrongTextBlockStyle}" />
+        <TextBlock
+            x:Name="ValueText"
+            Grid.Column="1"
+            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+            Style="{ThemeResource BodyTextBlockStyle}" />
+        <Slider
+            x:Name="ValueSlider"
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            Maximum="1.0"
+            Minimum="0.0"
+            StepFrequency="0.01"
+            ValueChanged="OnSliderValueChanged" />
+    </Grid>
+</UserControl>

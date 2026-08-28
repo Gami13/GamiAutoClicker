@@ -1,10 +1,9 @@
 using Gami;
+using GamiAutoClicker.Components;
 using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using System;
 using Windows.UI;
 
 namespace GamiAutoClicker;
@@ -97,18 +96,16 @@ internal sealed partial class SettingsWindow : Window {
 	}
 #pragma warning restore CA1822
 
-	private void OnTintOpacityChange(object sender, RangeBaseValueChangedEventArgs e) {
-		if (_isSynchronizing) return;
+	private void OnTintOpacityChange(object sender, RoutedEventArgs e) {
+		if (_isSynchronizing || sender is not LabeledPercentageSlider slider) return;
 
-		EasyWindows.SetTintOpacity(Math.Clamp((float)e.NewValue, 0f, 1f));
-		TintOpacityValueText.Text = FormatOpacity(e.NewValue);
+		EasyWindows.SetTintOpacity((float)slider.Percentage);
 	}
 
-	private void OnLuminosityOpacityChange(object sender, RangeBaseValueChangedEventArgs e) {
-		if (_isSynchronizing) return;
+	private void OnLuminosityOpacityChange(object sender, RoutedEventArgs e) {
+		if (_isSynchronizing || sender is not LabeledPercentageSlider slider) return;
 
-		EasyWindows.SetLuminosityOpacity(Math.Clamp((float)e.NewValue, 0f, 1f));
-		LuminosityOpacityValueText.Text = FormatOpacity(e.NewValue);
+		EasyWindows.SetLuminosityOpacity((float)slider.Percentage);
 	}
 
 	private void OnRestoreDefaultsClick(object sender, RoutedEventArgs e) {
@@ -124,15 +121,13 @@ internal sealed partial class SettingsWindow : Window {
 			OverrideDefaultsToggleSwitch.IsOn = settings.shouldOverride;
 			FallbackColorPicker.SelectedColor = settings.fallbackColor;
 			TintColorPicker.SelectedColor = settings.tintColor;
-			TintOpacitySlider.Value = settings.tintOpacity;
-			LuminosityOpacitySlider.Value = settings.luminosityOpacity;
+			TintOpacitySlider.Percentage = settings.tintOpacity;
+			LuminosityOpacitySlider.Percentage = settings.luminosityOpacity;
 		}
 		finally {
 			_isSynchronizing = false;
 		}
 
-		TintOpacityValueText.Text = FormatOpacity(settings.tintOpacity);
-		LuminosityOpacityValueText.Text = FormatOpacity(settings.luminosityOpacity);
 		UpdateAdvancedControlState(settings.shouldOverride);
 		UpdateAppearanceSummary(settings);
 	}
@@ -164,8 +159,6 @@ internal sealed partial class SettingsWindow : Window {
 		EasyWindows.BackdropMaterial.AcrylicThin => "Thin Acrylic",
 		_ => material.ToString()
 	};
-
-	private static string FormatOpacity(double value) => $"{Math.Round(value * 100):0}%";
 
 	private void UpdateResponsiveLayout(double width) {
 		bool useTwoSettingsColumns = width >= 820;
