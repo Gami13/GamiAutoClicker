@@ -27,7 +27,6 @@ public static partial class EasyWindows {
 		public SystemBackdropTheme theme { get; set; }
 
 		public bool shouldOverride { get; set; }
-		public bool isFirstTimeOverriding { get; set; }
 		public Color fallbackColor { get; set; }
 		public Color tintColor { get; set; }
 		public float tintOpacity { get; set; }

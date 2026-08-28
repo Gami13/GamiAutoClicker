@@ -26,6 +26,16 @@ public static partial class EasyWindows {
 			if (window.Adapter is { } adapter) action(adapter);
 		});
 	}
+	private static void CaptureSystemBackdropDefaults(bool force = false) {
+		if (HasCapturedSystemBackdropDefaults && !force) return;
+
+		foreach (var window in Windows.Values) {
+			if (window.TryCaptureBackdropDefaults()) {
+				HasCapturedSystemBackdropDefaults = true;
+				return;
+			}
+		}
+	}
 	public static void CreateWindow(object key) {
 		if (!WindowConfigs.TryGetValue(key, out var options)) {
 			throw new ArgumentException($"WindowOptions for {key} not found.");
@@ -38,10 +48,15 @@ public static partial class EasyWindows {
 
 		var window = options.Factory();
 		_ = WindowController.Register(window, key);
+		CaptureSystemBackdropDefaults();
 
 		window.Activate();
 	}
 	public static void SetOverrides(bool state) {
+		if (state && !HasCustomBackdropValues) {
+			CaptureSystemBackdropDefaults(force: true);
+		}
+
 		Theme.shouldOverride = state;
 		ApplyToAllWindows(theme => theme.SetOverrides());
 	}
@@ -56,34 +71,35 @@ public static partial class EasyWindows {
 	}
 	public static void SetFallbackColor(Color color) {
 		Theme.fallbackColor = color;
+		HasCustomBackdropValues = true;
 		ApplyToAllAdapters(adapter => adapter.FallbackColor = color);
 	}
 	public static void SetTintColor(Color color) {
 		Theme.tintColor = color;
+		HasCustomBackdropValues = true;
 		ApplyToAllAdapters(adapter => adapter.TintColor = color);
 	}
 	public static void SetTintOpacity(float opacity) {
 		Theme.tintOpacity = opacity;
+		HasCustomBackdropValues = true;
 		ApplyToAllAdapters(adapter => adapter.TintOpacity = opacity);
 	}
 	public static void SetLuminosityOpacity(float opacity) {
 		Theme.luminosityOpacity = opacity;
+		HasCustomBackdropValues = true;
 		ApplyToAllAdapters(adapter => adapter.LuminosityOpacity = opacity);
 	}
 	public static void RestoreThemeDefaults() {
 		Theme.backdropMaterial = BackdropMaterial.Acrylic;
 		Theme.theme = SystemBackdropTheme.Default;
 		Theme.shouldOverride = false;
-		Theme.isFirstTimeOverriding = false;
-		Theme.fallbackColor = Colors.White;
-		Theme.tintColor = Colors.White;
-		Theme.tintOpacity = 0f;
-		Theme.luminosityOpacity = 0f;
+		HasCustomBackdropValues = false;
 
 		ApplyToAllWindows(window => {
 			window.SetTheme();
 			window.CreateAdapter();
 		});
+		CaptureSystemBackdropDefaults(force: true);
 	}
 	internal static WindowOptions GetWindowOptions(object key) {
 		if (!WindowConfigs.TryGetValue(key, out var options)) {

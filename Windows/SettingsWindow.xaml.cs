@@ -78,9 +78,7 @@ internal sealed partial class SettingsWindow : Window {
 
 		var toggleSwitch = (ToggleSwitch)sender;
 		EasyWindows.SetOverrides(toggleSwitch.IsOn);
-
-		UpdateAdvancedControlState(EasyWindows.Theme.shouldOverride);
-		UpdateAppearanceSummary(EasyWindows.Theme);
+		UpdateSwitches(EasyWindows.Theme);
 	}
 
 	#pragma warning disable CA1822 // XAML event handlers must be instance methods

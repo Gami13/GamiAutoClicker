@@ -120,24 +120,28 @@ public static partial class EasyWindows {
 		}
 
 		public void SetOverrides() {
-			if (Theme.isFirstTimeOverriding) {
-				Theme.isFirstTimeOverriding = false;
-
-				Theme.fallbackColor = Adapter?.FallbackColor ?? Colors.Red;
-				Theme.tintColor = Adapter?.TintColor ?? Colors.Red;
-				Theme.tintOpacity = Adapter?.TintOpacity ?? 0f;
-				Theme.luminosityOpacity = Adapter?.LuminosityOpacity ?? 0f;
-			}
 			CreateAdapter();
 		}
 
+		internal bool TryCaptureBackdropDefaults() {
+			if (Adapter is not { } adapter) return false;
+
+			Theme.fallbackColor = adapter.FallbackColor;
+			Theme.tintColor = adapter.TintColor;
+			Theme.tintOpacity = adapter.TintOpacity;
+			Theme.luminosityOpacity = adapter.LuminosityOpacity;
+			return true;
+		}
+
 		public void SetTheme() {
-			if (Window.Content is FrameworkElement root)
+			if (Window.Content is FrameworkElement root) {
 				root.RequestedTheme = Theme.theme switch {
 					SystemBackdropTheme.Light => ElementTheme.Light,
 					SystemBackdropTheme.Dark => ElementTheme.Dark,
 					_ => ElementTheme.Default
 				};
+				UpdateConfigTheme();
+			}
 		}
 
 		private void UpdateConfigTheme() {

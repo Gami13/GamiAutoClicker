@@ -12,7 +12,6 @@ public static partial class EasyWindows {
 		backdropMaterial = BackdropMaterial.Acrylic,
 		theme = SystemBackdropTheme.Default,
 		shouldOverride = false,
-		isFirstTimeOverriding = false,
 		fallbackColor = Colors.White,
 		tintColor = Colors.White,
 		tintOpacity = 0.0f,
@@ -21,6 +20,8 @@ public static partial class EasyWindows {
 
 	private static Dictionary<object, WindowController> Windows { get; } = new();
 	private static Dictionary<object, WindowOptions> WindowConfigs { get; } = new();
+	private static bool HasCapturedSystemBackdropDefaults { get; set; }
+	private static bool HasCustomBackdropValues { get; set; }
 
 	public static void RegisterWindow(object key, WindowOptions options) {
 		ArgumentNullException.ThrowIfNull(options);
