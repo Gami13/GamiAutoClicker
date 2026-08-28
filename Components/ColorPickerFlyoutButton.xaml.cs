@@ -1,4 +1,5 @@
 using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
@@ -90,6 +91,12 @@ public sealed partial class ColorPickerFlyoutButton : UserControl {
 
 			ColorPickerControl.Color = SelectedColor;
 		}
+		if (ColorValueText != null) {
+			ColorValueText.Text = FormatColor(SelectedColor);
+		}
+		if (ColorButton != null) {
+			AutomationProperties.SetName(ColorButton, $"{Header}: {FormatColor(SelectedColor)}");
+		}
 	}
 
 	private void updateHeader() {
@@ -102,7 +109,10 @@ public sealed partial class ColorPickerFlyoutButton : UserControl {
 				HeaderText.Visibility = Visibility.Visible;
 			}
 		}
+		updateColorDisplay();
 	}
+
+	private static string FormatColor(Color color) => $"#{color.A:X2}{color.R:X2}{color.G:X2}{color.B:X2}";
 
 
 	//Yoinked from Windows Community Toolkit

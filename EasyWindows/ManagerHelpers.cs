@@ -70,6 +70,21 @@ public static partial class EasyWindows {
 		Theme.luminosityOpacity = opacity;
 		ApplyToAllAdapters(adapter => adapter.LuminosityOpacity = opacity);
 	}
+	public static void RestoreThemeDefaults() {
+		Theme.backdropMaterial = BackdropMaterial.Acrylic;
+		Theme.theme = SystemBackdropTheme.Default;
+		Theme.shouldOverride = false;
+		Theme.isFirstTimeOverriding = false;
+		Theme.fallbackColor = Colors.White;
+		Theme.tintColor = Colors.White;
+		Theme.tintOpacity = 0f;
+		Theme.luminosityOpacity = 0f;
+
+		ApplyToAllWindows(window => {
+			window.SetTheme();
+			window.CreateAdapter();
+		});
+	}
 	internal static WindowOptions GetWindowOptions(object key) {
 		if (!WindowConfigs.TryGetValue(key, out var options)) {
 			throw new ArgumentException($"WindowOptions for {key} not found.", nameof(key));

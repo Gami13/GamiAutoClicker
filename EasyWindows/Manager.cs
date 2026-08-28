@@ -12,9 +12,9 @@ public static partial class EasyWindows {
 		backdropMaterial = BackdropMaterial.Acrylic,
 		theme = SystemBackdropTheme.Default,
 		shouldOverride = false,
-		isFirstTimeOverriding = true,
-		fallbackColor = Colors.Transparent,
-		tintColor = Colors.Transparent,
+		isFirstTimeOverriding = false,
+		fallbackColor = Colors.White,
+		tintColor = Colors.White,
 		tintOpacity = 0.0f,
 		luminosityOpacity = 0.0f
 	};
