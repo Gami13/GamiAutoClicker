@@ -36,6 +36,8 @@ public static partial class EasyWindows {
 			}
 		}
 	}
+	private static void NotifyThemeChanged() => ThemeChanged?.Invoke(null, EventArgs.Empty);
+
 	public static void CreateWindow(object key) {
 		if (!WindowConfigs.TryGetValue(key, out var options)) {
 			throw new ArgumentException($"WindowOptions for {key} not found.");
@@ -59,35 +61,41 @@ public static partial class EasyWindows {
 
 		Theme.shouldOverride = state;
 		ApplyToAllWindows(theme => theme.SetOverrides());
+		NotifyThemeChanged();
 	}
 	public static void SetBackdropMaterial(BackdropMaterial material) {
 		Theme.backdropMaterial = material;
 		ApplyToAllWindows(theme => theme.CreateAdapter());
-
+		NotifyThemeChanged();
 	}
 	public static void SetTheme(SystemBackdropTheme theme) {
 		Theme.theme = theme;
 		ApplyToAllWindows(theme => theme.SetTheme());
+		NotifyThemeChanged();
 	}
 	public static void SetFallbackColor(Color color) {
 		Theme.fallbackColor = color;
 		HasCustomBackdropValues = true;
 		ApplyToAllAdapters(adapter => adapter.FallbackColor = color);
+		NotifyThemeChanged();
 	}
 	public static void SetTintColor(Color color) {
 		Theme.tintColor = color;
 		HasCustomBackdropValues = true;
 		ApplyToAllAdapters(adapter => adapter.TintColor = color);
+		NotifyThemeChanged();
 	}
 	public static void SetTintOpacity(float opacity) {
 		Theme.tintOpacity = opacity;
 		HasCustomBackdropValues = true;
 		ApplyToAllAdapters(adapter => adapter.TintOpacity = opacity);
+		NotifyThemeChanged();
 	}
 	public static void SetLuminosityOpacity(float opacity) {
 		Theme.luminosityOpacity = opacity;
 		HasCustomBackdropValues = true;
 		ApplyToAllAdapters(adapter => adapter.LuminosityOpacity = opacity);
+		NotifyThemeChanged();
 	}
 	public static void RestoreThemeDefaults() {
 		Theme.backdropMaterial = BackdropMaterial.Acrylic;
@@ -100,6 +108,7 @@ public static partial class EasyWindows {
 			window.CreateAdapter();
 		});
 		CaptureSystemBackdropDefaults(force: true);
+		NotifyThemeChanged();
 	}
 	internal static WindowOptions GetWindowOptions(object key) {
 		if (!WindowConfigs.TryGetValue(key, out var options)) {

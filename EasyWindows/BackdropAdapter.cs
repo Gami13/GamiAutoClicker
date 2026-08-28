@@ -14,6 +14,47 @@ public interface IBackdropAdapter : IDisposable {
 	float LuminosityOpacity { get; set; }
 }
 
+internal static class AcrylicControllerHelper {
+	public static DesktopAcrylicController Create(
+		DesktopAcrylicKind kind,
+		SystemBackdropConfiguration configuration,
+		ICompositionSupportsSystemBackdrop target,
+		EasyWindows.ThemeSettings theme) {
+		var controller = new DesktopAcrylicController {
+			Kind = kind
+		};
+		controller.SetSystemBackdropConfiguration(configuration);
+		controller.AddSystemBackdropTarget(target);
+
+		if (theme.shouldOverride) {
+			ApplyOverrides(controller, theme);
+		}
+
+		return controller;
+	}
+
+	public static void ApplyOverrides(DesktopAcrylicController controller, EasyWindows.ThemeSettings theme) {
+		controller.FallbackColor = theme.fallbackColor;
+		controller.TintColor = theme.tintColor;
+		SetTintOpacity(controller, theme.tintOpacity);
+		controller.LuminosityOpacity = theme.luminosityOpacity;
+	}
+
+	public static void SetTintOpacity(DesktopAcrylicController controller, float opacity) {
+		controller.TintOpacity = opacity;
+		RefreshTint(controller);
+	}
+
+	private static void RefreshTint(DesktopAcrylicController controller) {
+		// Workaround for https://github.com/microsoft/microsoft-ui-xaml/issues/10717
+		var currentColor = controller.TintColor;
+		var temporaryColor = currentColor;
+		temporaryColor.A = (byte)(currentColor.A < 255 ? currentColor.A + 1 : currentColor.A - 1);
+		controller.TintColor = temporaryColor;
+		controller.TintColor = currentColor;
+	}
+}
+
 public class MicaAdapter : IBackdropAdapter {
 	private readonly MicaController _controller;
 
@@ -75,13 +116,11 @@ public class AcrylicAdapter : IBackdropAdapter {
 	private readonly DesktopAcrylicController _controller;
 
 	public AcrylicAdapter(Window window, SystemBackdropConfiguration configurationSource, DesktopAcrylicKind kind) {
-		_controller = new DesktopAcrylicController {
-			Kind = kind
-		};
-
-		_controller.AddSystemBackdropTarget(window.As<ICompositionSupportsSystemBackdrop>());
-		_controller.SetSystemBackdropConfiguration(configurationSource);
-		ApplyOverrides();
+		_controller = AcrylicControllerHelper.Create(
+			kind,
+			configurationSource,
+			window.As<ICompositionSupportsSystemBackdrop>(),
+			EasyWindows.Theme);
 	}
 
 	public Color FallbackColor {
@@ -99,30 +138,13 @@ public class AcrylicAdapter : IBackdropAdapter {
 		set {
 			if (!EasyWindows.Theme.shouldOverride) return;
 
-			_controller.TintOpacity = value;
-			// Workaround for https://github.com/microsoft/microsoft-ui-xaml/issues/10717
-			// Slightly modify the tint color to force a visual update, as changing opacity alone doesn't always work
-			var currentColor = _controller.TintColor;
-			var tempColor = currentColor;
-			tempColor.A = (byte)(currentColor.A < 255 ? currentColor.A + 1 : currentColor.A - 1);
-			_controller.TintColor = tempColor;
-			_controller.TintColor = currentColor;
+			AcrylicControllerHelper.SetTintOpacity(_controller, value);
 		}
 	}
 
 	public float LuminosityOpacity {
 		get => _controller.LuminosityOpacity;
 		set => _controller.LuminosityOpacity = value;
-	}
-
-	private void ApplyOverrides() {
-		if (!EasyWindows.Theme.shouldOverride) return;
-
-		var settings = EasyWindows.Theme;
-		_controller.FallbackColor = settings.fallbackColor;
-		_controller.TintColor = settings.tintColor;
-		_controller.TintOpacity = settings.tintOpacity;
-		_controller.LuminosityOpacity = settings.luminosityOpacity;
 	}
 
 	public void Dispose() => _controller.Dispose();

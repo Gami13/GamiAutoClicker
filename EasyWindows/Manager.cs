@@ -23,6 +23,9 @@ public static partial class EasyWindows {
 	private static bool HasCapturedSystemBackdropDefaults { get; set; }
 	private static bool HasCustomBackdropValues { get; set; }
 
+	[SuppressMessage("Design", "CA1515:Consider making public types internal", Justification = "Will be extracted to separate package")]
+	public static event EventHandler? ThemeChanged;
+
 	public static void RegisterWindow(object key, WindowOptions options) {
 		ArgumentNullException.ThrowIfNull(options);
 

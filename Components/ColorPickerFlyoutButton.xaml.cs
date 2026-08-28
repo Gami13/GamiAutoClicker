@@ -16,8 +16,8 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
-
-
+using Gami;
+using EasyWindows = Gami.EasyWindows;
 
 namespace GamiAutoClicker.Components;
 
@@ -57,12 +57,37 @@ public sealed partial class ColorPickerFlyoutButton : UserControl {
 
 	private void OnLoaded(object sender, RoutedEventArgs e) {
 		ColorPickerControl.ColorChanged += OnColorPickerColorChanged;
+		ColorPickerFlyout.Opening += OnFlyoutOpening;
+		EasyWindows.ThemeChanged += OnEasyWindowsThemeChanged;
 		updateColorDisplay();
 		HeaderText.Text = Header;
-
+		UpdateFlyoutTheme();
 	}
+
 	private void OnUnloaded(object sender, RoutedEventArgs e) {
 		ColorPickerControl.ColorChanged -= OnColorPickerColorChanged;
+		ColorPickerFlyout.Opening -= OnFlyoutOpening;
+		EasyWindows.ThemeChanged -= OnEasyWindowsThemeChanged;
+	}
+
+	private void OnFlyoutOpening(object? sender, object e) {
+		UpdateFlyoutTheme();
+	}
+
+	private void OnEasyWindowsThemeChanged(object? sender, EventArgs e) {
+		UpdateFlyoutTheme();
+	}
+
+	private void UpdateFlyoutTheme() {
+		var elementTheme = EasyWindows.Theme.theme switch {
+			Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light => ElementTheme.Light,
+			Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark => ElementTheme.Dark,
+			_ => ElementTheme.Default
+		};
+
+		if (ColorPickerFlyout?.Content is FrameworkElement contentElement) {
+			contentElement.RequestedTheme = elementTheme;
+		}
 	}
 
 	private static void OnSelectedColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
@@ -126,10 +151,10 @@ public sealed partial class ColorPickerFlyoutButton : UserControl {
 			var bitmap = await Utilities.CreateCheckeredBitmapAsync(
 				width,
 				height,
-				Utilities.CheckerBackgroundColor);
+				Utilities.CheckerBackgroundColor).ConfigureAwait(true);
 
 			if (bitmap != null) {
-				border.Background = await Utilities.BitmapToBrushAsync(bitmap, width, height);
+				border.Background = await Utilities.BitmapToBrushAsync(bitmap, width, height).ConfigureAwait(true);
 			}
 		}
 
