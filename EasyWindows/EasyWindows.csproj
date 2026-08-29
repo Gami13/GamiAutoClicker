@@ -5,7 +5,9 @@
 		<RootNamespace>Gami</RootNamespace>
 		<Platforms>x86;x64;ARM64</Platforms>
 		<Platform>x64</Platform>
+		<RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
 		<UseWinUI>true</UseWinUI>
+		<EnableMsixTooling>true</EnableMsixTooling>
 		<Nullable>enable</Nullable>
 		<AnalysisMode>All</AnalysisMode>
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
@@ -14,6 +16,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.1-RTM" />
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="2.0.0-experimental3" />
+		<PackageReference Include="Microsoft.WindowsAppSDK" Version="2.4.0" />
 	</ItemGroup>
 </Project>

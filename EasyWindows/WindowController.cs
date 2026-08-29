@@ -16,7 +16,6 @@ public static partial class EasyWindows {
 
 
 		private readonly object _windowKey;
-		private readonly WindowsSystemDispatcherQueueHelper _dispatcherHelper;
 		private readonly SystemBackdropConfiguration _backdropConfig;
 		private readonly TitleBar _topWindowBar;
 		public IBackdropAdapter? Adapter { get; private set; }
@@ -40,8 +39,7 @@ public static partial class EasyWindows {
 			_windowKey = windowKey;
 			Window = window;
 
-			_dispatcherHelper = new WindowsSystemDispatcherQueueHelper();
-			_dispatcherHelper.EnsureWindowsSystemDispatcherQueueController();
+			WindowsSystemDispatcherQueueHelper.EnsureWindowsSystemDispatcherQueueController();
 
 			_topWindowBar = new TitleBar(windowKey);
 			var root = CreateRoot(window, _topWindowBar);

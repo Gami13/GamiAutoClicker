@@ -9,7 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Gami;
 
 [SuppressMessage("Design", "CA1515:Consider making public types internal", Justification = "Will be extracted to separate package")]
-public class EasyWindowsBackdrop : SystemBackdrop {
+public partial class EasyWindowsBackdrop : SystemBackdrop {
 	private sealed class TargetState(
 		DesktopAcrylicController controller,
 		SystemBackdropConfiguration configuration,
