@@ -33,11 +33,20 @@ internal static class AcrylicControllerHelper {
 		return controller;
 	}
 
+	//guarding for less gpu composition calls
 	public static void ApplyOverrides(DesktopAcrylicController controller, EasyWindows.ThemeSettings theme) {
-		controller.FallbackColor = theme.fallbackColor;
-		controller.TintColor = theme.tintColor;
-		SetTintOpacity(controller, theme.tintOpacity);
-		controller.LuminosityOpacity = theme.luminosityOpacity;
+		if (controller.FallbackColor != theme.fallbackColor) {
+			controller.FallbackColor = theme.fallbackColor;
+		}
+		if (controller.TintColor != theme.tintColor) {
+			controller.TintColor = theme.tintColor;
+		}
+		if (Math.Abs(controller.TintOpacity - theme.tintOpacity) > 0.001f) {
+			SetTintOpacity(controller, theme.tintOpacity);
+		}
+		if (Math.Abs(controller.LuminosityOpacity - theme.luminosityOpacity) > 0.001f) {
+			controller.LuminosityOpacity = theme.luminosityOpacity;
+		}
 	}
 
 	public static void SetTintOpacity(DesktopAcrylicController controller, float opacity) {

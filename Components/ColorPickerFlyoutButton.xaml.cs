@@ -1,38 +1,24 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Automation;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Media.Imaging;
-using Microsoft.UI.Xaml.Navigation;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI;
 using Gami;
 using EasyWindows = Gami.EasyWindows;
+using System.Diagnostics;
 
 namespace GamiAutoClicker.Components;
 
 public sealed partial class ColorPickerFlyoutButton : UserControl {
+	private readonly SolidColorBrush _colorDisplayBrush = new();
+	private ElementTheme? _flyoutTheme;
 
-	public static readonly DependencyProperty SelectedColorProperty =
-		DependencyProperty.Register(
-			nameof(SelectedColor),
-			typeof(Color),
-			typeof(ColorPickerFlyoutButton),
-			new PropertyMetadata(Color.FromArgb(255, 16, 129, 255), OnSelectedColorChanged));
-
-	public Color SelectedColor {
-		get => (Color)GetValue(SelectedColorProperty);
-		set => SetValue(SelectedColorProperty, value);
+	public Color Color {
+		get => ColorPickerControl.Color;
+		set => ColorPickerControl.Color = value;
 	}
 
 	public static readonly DependencyProperty HeaderProperty =
@@ -47,84 +33,91 @@ public sealed partial class ColorPickerFlyoutButton : UserControl {
 		set => SetValue(HeaderProperty, value);
 	}
 
-	public event EventHandler<Color>? ColorChanged;
+	public event TypedEventHandler<ColorPicker, ColorChangedEventArgs>? ColorChanged {
+		add => ColorPickerControl.ColorChanged += value;
+		remove => ColorPickerControl.ColorChanged -= value;
+	}
 
 	public ColorPickerFlyoutButton() {
 		InitializeComponent();
+		Debug.WriteLine("ColorPickerFlyoutButton initialized.");
 		Loaded += OnLoaded;
 		Unloaded += OnUnloaded;
 	}
 
 	private void OnLoaded(object sender, RoutedEventArgs e) {
+		Debug.WriteLine("OnLoaded");
 		ColorPickerControl.ColorChanged += OnColorPickerColorChanged;
 		ColorPickerFlyout.Opening += OnFlyoutOpening;
 		EasyWindows.ThemeChanged += OnEasyWindowsThemeChanged;
-		updateColorDisplay();
-		HeaderText.Text = Header;
+		UpdateColorDisplay(ColorPickerControl.Color);
+		UpdateHeader();
 		UpdateFlyoutTheme();
 	}
 
 	private void OnUnloaded(object sender, RoutedEventArgs e) {
+		Debug.WriteLine("OnUnloaded");
 		ColorPickerControl.ColorChanged -= OnColorPickerColorChanged;
 		ColorPickerFlyout.Opening -= OnFlyoutOpening;
 		EasyWindows.ThemeChanged -= OnEasyWindowsThemeChanged;
 	}
 
 	private void OnFlyoutOpening(object? sender, object e) {
+		Debug.WriteLine("OnFlyoutOpening");
 		UpdateFlyoutTheme();
 	}
 
 	private void OnEasyWindowsThemeChanged(object? sender, EventArgs e) {
+		Debug.WriteLine("OnEasyWindowsThemeChanged");
 		UpdateFlyoutTheme();
 	}
 
 	private void UpdateFlyoutTheme() {
+		Debug.WriteLine("UpdateFlyoutTheme");
 		var elementTheme = EasyWindows.Theme.theme switch {
 			Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light => ElementTheme.Light,
 			Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark => ElementTheme.Dark,
 			_ => ElementTheme.Default
 		};
 
+		if (_flyoutTheme == elementTheme) return;
+
 		if (ColorPickerFlyout?.Content is FrameworkElement contentElement) {
 			contentElement.RequestedTheme = elementTheme;
-		}
-	}
-
-	private static void OnSelectedColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-		if (d is ColorPickerFlyoutButton control) {
-			control.updateColorDisplay();
+			_flyoutTheme = elementTheme;
 		}
 	}
 
 	private static void OnHeaderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+		Debug.WriteLine("OnHeaderChanged");
 		if (d is ColorPickerFlyoutButton control) {
-			control.updateHeader();	
+			control.UpdateHeader();
 		}
 	}
 
 	private void OnColorPickerColorChanged(ColorPicker sender, ColorChangedEventArgs args) {
-		SelectedColor = args.NewColor;
-		ColorChanged?.Invoke(this, args.NewColor);
+		Debug.WriteLine("OnColorPickerColorChanged");
+		UpdateColorDisplay(args.NewColor);
 	}
 
-	private void updateColorDisplay() {
+	private void UpdateColorDisplay(Color color) {
+		Debug.WriteLine("UpdateColorDisplay");
+		var formattedColor = FormatColor(color);
+
 		if (ColorDisplayFill != null) {
-			ColorDisplayFill.Fill = new SolidColorBrush(SelectedColor);
-
-		}
-		if (ColorPickerControl != null) {
-
-			ColorPickerControl.Color = SelectedColor;
+			_colorDisplayBrush.Color = color;
+			ColorDisplayFill.Fill = _colorDisplayBrush;
 		}
 		if (ColorValueText != null) {
-			ColorValueText.Text = FormatColor(SelectedColor);
+			ColorValueText.Text = formattedColor;
 		}
 		if (ColorButton != null) {
-			AutomationProperties.SetName(ColorButton, $"{Header}: {FormatColor(SelectedColor)}");
+			AutomationProperties.SetName(ColorButton, $"{Header}: {formattedColor}");
 		}
 	}
 
-	private void updateHeader() {
+	private void UpdateHeader() {
+		Debug.WriteLine("UpdateHeader");
 		if (HeaderText != null) {
 			HeaderText.Text = Header;
 			if (string.IsNullOrEmpty(Header)) {
@@ -134,7 +127,6 @@ public sealed partial class ColorPickerFlyoutButton : UserControl {
 				HeaderText.Visibility = Visibility.Visible;
 			}
 		}
-		updateColorDisplay();
 	}
 
 	private static string FormatColor(Color color) => $"#{color.A:X2}{color.R:X2}{color.G:X2}{color.B:X2}";
@@ -142,6 +134,7 @@ public sealed partial class ColorPickerFlyoutButton : UserControl {
 
 	//Yoinked from Windows Community Toolkit
 	private async void ColorDisplay_Loaded(object sender, RoutedEventArgs e) {
+		Debug.WriteLine("ColorDisplay_Loaded");
 
 
 		if (sender is Border border) {

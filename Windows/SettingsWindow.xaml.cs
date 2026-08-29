@@ -30,7 +30,7 @@ internal sealed partial class SettingsWindow : Window {
 		var comboBox = (ComboBox)sender;
 		var selectedItem = comboBox.SelectedItem;
 
-		 switch (selectedItem) {
+		switch (selectedItem) {
 			case "Acrylic":
 				EasyWindows.SetBackdropMaterial(EasyWindows.BackdropMaterial.Acrylic);
 				break;
@@ -81,16 +81,16 @@ internal sealed partial class SettingsWindow : Window {
 		UpdateSwitches(EasyWindows.Theme);
 	}
 
-	#pragma warning disable CA1822 // XAML event handlers must be instance methods
-	private void OnFallbackColorChange(object sender, Color color) {
+#pragma warning disable CA1822 // XAML event handlers must be instance methods
+	private void OnFallbackColorChange(ColorPicker sender, ColorChangedEventArgs args) {
 		if (_isSynchronizing) return;
 
-		EasyWindows.SetFallbackColor(color);
+		EasyWindows.SetFallbackColor(args.NewColor);
 	}
-	private void OnTintColorChange(object sender, Color color) {
+	private void OnTintColorChange(ColorPicker sender, ColorChangedEventArgs args) {
 		if (_isSynchronizing) return;
 
-		EasyWindows.SetTintColor(color);
+		EasyWindows.SetTintColor(args.NewColor);
 	}
 #pragma warning restore CA1822
 
@@ -117,8 +117,8 @@ internal sealed partial class SettingsWindow : Window {
 			BackdropMaterialComboBox.SelectedItem = settings.backdropMaterial.ToString();
 			ThemeComboBox.SelectedItem = settings.theme.ToString();
 			OverrideDefaultsToggleSwitch.IsOn = settings.shouldOverride;
-			FallbackColorPicker.SelectedColor = settings.fallbackColor;
-			TintColorPicker.SelectedColor = settings.tintColor;
+			FallbackColorPicker.Color = settings.fallbackColor;
+			TintColorPicker.Color = settings.tintColor;
 			TintOpacitySlider.Percentage = settings.tintOpacity;
 			LuminosityOpacitySlider.Percentage = settings.luminosityOpacity;
 		}
