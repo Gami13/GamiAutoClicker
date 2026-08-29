@@ -7,7 +7,6 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using Windows.Foundation;
 using Windows.Graphics;
-using WinRT.Interop;
 
 
 namespace Gami;

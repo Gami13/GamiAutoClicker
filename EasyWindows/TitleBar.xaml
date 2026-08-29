@@ -18,7 +18,6 @@
             <ColumnDefinition x:Name="IconColumn" Width="Auto" />
             <ColumnDefinition x:Name="TitleColumn" Width="Auto" />
             <ColumnDefinition x:Name="DragColumn" Width="*" />
-            <ColumnDefinition x:Name="ButtonColumn" Width="Auto" />
             <ColumnDefinition x:Name="RightPaddingColumn" Width="0" />
         </Grid.ColumnDefinitions>
         <!--<FontIcon  x:Name="TitleBarIcon" FontFamily="Segoe Fluent Icons" Glyph="&#xE962;" Grid.Column="1"/>-->

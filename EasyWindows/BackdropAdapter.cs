@@ -7,15 +7,15 @@ using WinRT;
 
 namespace Gami;
 
-public interface IBackdropAdapter : IDisposable {
+internal interface IBackdropAdapter : IDisposable {
 	Color FallbackColor { get; set; }
 	Color TintColor { get; set; }
 	float TintOpacity { get; set; }
 	float LuminosityOpacity { get; set; }
 }
 
-internal static class AcrylicControllerHelper {
-	public static DesktopAcrylicController Create(
+internal static class BackdropHelper {
+	internal static DesktopAcrylicController CreateAcrylicController(
 		DesktopAcrylicKind kind,
 		SystemBackdropConfiguration configuration,
 		ICompositionSupportsSystemBackdrop target,
@@ -26,15 +26,14 @@ internal static class AcrylicControllerHelper {
 		controller.SetSystemBackdropConfiguration(configuration);
 		controller.AddSystemBackdropTarget(target);
 
-		if (theme.shouldOverride) {
-			ApplyOverrides(controller, theme);
-		}
+		ApplyOverrides(controller, theme);
 
 		return controller;
 	}
 
-	//guarding for less gpu composition calls
-	public static void ApplyOverrides(DesktopAcrylicController controller, EasyWindows.ThemeSettings theme) {
+	internal static void ApplyOverrides(MicaController controller, EasyWindows.ThemeSettings theme) {
+		if (!theme.shouldOverride) return;
+
 		if (controller.FallbackColor != theme.fallbackColor) {
 			controller.FallbackColor = theme.fallbackColor;
 		}
@@ -42,29 +41,41 @@ internal static class AcrylicControllerHelper {
 			controller.TintColor = theme.tintColor;
 		}
 		if (Math.Abs(controller.TintOpacity - theme.tintOpacity) > 0.001f) {
-			SetTintOpacity(controller, theme.tintOpacity);
+			controller.TintOpacity = theme.tintOpacity;
 		}
 		if (Math.Abs(controller.LuminosityOpacity - theme.luminosityOpacity) > 0.001f) {
 			controller.LuminosityOpacity = theme.luminosityOpacity;
 		}
 	}
 
-	public static void SetTintOpacity(DesktopAcrylicController controller, float opacity) {
-		controller.TintOpacity = opacity;
-		RefreshTint(controller);
+	internal static void ApplyOverrides(DesktopAcrylicController controller, EasyWindows.ThemeSettings theme) {
+		if (!theme.shouldOverride) return;
+
+		if (controller.FallbackColor != theme.fallbackColor) {
+			controller.FallbackColor = theme.fallbackColor;
+		}
+		if (controller.TintColor != theme.tintColor) {
+			controller.TintColor = theme.tintColor;
+		}
+		if (Math.Abs(controller.TintOpacity - theme.tintOpacity) > 0.001f) {
+			controller.TintOpacity = theme.tintOpacity;
+			RefreshTint(controller.TintColor, value => controller.TintColor = value);
+		}
+		if (Math.Abs(controller.LuminosityOpacity - theme.luminosityOpacity) > 0.001f) {
+			controller.LuminosityOpacity = theme.luminosityOpacity;
+		}
 	}
 
-	private static void RefreshTint(DesktopAcrylicController controller) {
+	internal static void RefreshTint(Color currentColor, Action<Color> setTintColor) {
 		// Workaround for https://github.com/microsoft/microsoft-ui-xaml/issues/10717
-		var currentColor = controller.TintColor;
 		var temporaryColor = currentColor;
 		temporaryColor.A = (byte)(currentColor.A < 255 ? currentColor.A + 1 : currentColor.A - 1);
-		controller.TintColor = temporaryColor;
-		controller.TintColor = currentColor;
+		setTintColor(temporaryColor);
+		setTintColor(currentColor);
 	}
 }
 
-public class MicaAdapter : IBackdropAdapter {
+internal sealed class MicaAdapter : IBackdropAdapter {
 	private readonly MicaController _controller;
 
 	public MicaAdapter(Window window, SystemBackdropConfiguration configurationSource, MicaKind kind) {
@@ -74,7 +85,7 @@ public class MicaAdapter : IBackdropAdapter {
 
 		_controller.AddSystemBackdropTarget(window.As<ICompositionSupportsSystemBackdrop>());
 		_controller.SetSystemBackdropConfiguration(configurationSource);
-		ApplyOverrides();
+		BackdropHelper.ApplyOverrides(_controller, EasyWindows.Theme);
 	}
 
 	public Color FallbackColor {
@@ -93,13 +104,7 @@ public class MicaAdapter : IBackdropAdapter {
 			if (!EasyWindows.Theme.shouldOverride) return;
 
 			_controller.TintOpacity = value;
-			// Workaround for https://github.com/microsoft/microsoft-ui-xaml/issues/10717
-			// Slightly modify the tint color to force a visual update, as changing opacity alone doesn't always work
-			var currentColor = _controller.TintColor;
-			var tempColor = currentColor;
-			tempColor.A = (byte)(currentColor.A < 255 ? currentColor.A + 1 : currentColor.A - 1);
-			_controller.TintColor = tempColor;
-			_controller.TintColor = currentColor;
+			BackdropHelper.RefreshTint(_controller.TintColor, color => _controller.TintColor = color);
 		}
 	}
 
@@ -108,24 +113,14 @@ public class MicaAdapter : IBackdropAdapter {
 		set => _controller.LuminosityOpacity = value;
 	}
 
-	private void ApplyOverrides() {
-		if (!EasyWindows.Theme.shouldOverride) return;
-
-		var settings = EasyWindows.Theme;
-		_controller.FallbackColor = settings.fallbackColor;
-		_controller.TintColor = settings.tintColor;
-		_controller.TintOpacity = settings.tintOpacity;
-		_controller.LuminosityOpacity = settings.luminosityOpacity;
-	}
-
 	public void Dispose() => _controller.Dispose();
 }
 
-public class AcrylicAdapter : IBackdropAdapter {
+internal sealed class AcrylicAdapter : IBackdropAdapter {
 	private readonly DesktopAcrylicController _controller;
 
 	public AcrylicAdapter(Window window, SystemBackdropConfiguration configurationSource, DesktopAcrylicKind kind) {
-		_controller = AcrylicControllerHelper.Create(
+		_controller = BackdropHelper.CreateAcrylicController(
 			kind,
 			configurationSource,
 			window.As<ICompositionSupportsSystemBackdrop>(),
@@ -147,7 +142,8 @@ public class AcrylicAdapter : IBackdropAdapter {
 		set {
 			if (!EasyWindows.Theme.shouldOverride) return;
 
-			AcrylicControllerHelper.SetTintOpacity(_controller, value);
+			_controller.TintOpacity = value;
+			BackdropHelper.RefreshTint(_controller.TintColor, color => _controller.TintColor = color);
 		}
 	}
 

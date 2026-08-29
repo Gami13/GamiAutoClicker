@@ -39,7 +39,7 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 		UpdateConfigurationTheme(config, EasyWindows.Theme);
 
 		var kind = GetFlyoutAcrylicKind(EasyWindows.Theme);
-		var controller = AcrylicControllerHelper.Create(kind, config, connectedTarget, EasyWindows.Theme);
+		var controller = BackdropHelper.CreateAcrylicController(kind, config, connectedTarget, EasyWindows.Theme);
 
 		_targets[connectedTarget] = new TargetState(controller, config, kind, EasyWindows.Theme.shouldOverride);
 
@@ -85,13 +85,13 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 				state.Controller.RemoveSystemBackdropTarget(target);
 				state.Controller.Dispose();
 
-				var newController = AcrylicControllerHelper.Create(requiredKind, state.Configuration, target, theme);
+				var newController = BackdropHelper.CreateAcrylicController(requiredKind, state.Configuration, target, theme);
 				state.Controller = newController;
 				state.Kind = requiredKind;
 				state.HasAppliedOverrides = theme.shouldOverride;
 			}
 			else if (theme.shouldOverride) {
-				AcrylicControllerHelper.ApplyOverrides(state.Controller, theme);
+				BackdropHelper.ApplyOverrides(state.Controller, theme);
 				state.HasAppliedOverrides = true;
 			}
 		}

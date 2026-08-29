@@ -6,7 +6,6 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
 using Windows.Graphics;
-using WinRT.Interop;
 
 namespace Gami;
 
@@ -23,10 +22,10 @@ public static partial class EasyWindows {
 		private bool _windowClosed;
 		private bool _isWindowActive = true;
 
-		public Window Window { get; }
+		public Microsoft.UI.Xaml.Window Window { get; }
 
 
-		internal static WindowController Register(Window window, object windowKey) {
+		internal static WindowController Register(Microsoft.UI.Xaml.Window window, object windowKey) {
 			var controller = new WindowController(window, windowKey);
 			Windows[windowKey] = controller;
 			return controller;
@@ -49,16 +48,15 @@ public static partial class EasyWindows {
 
 			CreateAdapter();
 
-			var appWindow = AppWindow.GetFromWindowId(Win32Interop.GetWindowIdFromWindow(WindowNative.GetWindowHandle(window)));
-			appWindow.SetPresenter(options.PresenterKind);
-			appWindow.Resize(options.DefaultSize);
+			Window.AppWindow.SetPresenter(options.PresenterKind);
+			Window.AppWindow.Resize(options.DefaultSize);
 			if (options.DefaultPosition is { } position) {
-				appWindow.Move(position);
+				Window.AppWindow.Move(position);
 			}
-			appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-			appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+			Window.AppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+			Window.AppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
 
-			if (appWindow.Presenter is OverlappedPresenter presenter) {
+			if (Window.AppWindow.Presenter is OverlappedPresenter presenter) {
 				presenter.IsMaximizable = options.IsMaximizable;
 				presenter.IsMinimizable = options.IsMinimizable;
 				presenter.IsResizable = options.IsResizable;
@@ -93,7 +91,11 @@ public static partial class EasyWindows {
 			root.Children.Add(titleBar);
 
 			if (content is not null) {
-				content.SetValue(Grid.RowProperty, 1);
+				if (content is FrameworkElement frameworkElement) {
+					Grid.SetRow(frameworkElement, 1);
+				} else {
+					content.SetValue(Grid.RowProperty, 1);
+				}
 				root.Children.Add(content);
 			}
 
