@@ -9,7 +9,15 @@ using System.Diagnostics.CodeAnalysis;
 namespace Gami;
 
 [SuppressMessage("Design", "CA1515:Consider making public types internal", Justification = "Will be extracted to separate package")]
+/// <summary>
+/// Acrylic backdrop used by flyouts and other XAML elements that expose a
+/// <see cref="SystemBackdrop"/> property. Unlike a window adapter, this
+/// backdrop can be connected to several targets over its lifetime, so it
+/// keeps one controller and configuration for each connected target.
+/// </summary>
 public partial class EasyWindowsBackdrop : SystemBackdrop {
+	// SystemBackdrop targets can be connected and disconnected independently.
+	// Keep the controller state per target so one flyout cannot affect another.
 	private sealed class TargetState(
 		DesktopAcrylicController controller,
 		SystemBackdropConfiguration configuration,
@@ -18,6 +26,8 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 		public DesktopAcrylicController Controller { get; set; } = controller;
 		public SystemBackdropConfiguration Configuration { get; set; } = configuration;
 		public DesktopAcrylicKind Kind { get; set; } = kind;
+		// When overrides are disabled, the controller must be recreated to restore
+		// the system defaults. This flag records whether that recreation is needed.
 		public bool HasAppliedOverrides { get; set; } = hasAppliedOverrides;
 
 		public void Dispose() {
@@ -29,12 +39,14 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 
 	[SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed via TargetState in OnTargetDisconnected/Dispose")]
 	protected override void OnTargetConnected(ICompositionSupportsSystemBackdrop connectedTarget, XamlRoot xamlRoot) {
+		// WinUI calls this when a flyout attaches this backdrop to a visual target.
 		base.OnTargetConnected(connectedTarget, xamlRoot);
 
 		if (!DesktopAcrylicController.IsSupported()) {
 			return;
 		}
 
+		// Each target receives its own configuration and Acrylic controller.
 		var config = GetDefaultSystemBackdropConfiguration(connectedTarget, xamlRoot);
 		UpdateConfigurationTheme(config, EasyWindows.Theme);
 
@@ -44,11 +56,15 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 		_targets[connectedTarget] = new TargetState(controller, config, kind, EasyWindows.Theme.shouldOverride);
 
 		if (_targets.Count == 1) {
+			// Subscribe only while at least one target exists; this prevents this
+			// backdrop instance from retaining an unused global event subscription.
 			EasyWindows.ThemeChanged += OnThemeChanged;
 		}
 	}
 
 	protected override void OnTargetDisconnected(ICompositionSupportsSystemBackdrop disconnectedTarget) {
+		// Remove the target before disposing its controller so the controller no
+		// longer references the disconnected XAML object.
 		base.OnTargetDisconnected(disconnectedTarget);
 
 		if (_targets.Remove(disconnectedTarget, out var state)) {
@@ -62,6 +78,8 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 	}
 
 	protected override void OnDefaultSystemBackdropConfigurationChanged(ICompositionSupportsSystemBackdrop target, XamlRoot xamlRoot) {
+		// DPI, theme, or XAML-root changes can invalidate the default configuration
+		// supplied by WinUI. Refresh only the affected target's configuration.
 		base.OnDefaultSystemBackdropConfigurationChanged(target, xamlRoot);
 
 		if (_targets.TryGetValue(target, out var state)) {
@@ -74,6 +92,9 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 
 	[SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "Disposed via TargetState in OnTargetDisconnected/Dispose")]
 	private void OnThemeChanged(object? sender, EventArgs e) {
+		// EasyWindows owns the global settings. Existing flyout targets either get
+		// their current values applied in place or receive a new controller when
+		// the Acrylic kind or override state requires one.
 		var theme = EasyWindows.Theme;
 		var requiredKind = GetFlyoutAcrylicKind(theme);
 
@@ -100,6 +121,8 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 	private static void UpdateConfigurationTheme(SystemBackdropConfiguration config, EasyWindows.ThemeSettings theme) =>
 		config.Theme = theme.theme;
 
+	// Flyouts use Acrylic even when windows use Mica. Only the Acrylic variant
+	// (Base versus Thin) is selected from the global backdrop setting.
 	private static DesktopAcrylicKind GetFlyoutAcrylicKind(EasyWindows.ThemeSettings theme) =>
 		theme.backdropMaterial == EasyWindows.BackdropMaterial.AcrylicThin
 			? DesktopAcrylicKind.Thin

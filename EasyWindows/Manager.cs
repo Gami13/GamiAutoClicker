@@ -40,20 +40,26 @@ public static partial class EasyWindows {
 
 	internal static AppWindow GetAppWindow(object key) {
 		var window = Windows.TryGetValue(key, out var controller) ? controller.Window : null;
-		if (window == null) throw new InvalidOperationException($"Window {key} not registered.");
+		if (window == null) throw new InvalidOperationException($"Window {key} not created.");
 		return window.AppWindow;
+	}
+	internal static WindowOptions GetWindowOptions(object key) {
+		if (!WindowConfigs.TryGetValue(key, out var options)) {
+			throw new ArgumentException($"WindowOptions {key} not registered.", nameof(key));
+		}
+		return options;
 	}
 
 	private static void ApplyToAllWindows(Action<WindowController> action) {
 		foreach (var controller in Windows.Values) action(controller);
 	}
 
-	private static void ApplyToAllAdapters(Action<IBackdropAdapter> action) {
-		if (!Theme.shouldOverride) return;
-
-		ApplyToAllWindows(window => {
-			if (window.Adapter is { } adapter) action(adapter);
-		});
+	private static void UpdateAdapter(
+		WindowController window,
+		Action<IBackdropAdapter> updateAdapter) {
+		if (Theme.shouldOverride && window.Adapter is { } adapter) {
+			updateAdapter(adapter);
+		}
 	}
 
 	private static void CaptureSystemBackdropDefaults(bool force = false) {
@@ -108,33 +114,31 @@ public static partial class EasyWindows {
 		NotifyThemeChanged();
 	}
 
-	public static void SetFallbackColor(Color color) => UpdateCustomSetting(
-		(theme, value) => theme.fallbackColor = value,
-		(adapter, value) => adapter.FallbackColor = value,
-		color);
-
-	public static void SetTintColor(Color color) => UpdateCustomSetting(
-		(theme, value) => theme.tintColor = value,
-		(adapter, value) => adapter.TintColor = value,
-		color);
-
-	public static void SetTintOpacity(float opacity) => UpdateCustomSetting(
-		(theme, value) => theme.tintOpacity = value,
-		(adapter, value) => adapter.TintOpacity = value,
-		opacity);
-
-	public static void SetLuminosityOpacity(float opacity) => UpdateCustomSetting(
-		(theme, value) => theme.luminosityOpacity = value,
-		(adapter, value) => adapter.LuminosityOpacity = value,
-		opacity);
-
-	private static void UpdateCustomSetting<T>(
-		Action<ThemeSettings, T> updateTheme,
-		Action<IBackdropAdapter, T> updateAdapter,
-		T value) {
-		updateTheme(Theme, value);
+	public static void SetFallbackColor(Color color) {
+		Theme.fallbackColor = color;
 		HasCustomBackdropValues = true;
-		ApplyToAllAdapters(adapter => updateAdapter(adapter, value));
+		ApplyToAllWindows(window => UpdateAdapter(window, adapter => adapter.FallbackColor = color));
+		NotifyThemeChanged();
+	}
+
+	public static void SetTintColor(Color color) {
+		Theme.tintColor = color;
+		HasCustomBackdropValues = true;
+		ApplyToAllWindows(window => UpdateAdapter(window, adapter => adapter.TintColor = color));
+		NotifyThemeChanged();
+	}
+
+	public static void SetTintOpacity(float opacity) {
+		Theme.tintOpacity = opacity;
+		HasCustomBackdropValues = true;
+		ApplyToAllWindows(window => UpdateAdapter(window, adapter => adapter.TintOpacity = opacity));
+		NotifyThemeChanged();
+	}
+
+	public static void SetLuminosityOpacity(float opacity) {
+		Theme.luminosityOpacity = opacity;
+		HasCustomBackdropValues = true;
+		ApplyToAllWindows(window => UpdateAdapter(window, adapter => adapter.LuminosityOpacity = opacity));
 		NotifyThemeChanged();
 	}
 
@@ -150,12 +154,5 @@ public static partial class EasyWindows {
 		});
 		CaptureSystemBackdropDefaults(force: true);
 		NotifyThemeChanged();
-	}
-
-	internal static WindowOptions GetWindowOptions(object key) {
-		if (!WindowConfigs.TryGetValue(key, out var options)) {
-			throw new ArgumentException($"WindowOptions for {key} not found.", nameof(key));
-		}
-		return options;
 	}
 }
