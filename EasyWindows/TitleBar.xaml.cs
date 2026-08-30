@@ -15,7 +15,7 @@ namespace Gami;
 
 internal sealed partial class TitleBar : UserControl {
 	private readonly object windowKey;
-
+	private bool _isActive = true;
 
 	public TitleBar(object windowKey) {
 		InitializeComponent();
@@ -33,6 +33,21 @@ internal sealed partial class TitleBar : UserControl {
 		}
 		this.windowKey = windowKey;
 	}
+
+	internal void RefreshForeground(bool? isActive = null) {
+		if (isActive is { } active) {
+			_isActive = active;
+		}
+
+		string resourceKey = _isActive
+			? "WindowCaptionForeground"
+			: "WindowCaptionForegroundDisabled";
+
+		if (Application.Current?.Resources[resourceKey] is SolidColorBrush brush) {
+			Foreground = brush;
+		}
+	}
+
 	private void AppTitleBar_Loaded(object sender, RoutedEventArgs e) {
 		SetRegionsForCustomTitleBar();
 	}

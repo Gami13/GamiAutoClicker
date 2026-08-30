@@ -3,7 +3,6 @@ using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 using System;
 using Windows.Graphics;
 
@@ -20,7 +19,6 @@ public static partial class EasyWindows {
 		public IBackdropAdapter? Adapter { get; private set; }
 		private bool _disposed;
 		private bool _windowClosed;
-		private bool _isWindowActive = true;
 
 		public Microsoft.UI.Xaml.Window Window { get; }
 
@@ -155,24 +153,14 @@ public static partial class EasyWindows {
 		}
 
 		private void OnActivated(object sender, WindowActivatedEventArgs args) {
-			_isWindowActive = args.WindowActivationState != WindowActivationState.Deactivated;
-			_backdropConfig.IsInputActive = _isWindowActive;
-			UpdateTitleBarForeground();
-		}
-
-		private void UpdateTitleBarForeground() {
-			string resourceKey = _isWindowActive
-				? "WindowCaptionForeground"
-				: "WindowCaptionForegroundDisabled";
-
-			if (Application.Current?.Resources[resourceKey] is SolidColorBrush brush) {
-				_topWindowBar.Foreground = brush;
-			}
+			bool isActive = args.WindowActivationState != WindowActivationState.Deactivated;
+			_backdropConfig.IsInputActive = isActive;
+			_topWindowBar.RefreshForeground(isActive);
 		}
 
 		private void OnThemeChanged(FrameworkElement sender, object args) {
 			UpdateConfigTheme();
-			UpdateTitleBarForeground();
+			_topWindowBar.RefreshForeground();
 		}
 
 		private void OnClosed(object sender, WindowEventArgs args) {
