@@ -6,6 +6,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="Root"
+    Foreground="{x:Bind Foreground, Mode=OneWay}"
+    Loaded="AppTitleBar_Loaded"
+    SizeChanged="AppTitleBar_SizeChanged"
+    Unloaded="AppTitleBar_Unloaded"
     mc:Ignorable="d">
 
 
@@ -26,15 +30,16 @@
             Grid.Column="1"
             Width="32"
             Height="28"
+            Margin="-1.5,0,0,0"
             Padding="1"
             Background="Transparent"
             BorderBrush="Transparent"
-            Foreground="{x:Bind Foreground}"
+            CornerRadius="6"
             Visibility="Collapsed">
 
             <SymbolIcon
                 x:Name="TitleBarButtonIcon"
-                Foreground="{x:Bind Foreground}"
+                Foreground="{x:Bind Foreground, Mode=OneWay}"
                 Symbol="Delete" />
         </Button>
         <TextBlock
@@ -42,7 +47,6 @@
             Grid.Column="2"
             Padding="4,0,0,0"
             VerticalAlignment="Center"
-            Foreground="{x:Bind Foreground}"
             Style="{StaticResource CaptionTextBlockStyle}"
             Text="TEXT" />
 

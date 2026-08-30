@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
+using System.Diagnostics;
 using Windows.Foundation;
 using Windows.Graphics;
 
@@ -19,30 +20,31 @@ internal sealed partial class TitleBar : UserControl {
 
 	public TitleBar(object windowKey) {
 		InitializeComponent();
-		this.Loaded += AppTitleBar_Loaded;
-		this.SizeChanged += AppTitleBar_SizeChanged;
-		this.Unloaded += AppTitleBar_Unloaded;
+		this.windowKey = windowKey;
 		EasyWindows.WindowOptions options = EasyWindows.GetWindowOptions(windowKey);
 		this.TitleBarTextBlock.Text = options.Title;
+
+		// initialize button
 		if (options.Button is { } button) {
 			this.TitleBarButton.Visibility = Visibility.Visible;
 			this.TitleBarButtonIcon.Symbol = button.Icon;
 			this.TitleBarButton.Click += button.Action;
-		} else {
+		}
+		else {
 			this.TitleBarButton.Visibility = Visibility.Collapsed;
 		}
-		this.windowKey = windowKey;
 	}
 
 	internal void RefreshForeground(bool? isActive = null) {
-		if (isActive is { } active) {
-			_isActive = active;
+		Debug.WriteLine($"TitleBar.RefreshForeground called with isActive={isActive}");
+		if (isActive != null) {
+			_isActive = (bool)isActive;
 		}
 
 		string resourceKey = _isActive
 			? "WindowCaptionForeground"
 			: "WindowCaptionForegroundDisabled";
-
+		Debug.WriteLine($"TitleBar.RefreshForeground: Using resource key '{resourceKey}'");
 		if (Application.Current?.Resources[resourceKey] is SolidColorBrush brush) {
 			Foreground = brush;
 		}
@@ -50,6 +52,11 @@ internal sealed partial class TitleBar : UserControl {
 
 	private void AppTitleBar_Loaded(object sender, RoutedEventArgs e) {
 		SetRegionsForCustomTitleBar();
+	}
+	private void AppTitleBar_Unloaded(object sender, RoutedEventArgs e) {
+		if (EasyWindows.GetWindowOptions(windowKey).Button is { } button) {
+			this.TitleBarButton.Click -= button.Action;
+		}
 	}
 
 	private void AppTitleBar_SizeChanged(object sender, SizeChangedEventArgs e) {
@@ -84,14 +91,6 @@ internal sealed partial class TitleBar : UserControl {
 			InputNonClientPointerSource.GetForWindowId(appWindow.Id);
 		nonClientInputSrc.SetRegionRects(NonClientRegionKind.Passthrough, rectArray);
 
-	}
-	private void AppTitleBar_Unloaded(object sender, RoutedEventArgs e) {
-		this.Loaded -= AppTitleBar_Loaded;
-		this.SizeChanged -= AppTitleBar_SizeChanged;
-		this.Unloaded -= AppTitleBar_Unloaded;
-		if (EasyWindows.GetWindowOptions(windowKey).Button is { } button) {
-			this.TitleBarButton.Click -= button.Action;
-		}
 	}
 
 	private static RectInt32 GetRect(Rect bounds, double scale) {
