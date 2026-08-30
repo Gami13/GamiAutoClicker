@@ -22,13 +22,19 @@ public static partial class EasyWindows {
 
 	private static Dictionary<object, WindowController> WindowControllers { get; } = new();
 	private static Dictionary<object, WindowOptions> WindowConfigs { get; } = new();
-	private static bool HasCapturedSystemBackdropDefaults { get; set; }
-	private static bool HasCustomBackdropValues { get; set; }
+	private static BackdropValueSource BackdropValues { get; set; }
+
+	private enum BackdropValueSource {
+		Uninitialized,
+		SystemDefaults,
+		Custom
+	}
 
 	[SuppressMessage("Design", "CA1515:Consider making public types internal", Justification = "Will be extracted to separate package")]
 	public static event EventHandler? ThemeChanged;
 
 	public static void RegisterWindow(object key, WindowOptions options) {
+		ArgumentNullException.ThrowIfNull(key);
 		ArgumentNullException.ThrowIfNull(options);
 
 		if (!WindowConfigs.TryAdd(key, options)) {
@@ -63,17 +69,23 @@ public static partial class EasyWindows {
 	}
 
 	private static void CaptureSystemBackdropDefaults(bool force = false) {
-		if (HasCapturedSystemBackdropDefaults && !force) return;
+		if (BackdropValues != BackdropValueSource.Uninitialized && !force) return;
 
 		foreach (var window in WindowControllers.Values) {
 			if (window.TryCaptureBackdropDefaults()) {
-				HasCapturedSystemBackdropDefaults = true;
-				return;
+				BackdropValues = BackdropValueSource.SystemDefaults;
+				break;
 			}
 		}
 	}
 
 	private static void NotifyThemeChanged() => ThemeChanged?.Invoke(null, EventArgs.Empty);
+
+	private static void EnsureOpacityInRange(float opacity, string parameterName) {
+		if (opacity is < 0.0f or > 1.0f) {
+			throw new ArgumentOutOfRangeException(parameterName, opacity, "Opacity must be between 0 and 1.");
+		}
+	}
 
 	public static void CreateWindow(object key) {
 		if (!WindowConfigs.TryGetValue(key, out var options)) {
@@ -81,7 +93,7 @@ public static partial class EasyWindows {
 		}
 		if (WindowControllers.TryGetValue(key, out var controller)) {
 			controller.Window.Activate();
-			GetAppWindow(key).MoveInZOrderAtTop();
+			controller.Window.AppWindow.MoveInZOrderAtTop();
 			return;
 		}
 
@@ -93,7 +105,11 @@ public static partial class EasyWindows {
 	}
 
 	public static void SetOverrides(bool state) {
-		if (state && !HasCustomBackdropValues) {
+		if (state == Theme.shouldOverride) {
+			return;
+		}
+
+		if (state && BackdropValues != BackdropValueSource.Custom) {
 			CaptureSystemBackdropDefaults(force: true);
 		}
 
@@ -103,41 +119,74 @@ public static partial class EasyWindows {
 	}
 
 	public static void SetBackdropMaterial(BackdropMaterial material) {
+		if (!Enum.IsDefined(material)) {
+			throw new ArgumentOutOfRangeException(nameof(material));
+		}
+
+		if (material == Theme.backdropMaterial) {
+			return;
+		}
+
 		Theme.backdropMaterial = material;
-		ApplyToAllWindowControllers(theme => theme.CreateAdapter());
+		ApplyToAllWindowControllers(window => window.CreateAdapter());
 		NotifyThemeChanged();
 	}
 
 	public static void SetTheme(SystemBackdropTheme theme) {
+		if (!Enum.IsDefined(theme)) {
+			throw new ArgumentOutOfRangeException(nameof(theme));
+		}
+
+		if (theme == Theme.theme) {
+			return;
+		}
+
 		Theme.theme = theme;
 		ApplyToAllWindowControllers(window => window.SetTheme());
 		NotifyThemeChanged();
 	}
 
 	public static void SetFallbackColor(Color color) {
+		if (color == Theme.fallbackColor) {
+			return;
+		}
+
 		Theme.fallbackColor = color;
-		HasCustomBackdropValues = true;
+		BackdropValues = BackdropValueSource.Custom;
 		ApplyToAllWindowControllers(window => UpdateAdapter(window, adapter => adapter.FallbackColor = color));
 		NotifyThemeChanged();
 	}
 
 	public static void SetTintColor(Color color) {
+		if (color == Theme.tintColor) {
+			return;
+		}
+
 		Theme.tintColor = color;
-		HasCustomBackdropValues = true;
-		ApplyToAllWindowControllers(window => UpdateAdapter(window, adapter => adapter.TintColor = color));
-		NotifyThemeChanged();
+		BackdropValues = BackdropValueSource.Custom;
+		ApplyToAllWindowControllers(window => UpdateAdapter(window, adapter => adapter.TintColor = color)); NotifyThemeChanged();
 	}
 
 	public static void SetTintOpacity(float opacity) {
+		EnsureOpacityInRange(opacity, nameof(opacity));
+		if (opacity == Theme.tintOpacity) {
+			return;
+		}
+
 		Theme.tintOpacity = opacity;
-		HasCustomBackdropValues = true;
+		BackdropValues = BackdropValueSource.Custom;
 		ApplyToAllWindowControllers(window => UpdateAdapter(window, adapter => adapter.TintOpacity = opacity));
 		NotifyThemeChanged();
 	}
 
 	public static void SetLuminosityOpacity(float opacity) {
+		EnsureOpacityInRange(opacity, nameof(opacity));
+		if (opacity == Theme.luminosityOpacity) {
+			return;
+		}
+
 		Theme.luminosityOpacity = opacity;
-		HasCustomBackdropValues = true;
+		BackdropValues = BackdropValueSource.Custom;
 		ApplyToAllWindowControllers(window => UpdateAdapter(window, adapter => adapter.LuminosityOpacity = opacity));
 		NotifyThemeChanged();
 	}
@@ -146,13 +195,18 @@ public static partial class EasyWindows {
 		Theme.backdropMaterial = BackdropMaterial.Acrylic;
 		Theme.theme = SystemBackdropTheme.Default;
 		Theme.shouldOverride = false;
-		HasCustomBackdropValues = false;
+		// Theme.fallbackColor = new Color { A = byte.MaxValue, R = byte.MaxValue, G = byte.MaxValue, B = byte.MaxValue };
+		// Theme.tintColor = new Color { A = byte.MaxValue, R = byte.MaxValue, G = byte.MaxValue, B = byte.MaxValue };
+		// Theme.tintOpacity = 0.0f;
+		// Theme.luminosityOpacity = 0.0f;
+		BackdropValues = BackdropValueSource.Uninitialized;
 
 		ApplyToAllWindowControllers(window => {
 			window.SetTheme();
 			window.CreateAdapter();
 		});
 		CaptureSystemBackdropDefaults(force: true);
+
 		NotifyThemeChanged();
 	}
 }

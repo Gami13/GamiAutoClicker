@@ -5,7 +5,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    x:Name="Root"
     Foreground="{x:Bind Foreground, Mode=OneWay}"
     Loaded="AppTitleBar_Loaded"
     SizeChanged="AppTitleBar_SizeChanged"
@@ -19,12 +18,11 @@
         ColumnSpacing="2">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="LeftPaddingColumn" Width="0" />
-            <ColumnDefinition x:Name="IconColumn" Width="Auto" />
-            <ColumnDefinition x:Name="TitleColumn" Width="Auto" />
-            <ColumnDefinition x:Name="DragColumn" Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
             <ColumnDefinition x:Name="RightPaddingColumn" Width="0" />
         </Grid.ColumnDefinitions>
-        <!--<FontIcon  x:Name="TitleBarIcon" FontFamily="Segoe Fluent Icons" Glyph="&#xE962;" Grid.Column="1"/>-->
         <Button
             x:Name="TitleBarButton"
             Grid.Column="1"
@@ -48,7 +46,7 @@
             Padding="4,0,0,0"
             VerticalAlignment="Center"
             Style="{StaticResource CaptionTextBlockStyle}"
-            Text="TEXT" />
+            />
 
 
     </Grid>

@@ -3,6 +3,7 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Windows.Graphics;
 using Windows.UI;
 
@@ -17,11 +18,13 @@ public static partial class EasyWindows {
 		AcrylicThin
 	}
 
+	[SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "Consumers intentionally use the cohesive EasyWindows.ButtonOptions API.")]
 	public sealed class ButtonOptions {
 		public required Symbol Icon { get; init; }
 		public required RoutedEventHandler Action { get; init; }
 	}
 
+	[SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "Consumers intentionally use the cohesive EasyWindows.ThemeSettings API.")]
 	public record ThemeSettings {
 		public BackdropMaterial backdropMaterial { get; set; }
 		public SystemBackdropTheme theme { get; set; }
@@ -34,6 +37,7 @@ public static partial class EasyWindows {
 	}
 
 
+	[SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "Consumers intentionally use the cohesive EasyWindows.WindowOptions API.")]
 	public sealed class WindowOptions {
 		public required Func<Window> Factory { get; init; }
 		public required string Title { get; init; }

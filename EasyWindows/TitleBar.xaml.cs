@@ -5,7 +5,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
 using System;
-using System.Diagnostics;
 using Windows.Foundation;
 using Windows.Graphics;
 
@@ -24,19 +23,14 @@ internal sealed partial class TitleBar : UserControl {
 		EasyWindows.WindowOptions options = EasyWindows.GetWindowOptions(windowKey);
 		this.TitleBarTextBlock.Text = options.Title;
 
-		// initialize button
 		if (options.Button is { } button) {
 			this.TitleBarButton.Visibility = Visibility.Visible;
 			this.TitleBarButtonIcon.Symbol = button.Icon;
 			this.TitleBarButton.Click += button.Action;
 		}
-		else {
-			this.TitleBarButton.Visibility = Visibility.Collapsed;
-		}
 	}
 
 	internal void RefreshForeground(bool? isActive = null) {
-		Debug.WriteLine($"TitleBar.RefreshForeground called with isActive={isActive}");
 		if (isActive != null) {
 			_isActive = (bool)isActive;
 		}
@@ -44,7 +38,6 @@ internal sealed partial class TitleBar : UserControl {
 		string resourceKey = _isActive
 			? "WindowCaptionForeground"
 			: "WindowCaptionForegroundDisabled";
-		Debug.WriteLine($"TitleBar.RefreshForeground: Using resource key '{resourceKey}'");
 		if (Application.Current?.Resources[resourceKey] is SolidColorBrush brush) {
 			Foreground = brush;
 		}

@@ -21,18 +21,10 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 	private sealed class TargetState(
 		DesktopAcrylicController controller,
 		SystemBackdropConfiguration configuration,
-		DesktopAcrylicKind kind,
-		bool hasAppliedOverrides) : IDisposable {
+		DesktopAcrylicKind kind) {
 		public DesktopAcrylicController Controller { get; set; } = controller;
 		public SystemBackdropConfiguration Configuration { get; set; } = configuration;
 		public DesktopAcrylicKind Kind { get; set; } = kind;
-		// When overrides are disabled, the controller must be recreated to restore
-		// the system defaults. This flag records whether that recreation is needed.
-		public bool HasAppliedOverrides { get; set; } = hasAppliedOverrides;
-
-		public void Dispose() {
-			Controller.Dispose();
-		}
 	}
 
 	private readonly Dictionary<ICompositionSupportsSystemBackdrop, TargetState> _targets = new();
@@ -53,7 +45,7 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 		var kind = GetFlyoutAcrylicKind(EasyWindows.Theme);
 		var controller = BackdropHelper.CreateAcrylicController(kind, config, connectedTarget, EasyWindows.Theme);
 
-		_targets[connectedTarget] = new TargetState(controller, config, kind, EasyWindows.Theme.shouldOverride);
+		_targets[connectedTarget] = new TargetState(controller, config, kind);
 
 		if (_targets.Count == 1) {
 			// Subscribe only while at least one target exists; this prevents this
@@ -69,7 +61,7 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 
 		if (_targets.Remove(disconnectedTarget, out var state)) {
 			state.Controller.RemoveSystemBackdropTarget(disconnectedTarget);
-			state.Dispose();
+			state.Controller.Dispose();
 		}
 
 		if (_targets.Count == 0) {
@@ -102,18 +94,19 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 			UpdateConfigurationTheme(state.Configuration, theme);
 			state.Controller.SetSystemBackdropConfiguration(state.Configuration);
 
-			if (state.Kind != requiredKind || (state.HasAppliedOverrides && !theme.shouldOverride)) {
+			if (state.Kind != requiredKind) {
 				state.Controller.RemoveSystemBackdropTarget(target);
 				state.Controller.Dispose();
 
 				var newController = BackdropHelper.CreateAcrylicController(requiredKind, state.Configuration, target, theme);
 				state.Controller = newController;
 				state.Kind = requiredKind;
-				state.HasAppliedOverrides = theme.shouldOverride;
 			}
 			else if (theme.shouldOverride) {
 				BackdropHelper.ApplyOverrides(state.Controller, theme);
-				state.HasAppliedOverrides = true;
+			}
+			else {
+				state.Controller.ResetProperties();
 			}
 		}
 	}
