@@ -20,7 +20,7 @@ public static partial class EasyWindows {
 		luminosityOpacity = 0.0f
 	};
 
-	private static Dictionary<object, WindowController> Windows { get; } = new();
+	private static Dictionary<object, WindowController> WindowControllers { get; } = new();
 	private static Dictionary<object, WindowOptions> WindowConfigs { get; } = new();
 	private static bool HasCapturedSystemBackdropDefaults { get; set; }
 	private static bool HasCustomBackdropValues { get; set; }
@@ -36,10 +36,10 @@ public static partial class EasyWindows {
 		}
 	}
 
-	internal static bool IsWindowOpen(object key) => Windows.ContainsKey(key);
+	internal static bool IsWindowOpen(object key) => WindowControllers.ContainsKey(key);
 
 	internal static AppWindow GetAppWindow(object key) {
-		var window = Windows.TryGetValue(key, out var controller) ? controller.Window : null;
+		var window = WindowControllers.TryGetValue(key, out var controller) ? controller.Window : null;
 		if (window == null) throw new InvalidOperationException($"Window {key} not created.");
 		return window.AppWindow;
 	}
@@ -50,8 +50,8 @@ public static partial class EasyWindows {
 		return options;
 	}
 
-	private static void ApplyToAllWindows(Action<WindowController> action) {
-		foreach (var controller in Windows.Values) action(controller);
+	private static void ApplyToAllWindowControllers(Action<WindowController> action) {
+		foreach (var controller in WindowControllers.Values) action(controller);
 	}
 
 	private static void UpdateAdapter(
@@ -65,7 +65,7 @@ public static partial class EasyWindows {
 	private static void CaptureSystemBackdropDefaults(bool force = false) {
 		if (HasCapturedSystemBackdropDefaults && !force) return;
 
-		foreach (var window in Windows.Values) {
+		foreach (var window in WindowControllers.Values) {
 			if (window.TryCaptureBackdropDefaults()) {
 				HasCapturedSystemBackdropDefaults = true;
 				return;
@@ -79,7 +79,7 @@ public static partial class EasyWindows {
 		if (!WindowConfigs.TryGetValue(key, out var options)) {
 			throw new ArgumentException($"WindowOptions for {key} not found.");
 		}
-		if (Windows.TryGetValue(key, out var controller)) {
+		if (WindowControllers.TryGetValue(key, out var controller)) {
 			controller.Window.Activate();
 			GetAppWindow(key).MoveInZOrderAtTop();
 			return;
@@ -98,47 +98,47 @@ public static partial class EasyWindows {
 		}
 
 		Theme.shouldOverride = state;
-		ApplyToAllWindows(theme => theme.SetOverrides());
+		ApplyToAllWindowControllers(theme => theme.SetOverrides());
 		NotifyThemeChanged();
 	}
 
 	public static void SetBackdropMaterial(BackdropMaterial material) {
 		Theme.backdropMaterial = material;
-		ApplyToAllWindows(theme => theme.CreateAdapter());
+		ApplyToAllWindowControllers(theme => theme.CreateAdapter());
 		NotifyThemeChanged();
 	}
 
 	public static void SetTheme(SystemBackdropTheme theme) {
 		Theme.theme = theme;
-		ApplyToAllWindows(window => window.SetTheme());
+		ApplyToAllWindowControllers(window => window.SetTheme());
 		NotifyThemeChanged();
 	}
 
 	public static void SetFallbackColor(Color color) {
 		Theme.fallbackColor = color;
 		HasCustomBackdropValues = true;
-		ApplyToAllWindows(window => UpdateAdapter(window, adapter => adapter.FallbackColor = color));
+		ApplyToAllWindowControllers(window => UpdateAdapter(window, adapter => adapter.FallbackColor = color));
 		NotifyThemeChanged();
 	}
 
 	public static void SetTintColor(Color color) {
 		Theme.tintColor = color;
 		HasCustomBackdropValues = true;
-		ApplyToAllWindows(window => UpdateAdapter(window, adapter => adapter.TintColor = color));
+		ApplyToAllWindowControllers(window => UpdateAdapter(window, adapter => adapter.TintColor = color));
 		NotifyThemeChanged();
 	}
 
 	public static void SetTintOpacity(float opacity) {
 		Theme.tintOpacity = opacity;
 		HasCustomBackdropValues = true;
-		ApplyToAllWindows(window => UpdateAdapter(window, adapter => adapter.TintOpacity = opacity));
+		ApplyToAllWindowControllers(window => UpdateAdapter(window, adapter => adapter.TintOpacity = opacity));
 		NotifyThemeChanged();
 	}
 
 	public static void SetLuminosityOpacity(float opacity) {
 		Theme.luminosityOpacity = opacity;
 		HasCustomBackdropValues = true;
-		ApplyToAllWindows(window => UpdateAdapter(window, adapter => adapter.LuminosityOpacity = opacity));
+		ApplyToAllWindowControllers(window => UpdateAdapter(window, adapter => adapter.LuminosityOpacity = opacity));
 		NotifyThemeChanged();
 	}
 
@@ -148,7 +148,7 @@ public static partial class EasyWindows {
 		Theme.shouldOverride = false;
 		HasCustomBackdropValues = false;
 
-		ApplyToAllWindows(window => {
+		ApplyToAllWindowControllers(window => {
 			window.SetTheme();
 			window.CreateAdapter();
 		});

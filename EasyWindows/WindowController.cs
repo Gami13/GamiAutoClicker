@@ -27,7 +27,7 @@ public static partial class EasyWindows {
 
 		internal static WindowController Register(Microsoft.UI.Xaml.Window window, object windowKey) {
 			var controller = new WindowController(window, windowKey);
-			Windows[windowKey] = controller;
+			WindowControllers[windowKey] = controller;
 			return controller;
 		}
 
@@ -71,6 +71,7 @@ public static partial class EasyWindows {
 			}
 
 			window.Activated += OnActivated;
+			
 			window.Closed += OnClosed;
 
 			root.ActualThemeChanged += OnThemeChanged;
@@ -206,7 +207,7 @@ public static partial class EasyWindows {
 			Adapter?.Dispose();
 			Adapter = null;
 
-			Windows.Remove(_windowKey);
+			WindowControllers.Remove(_windowKey);
 		}
 	}
 }
