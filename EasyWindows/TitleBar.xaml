@@ -45,8 +45,7 @@
             Grid.Column="2"
             Padding="4,0,0,0"
             VerticalAlignment="Center"
-            Style="{StaticResource CaptionTextBlockStyle}"
-            />
+            Style="{StaticResource CaptionTextBlockStyle}" />
 
 
     </Grid>
