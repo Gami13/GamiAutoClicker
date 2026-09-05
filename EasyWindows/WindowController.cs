@@ -148,18 +148,20 @@ public static partial class EasyWindows {
 					ElementTheme.Light => SystemBackdropTheme.Light,
 					_ => SystemBackdropTheme.Default
 				};
+				Window.AppWindow.TitleBar.PreferredTheme = root.ActualTheme == ElementTheme.Dark
+					? TitleBarTheme.Dark
+					: TitleBarTheme.Light;
 			}
 		}
 
 		private void OnActivated(object sender, WindowActivatedEventArgs args) {
 			bool isActive = args.WindowActivationState != WindowActivationState.Deactivated;
 			_backdropConfig.IsInputActive = isActive;
-			_topWindowBar.RefreshForeground(isActive);
+			_topWindowBar.SetActive(isActive);
 		}
 
 		private void OnThemeChanged(FrameworkElement sender, object args) {
 			SetTheme();
-			_topWindowBar.RefreshForeground();
 		}
 
 		private void OnClosed(object sender, WindowEventArgs args) {

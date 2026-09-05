@@ -15,7 +15,6 @@ namespace Gami;
 
 internal sealed partial class TitleBar : UserControl {
 	private readonly object windowKey;
-	private bool _isActive = true;
 
 	public TitleBar(object windowKey) {
 		InitializeComponent();
@@ -30,17 +29,8 @@ internal sealed partial class TitleBar : UserControl {
 		}
 	}
 
-	internal void RefreshForeground(bool? isActive = null) {
-		if (isActive != null) {
-			_isActive = (bool)isActive;
-		}
-
-		string resourceKey = _isActive
-			? "WindowCaptionForeground"
-			: "WindowCaptionForegroundDisabled";
-		if (Application.Current?.Resources[resourceKey] is SolidColorBrush brush) {
-			Foreground = brush;
-		}
+	internal void SetActive(bool isActive) {
+		VisualStateManager.GoToState(this, isActive ? "Active" : "Inactive", false);
 	}
 	[System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Bound via XAML")]
 	private void AppTitleBar_Loaded(object _, RoutedEventArgs __) {

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <UserControl
     x:Class="Gami.TitleBar"
+    x:Name="TitleBarControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Foreground="{x:Bind Foreground, Mode=OneWay}"
+    Foreground="{ThemeResource WindowCaptionForeground}"
     Loaded="AppTitleBar_Loaded"
     SizeChanged="AppTitleBar_SizeChanged"
     Unloaded="AppTitleBar_Unloaded"
@@ -16,6 +17,16 @@
         x:Name="AppTitleBar"
         Height="32"
         ColumnSpacing="2">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ActivationStates">
+                <VisualState x:Name="Active" />
+                <VisualState x:Name="Inactive">
+                    <VisualState.Setters>
+                        <Setter Target="TitleBarControl.Foreground" Value="{ThemeResource WindowCaptionForegroundDisabled}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="LeftPaddingColumn" Width="0" />
             <ColumnDefinition Width="Auto" />
