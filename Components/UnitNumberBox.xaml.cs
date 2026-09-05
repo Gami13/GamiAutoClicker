@@ -108,9 +108,9 @@ public sealed partial class UnitNumberBox : UserControl
 
 	private static void OnDisplayPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 	{
-		if (d is UnitNumberBox control)
+		if (d is UnitNumberBox control && !control._isUpdatingDisplay)
 		{
-			control.UpdateDisplay();
+			control.UpdateDisplay(e.Property);
 		}
 	}
 
@@ -127,21 +127,39 @@ public sealed partial class UnitNumberBox : UserControl
 		RemoveClearButton(InputNumberBox);
 	}
 
-	private void UpdateDisplay()
+	private void UpdateDisplay(DependencyProperty? property = null)
 	{
 		if (InputNumberBox is null || UnitTextBlock is null) return;
 
-		int decimalPlaces = Math.Max(DecimalPlaces, 0);
 		_isUpdatingDisplay = true;
 		try
 		{
-			InputNumberBox.Minimum = Minimum;
-			InputNumberBox.Maximum = Maximum;
-			InputNumberBox.SmallChange = SmallChange;
-			_numberFormatter.FractionDigits = decimalPlaces;
-			InputNumberBox.NumberFormatter = _numberFormatter;
-			InputNumberBox.Value = Math.Round(Value, decimalPlaces, MidpointRounding.AwayFromZero);
-			UnitTextBlock.Text = Unit;
+			if (property is null || property == MinimumProperty)
+				InputNumberBox.Minimum = Minimum;
+			if (property is null || property == MaximumProperty)
+				InputNumberBox.Maximum = Maximum;
+			if (property is null || property == SmallChangeProperty)
+				InputNumberBox.SmallChange = SmallChange;
+			if (property is null || property == UnitProperty)
+				UnitTextBlock.Text = Unit;
+
+			if (property is null || property == DecimalPlacesProperty)
+			{
+				_numberFormatter.FractionDigits = Math.Clamp(DecimalPlaces, 0, 15);
+				InputNumberBox.NumberFormatter = _numberFormatter;
+			}
+
+			if (property is null || property == MinimumProperty || property == MaximumProperty)
+			{
+				// Range changes can change the value; display rounding must not.
+				Value = Math.Clamp(Value, InputNumberBox.Minimum, InputNumberBox.Maximum);
+			}
+
+			if (property is null || property == ValueProperty || property == DecimalPlacesProperty
+				|| property == MinimumProperty || property == MaximumProperty)
+			{
+				InputNumberBox.Value = Math.Round(Value, Math.Clamp(DecimalPlaces, 0, 15), MidpointRounding.AwayFromZero);
+			}
 		}
 		finally
 		{
