@@ -55,10 +55,10 @@
                     Grid.Row="1"
                     Grid.Column="1"
                     Width="170"
-                    DecimalPlaces="2"
+                    DecimalPlaces="3"
                     Maximum="1000"
-                    Minimum="0.01"
-                    SmallChange="0.01"
+                    Minimum="0.001"
+                    SmallChange="0.001"
                     Unit="CPS"
                     ValueChanged="OnCpsValueChanged" />
             </Grid>

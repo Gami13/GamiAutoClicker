@@ -9,10 +9,8 @@ namespace GamiAutoClicker;
 public sealed partial class MainWindow : Window
 {
 	private const double InitialDelayMilliseconds = 100d;
-	private const int FrequencyDecimalPlaces = 2;
 	private bool _isSynchronizingTiming;
 	private double _delayMilliseconds = InitialDelayMilliseconds;
-	private double _cps = 1000d / InitialDelayMilliseconds;
 
 	public MainWindow()
 	{
@@ -30,7 +28,6 @@ public sealed partial class MainWindow : Window
 		if (!double.IsFinite(delay) || delay <= 0) return;
 
 		_delayMilliseconds = delay;
-		_cps = 1000d / delay;
 
 		SyncTimingInputs(updateDelayBox: false, updateCpsBox: true);
 	}
@@ -42,7 +39,6 @@ public sealed partial class MainWindow : Window
 		double cps = Math.Clamp(args.NewValue, CpsNumberBox.Minimum, CpsNumberBox.Maximum);
 		if (!double.IsFinite(cps) || cps <= 0) return;
 
-		_cps = cps;
 		_delayMilliseconds = 1000d / cps;
 
 		SyncTimingInputs(updateDelayBox: true, updateCpsBox: false);
@@ -60,12 +56,13 @@ public sealed partial class MainWindow : Window
 		{
 			if (updateDelayBox)
 			{
-				DelayNumberBox.Value = Math.Round(_delayMilliseconds, MidpointRounding.AwayFromZero);
+				DelayNumberBox.Value = _delayMilliseconds;
 			}
 
 			if (updateCpsBox)
 			{
-				CpsNumberBox.Value = Math.Round(_cps, FrequencyDecimalPlaces, MidpointRounding.AwayFromZero);
+				// UnitNumberBox rounds only its display; retain the exact reciprocal here.
+				CpsNumberBox.Value = 1000d / _delayMilliseconds;
 			}
 		}
 		finally
