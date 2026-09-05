@@ -12,7 +12,7 @@ using System.Diagnostics;
 
 namespace GamiAutoClicker.Components;
 
-public sealed partial class ColorPickerFlyoutButton : UserControl {
+internal sealed partial class ColorPickerFlyoutButton : UserControl {
 	private readonly SolidColorBrush _colorDisplayBrush = new();
 	private ElementTheme? _flyoutTheme;
 
@@ -74,7 +74,7 @@ public sealed partial class ColorPickerFlyoutButton : UserControl {
 
 	private void UpdateFlyoutTheme() {
 		Debug.WriteLine("UpdateFlyoutTheme");
-		var elementTheme = EasyWindows.Theme.theme switch {
+		var elementTheme = EasyWindows.Theme.Theme switch {
 			Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light => ElementTheme.Light,
 			Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark => ElementTheme.Dark,
 			_ => ElementTheme.Default

@@ -102,7 +102,7 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 				state.Controller = newController;
 				state.Kind = requiredKind;
 			}
-			else if (theme.shouldOverride) {
+			else if (theme.ShouldOverride) {
 				BackdropHelper.ApplyOverrides(state.Controller, theme);
 			}
 			else {
@@ -112,12 +112,12 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 	}
 
 	private static void UpdateConfigurationTheme(SystemBackdropConfiguration config, EasyWindows.ThemeSettings theme) =>
-		config.Theme = theme.theme;
+		config.Theme = theme.Theme;
 
 	// Flyouts use Acrylic even when windows use Mica. Only the Acrylic variant
 	// (Base versus Thin) is selected from the global backdrop setting.
 	private static DesktopAcrylicKind GetFlyoutAcrylicKind(EasyWindows.ThemeSettings theme) =>
-		theme.backdropMaterial == EasyWindows.BackdropMaterial.AcrylicThin
+		theme.BackdropMaterial == EasyWindows.BackdropMaterial.AcrylicThin
 			? DesktopAcrylicKind.Thin
 			: DesktopAcrylicKind.Base;
 }

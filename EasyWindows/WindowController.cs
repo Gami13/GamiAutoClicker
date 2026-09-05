@@ -69,7 +69,7 @@ public static partial class EasyWindows {
 			}
 
 			window.Activated += OnActivated;
-			
+
 			window.Closed += OnClosed;
 
 			root.ActualThemeChanged += OnThemeChanged;
@@ -92,7 +92,8 @@ public static partial class EasyWindows {
 			if (content is not null) {
 				if (content is FrameworkElement frameworkElement) {
 					Grid.SetRow(frameworkElement, 1);
-				} else {
+				}
+				else {
 					content.SetValue(Grid.RowProperty, 1);
 				}
 				root.Children.Add(content);
@@ -105,7 +106,7 @@ public static partial class EasyWindows {
 		}
 
 		public void CreateAdapter() {
-			IBackdropAdapter? replacement = Theme.backdropMaterial switch {
+			IBackdropAdapter? replacement = Theme.BackdropMaterial switch {
 				BackdropMaterial.Mica when MicaController.IsSupported() => new MicaAdapter(Window, _backdropConfig, MicaKind.Base),
 				BackdropMaterial.MicaAlt when MicaController.IsSupported() => new MicaAdapter(Window, _backdropConfig, MicaKind.BaseAlt),
 				BackdropMaterial.Acrylic when DesktopAcrylicController.IsSupported() => new AcrylicAdapter(Window, _backdropConfig, DesktopAcrylicKind.Base),
@@ -125,16 +126,16 @@ public static partial class EasyWindows {
 		internal bool TryCaptureBackdropDefaults() {
 			if (Adapter is not { } adapter) return false;
 
-			Theme.fallbackColor = adapter.FallbackColor;
-			Theme.tintColor = adapter.TintColor;
-			Theme.tintOpacity = adapter.TintOpacity;
-			Theme.luminosityOpacity = adapter.LuminosityOpacity;
+			Theme.FallbackColor = adapter.FallbackColor;
+			Theme.TintColor = adapter.TintColor;
+			Theme.TintOpacity = adapter.TintOpacity;
+			Theme.LuminosityOpacity = adapter.LuminosityOpacity;
 			return true;
 		}
 
 		public void SetTheme() {
 			if (Window.Content is FrameworkElement root) {
-				var requestedTheme = Theme.theme switch {
+				var requestedTheme = Theme.Theme switch {
 					SystemBackdropTheme.Light => ElementTheme.Light,
 					SystemBackdropTheme.Dark => ElementTheme.Dark,
 					_ => ElementTheme.Default

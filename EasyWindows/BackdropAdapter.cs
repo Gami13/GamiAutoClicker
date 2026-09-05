@@ -32,37 +32,37 @@ internal static class BackdropHelper {
 	}
 
 	internal static void ApplyOverrides(MicaController controller, EasyWindows.ThemeSettings theme) {
-		if (!theme.shouldOverride) return;
+		if (!theme.ShouldOverride) return;
 
-		if (controller.FallbackColor != theme.fallbackColor) {
-			controller.FallbackColor = theme.fallbackColor;
+		if (controller.FallbackColor != theme.FallbackColor) {
+			controller.FallbackColor = theme.FallbackColor;
 		}
-		if (controller.TintColor != theme.tintColor) {
-			controller.TintColor = theme.tintColor;
+		if (controller.TintColor != theme.TintColor) {
+			controller.TintColor = theme.TintColor;
 		}
-		if (Math.Abs(controller.TintOpacity - theme.tintOpacity) > 0.001f) {
-			controller.TintOpacity = theme.tintOpacity;
+		if (Math.Abs(controller.TintOpacity - theme.TintOpacity) > 0.001f) {
+			controller.TintOpacity = theme.TintOpacity;
 		}
-		if (Math.Abs(controller.LuminosityOpacity - theme.luminosityOpacity) > 0.001f) {
-			controller.LuminosityOpacity = theme.luminosityOpacity;
+		if (Math.Abs(controller.LuminosityOpacity - theme.LuminosityOpacity) > 0.001f) {
+			controller.LuminosityOpacity = theme.LuminosityOpacity;
 		}
 	}
 
 	internal static void ApplyOverrides(DesktopAcrylicController controller, EasyWindows.ThemeSettings theme) {
-		if (!theme.shouldOverride) return;
+		if (!theme.ShouldOverride) return;
 
-		if (controller.FallbackColor != theme.fallbackColor) {
-			controller.FallbackColor = theme.fallbackColor;
+		if (controller.FallbackColor != theme.FallbackColor) {
+			controller.FallbackColor = theme.FallbackColor;
 		}
-		if (controller.TintColor != theme.tintColor) {
-			controller.TintColor = theme.tintColor;
+		if (controller.TintColor != theme.TintColor) {
+			controller.TintColor = theme.TintColor;
 		}
-		if (Math.Abs(controller.TintOpacity - theme.tintOpacity) > 0.001f) {
-			controller.TintOpacity = theme.tintOpacity;
+		if (Math.Abs(controller.TintOpacity - theme.TintOpacity) > 0.001f) {
+			controller.TintOpacity = theme.TintOpacity;
 			RefreshTint(controller.TintColor, value => controller.TintColor = value);
 		}
-		if (Math.Abs(controller.LuminosityOpacity - theme.luminosityOpacity) > 0.001f) {
-			controller.LuminosityOpacity = theme.luminosityOpacity;
+		if (Math.Abs(controller.LuminosityOpacity - theme.LuminosityOpacity) > 0.001f) {
+			controller.LuminosityOpacity = theme.LuminosityOpacity;
 		}
 	}
 
@@ -101,7 +101,7 @@ internal sealed class MicaAdapter : IBackdropAdapter {
 	public float TintOpacity {
 		get => _controller.TintOpacity;
 		set {
-			if (!EasyWindows.Theme.shouldOverride) return;
+			if (!EasyWindows.Theme.ShouldOverride) return;
 
 			_controller.TintOpacity = value;
 			BackdropHelper.RefreshTint(_controller.TintColor, color => _controller.TintColor = color);
@@ -140,7 +140,7 @@ internal sealed class AcrylicAdapter : IBackdropAdapter {
 	public float TintOpacity {
 		get => _controller.TintOpacity;
 		set {
-			if (!EasyWindows.Theme.shouldOverride) return;
+			if (!EasyWindows.Theme.ShouldOverride) return;
 
 			_controller.TintOpacity = value;
 			BackdropHelper.RefreshTint(_controller.TintColor, color => _controller.TintColor = color);

@@ -26,14 +26,14 @@ public static partial class EasyWindows {
 
 	[SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "Consumers intentionally use the cohesive EasyWindows.ThemeSettings API.")]
 	public record ThemeSettings {
-		public BackdropMaterial backdropMaterial { get; set; }
-		public SystemBackdropTheme theme { get; set; }
+		public BackdropMaterial BackdropMaterial { get; internal set; }
+		public SystemBackdropTheme Theme { get; internal set; }
 
-		public bool shouldOverride { get; set; }
-		public Color fallbackColor { get; set; }
-		public Color tintColor { get; set; }
-		public float tintOpacity { get; set; }
-		public float luminosityOpacity { get; set; }
+		public bool ShouldOverride { get; internal set; }
+		public Color FallbackColor { get; internal set; }
+		public Color TintColor { get; internal set; }
+		public float TintOpacity { get; internal set; }
+		public float LuminosityOpacity { get; internal set; }
 	}
 
 

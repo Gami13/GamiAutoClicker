@@ -114,19 +114,19 @@ internal sealed partial class SettingsWindow : Window {
 	public void UpdateSwitches(EasyWindows.ThemeSettings settings) {
 		_isSynchronizing = true;
 		try {
-			BackdropMaterialComboBox.SelectedItem = settings.backdropMaterial.ToString();
-			ThemeComboBox.SelectedItem = settings.theme.ToString();
-			OverrideDefaultsToggleSwitch.IsOn = settings.shouldOverride;
-			FallbackColorPicker.Color = settings.fallbackColor;
-			TintColorPicker.Color = settings.tintColor;
-			TintOpacitySlider.Percentage = settings.tintOpacity;
-			LuminosityOpacitySlider.Percentage = settings.luminosityOpacity;
+			BackdropMaterialComboBox.SelectedItem = settings.BackdropMaterial.ToString();
+			ThemeComboBox.SelectedItem = settings.Theme.ToString();
+			OverrideDefaultsToggleSwitch.IsOn = settings.ShouldOverride;
+			FallbackColorPicker.Color = settings.FallbackColor;
+			TintColorPicker.Color = settings.TintColor;
+			TintOpacitySlider.Percentage = settings.TintOpacity;
+			LuminosityOpacitySlider.Percentage = settings.LuminosityOpacity;
 		}
 		finally {
 			_isSynchronizing = false;
 		}
 
-		UpdateAdvancedControlState(settings.shouldOverride);
+		UpdateAdvancedControlState(settings.ShouldOverride);
 		UpdateAppearanceSummary(settings);
 	}
 
@@ -142,12 +142,12 @@ internal sealed partial class SettingsWindow : Window {
 	}
 
 	private void UpdateAppearanceSummary(EasyWindows.ThemeSettings settings) {
-		PreviewMaterialText.Text = FormatBackdropMaterial(settings.backdropMaterial);
-		PreviewThemeText.Text = settings.theme switch {
+		PreviewMaterialText.Text = FormatBackdropMaterial(settings.BackdropMaterial);
+		PreviewThemeText.Text = settings.Theme switch {
 			SystemBackdropTheme.Default => "Follows Windows color mode",
-			_ => $"{settings.theme} color mode"
+			_ => $"{settings.Theme} color mode"
 		};
-		PreviewOverrideText.Text = settings.shouldOverride
+		PreviewOverrideText.Text = settings.ShouldOverride
 			? "Custom color tuning is active"
 			: "Using system material defaults";
 	}
