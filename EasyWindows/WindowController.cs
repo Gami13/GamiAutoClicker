@@ -42,7 +42,7 @@ public static partial class EasyWindows {
 			var root = CreateRoot(window, _topWindowBar);
 
 			_backdropConfig = new SystemBackdropConfiguration { IsInputActive = true };
-			UpdateConfigTheme();
+			SetTheme();
 
 			CreateAdapter();
 
@@ -134,22 +134,21 @@ public static partial class EasyWindows {
 
 		public void SetTheme() {
 			if (Window.Content is FrameworkElement root) {
-				root.RequestedTheme = Theme.theme switch {
+				var requestedTheme = Theme.theme switch {
 					SystemBackdropTheme.Light => ElementTheme.Light,
 					SystemBackdropTheme.Dark => ElementTheme.Dark,
 					_ => ElementTheme.Default
 				};
-				UpdateConfigTheme();
-			}
-		}
+				if (root.RequestedTheme != requestedTheme) {
+					root.RequestedTheme = requestedTheme;
+				}
 
-		private void UpdateConfigTheme() {
-			if (Window.Content is FrameworkElement root)
 				_backdropConfig.Theme = root.ActualTheme switch {
 					ElementTheme.Dark => SystemBackdropTheme.Dark,
 					ElementTheme.Light => SystemBackdropTheme.Light,
 					_ => SystemBackdropTheme.Default
 				};
+			}
 		}
 
 		private void OnActivated(object sender, WindowActivatedEventArgs args) {
@@ -159,7 +158,7 @@ public static partial class EasyWindows {
 		}
 
 		private void OnThemeChanged(FrameworkElement sender, object args) {
-			UpdateConfigTheme();
+			SetTheme();
 			_topWindowBar.RefreshForeground();
 		}
 

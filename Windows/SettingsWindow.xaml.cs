@@ -58,13 +58,13 @@ internal sealed partial class SettingsWindow : Window {
 
 		switch (selectedItem) {
 			case "Dark":
-				EasyWindows.SetTheme(SystemBackdropTheme.Dark);
+				EasyWindows.ApplyTheme(SystemBackdropTheme.Dark);
 				break;
 			case "Light":
-				EasyWindows.SetTheme(SystemBackdropTheme.Light);
+				EasyWindows.ApplyTheme(SystemBackdropTheme.Light);
 				break;
 			case "Default":
-				EasyWindows.SetTheme(SystemBackdropTheme.Default);
+				EasyWindows.ApplyTheme(SystemBackdropTheme.Default);
 				break;
 			default:
 				break;

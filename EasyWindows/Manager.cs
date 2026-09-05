@@ -132,7 +132,7 @@ public static partial class EasyWindows {
 		NotifyThemeChanged();
 	}
 
-	public static void SetTheme(SystemBackdropTheme theme) {
+	public static void ApplyTheme(SystemBackdropTheme theme) {
 		if (!Enum.IsDefined(theme)) {
 			throw new ArgumentOutOfRangeException(nameof(theme));
 		}
