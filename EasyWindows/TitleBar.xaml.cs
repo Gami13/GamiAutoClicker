@@ -42,17 +42,20 @@ internal sealed partial class TitleBar : UserControl {
 			Foreground = brush;
 		}
 	}
-
-	private void AppTitleBar_Loaded(object sender, RoutedEventArgs e) {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Bound via XAML")]
+	private void AppTitleBar_Loaded(object _, RoutedEventArgs __) {
 		SetRegionsForCustomTitleBar();
 	}
-	private void AppTitleBar_Unloaded(object sender, RoutedEventArgs e) {
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Bound via XAML")]
+
+	private void AppTitleBar_Unloaded(object _, RoutedEventArgs __) {
 		if (EasyWindows.GetWindowOptions(windowKey).Button is { } button) {
 			this.TitleBarButton.Click -= button.Action;
 		}
 	}
+	[System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Bound via XAML")]
 
-	private void AppTitleBar_SizeChanged(object sender, SizeChangedEventArgs e) {
+	private void AppTitleBar_SizeChanged(object _, SizeChangedEventArgs __) {
 		SetRegionsForCustomTitleBar();
 	}
 
