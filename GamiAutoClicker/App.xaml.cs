@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 using Windows.Graphics;
+using GamiToolkit.Settings;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -22,6 +23,8 @@ namespace GamiAutoClicker {
 
 		public App() {
 			InitializeComponent();
+			ThemeSettingsStore.Load();
+			EasyWindows.ThemeChanged += (_, _) => ThemeSettingsStore.Save();
 			EasyWindows.RegisterWindow(WindowKey.Main, new EasyWindows.WindowOptions {
 				Factory = () => new MainWindow(),
 				PresenterKind = AppWindowPresenterKind.Default,

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamiAutoClicker", "GamiAuto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyWindows", "EasyWindows\EasyWindows.csproj", "{4E38E232-367F-42B1-8BE8-DC98262F85B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamiToolkit", "GamiToolkit\GamiToolkit.csproj", "{D9B4D0E4-5D5A-4A76-8C11-0F67E1D2F7A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64

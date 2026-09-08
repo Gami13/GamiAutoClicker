@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+?<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
@@ -26,6 +26,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\EasyWindows\EasyWindows.csproj" />
+		<ProjectReference Include="..\GamiToolkit\GamiToolkit.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
