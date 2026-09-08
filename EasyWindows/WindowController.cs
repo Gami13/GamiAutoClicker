@@ -30,8 +30,8 @@ public static partial class EasyWindows {
 		}
 
 		private WindowController(Window window, object windowKey) {
-			if (!WindowConfigs.TryGetValue(windowKey, out WindowOptions? options)) {
-				throw new ArgumentException($"WindowOptions for {windowKey} not found.");
+			if (!WindowConfigs.TryGetValue(windowKey, out WindowOptionsBase? options)) {
+				throw new ArgumentException($"Window options for {windowKey} not found.");
 			}
 			_windowKey = windowKey;
 			Window = window;
@@ -83,7 +83,7 @@ public static partial class EasyWindows {
 		}
 
 		internal void RefreshText() {
-			WindowOptions options = GetWindowOptions(_windowKey);
+			WindowOptionsBase options = GetWindowOptions(_windowKey);
 			Window.Title = options.TitleProvider?.Invoke() ?? options.Title;
 			_topWindowBar.RefreshText();
 		}
@@ -96,7 +96,7 @@ public static partial class EasyWindows {
 		internal void ReloadContent() {
 			ValidateReload();
 			if (_disposed) return;
-			UIElement replacement = GetWindowOptions(_windowKey).ContentFactory()
+			UIElement replacement = GetWindowOptions(_windowKey).CreateContent()
 				?? throw new InvalidOperationException("ContentFactory must return fresh content.");
 			object previous = _contentHost.Content;
 			if (ReferenceEquals(previous, replacement))

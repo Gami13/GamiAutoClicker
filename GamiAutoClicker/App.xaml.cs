@@ -53,8 +53,9 @@ namespace GamiAutoClicker {
 
 				DefaultPosition = new PointInt32(100, 100)
 			});
-			EasyWindows.RegisterWindow(WindowKey.Settings, new EasyWindows.WindowOptions {
-				ContentFactory = () => new SettingsPage(),
+			EasyWindows.RegisterWindow(WindowKey.Settings, new EasyWindows.WindowOptions<SettingsWindowState> {
+				State = new SettingsWindowState(),
+				ContentFactory = _ => new SettingsPage(),
 				PresenterKind = AppWindowPresenterKind.Overlapped,
 				Title = "Settings",
 				TitleProvider = () => Localization.Get("Settings"),

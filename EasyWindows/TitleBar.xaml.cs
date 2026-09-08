@@ -19,7 +19,7 @@ internal sealed partial class TitleBar : UserControl {
 	public TitleBar(object windowKey) {
 		InitializeComponent();
 		this.windowKey = windowKey;
-		EasyWindows.WindowOptions options = EasyWindows.GetWindowOptions(windowKey);
+		EasyWindows.WindowOptionsBase options = EasyWindows.GetWindowOptions(windowKey);
 		RefreshText();
 
 		if (options.Button is { } button) {
@@ -30,7 +30,7 @@ internal sealed partial class TitleBar : UserControl {
 	}
 
     internal void RefreshText() {
-        EasyWindows.WindowOptions options = EasyWindows.GetWindowOptions(windowKey);
+        EasyWindows.WindowOptionsBase options = EasyWindows.GetWindowOptions(windowKey);
         TitleBarTextBlock.Text = options.TitleProvider?.Invoke() ?? options.Title;
         if (options.Button?.AccessibleNameProvider is { } nameProvider) {
             string name = nameProvider();

@@ -36,8 +36,51 @@ windows stay closed. Title and accessibility-name providers are reevaluated.
 
 Content owns initialization of its controls from app state. EasyWindows does not
 capture or restore control values, focus, navigation selection, or scroll position.
-The settings page starts on Appearance after a reload. Theme settings and the
-app-owned click engine survive; the new controls read their current values.
+Settings explicitly retains its selected section and pane-open state in the registration's state.
+Theme settings and the app-owned click engine also survive; the new controls read
+their current values.
+
+For window-specific state, use the typed options:
+
+```csharp
+EasyWindows.RegisterWindow(WindowKey.Settings, new EasyWindows.WindowOptions<SettingsWindowState> {
+    State = new SettingsWindowState(),
+    ContentFactory = _ => new SettingsPage(),
+    Title = "Settings",
+    DefaultSize = new SizeInt32(860, 600)
+});
+```
+
+`State` must be a reference type. The factory receives the same instance on every
+opening and reload, including after the window has been closed. Its lifetime is
+the registration's lifetime within the current app session; this does not save it
+to disk. EasyWindows does not copy, serialize, or dispose state. The application
+owns any resources it contains. Stateless windows keep using plain `WindowOptions`.
+
+Content can look up state without constructor parameters:
+
+```csharp
+private readonly SettingsWindowState _state =
+    EasyWindows.Windows[WindowKey.Settings].GetState<SettingsWindowState>();
+```
+
+`Windows` is a read-only view of all registrations, including closed windows.
+Register a window before constructing content that looks it up. `GetState<T>()`
+returns the same object, so assigning it to a variable and changing its properties
+changes the registered state. Reassigning the local variable does not replace the
+registered object. Missing keys throw `KeyNotFoundException`; missing state or an
+incompatible requested type throws `InvalidOperationException`.
+
+The factory still receives state for callers who prefer constructor passing
+(`ContentFactory = state => new SomePage(state)`). Settings ignores that argument
+and uses the lookup instead.
+
+`SettingsWindowState` is the model for Settings navigation: `SelectedSection` and
+`IsPaneOpen`. SettingsPage initializes its controls from that model and writes UI
+changes back to it. Language changes and closing/reopening retain both values.
+The page keeps only view instances and callback bookkeeping locally; global theme
+and general settings remain in their existing shared models. Discarded views detach
+their callbacks so they cannot change the retained model.
 
 Root content that implements `IDisposable` is disposed on replacement and window
 closure. Use this to detach subscriptions to long-lived services and release owned
@@ -63,9 +106,9 @@ dotnet build GamiAutoClicker/GamiAutoClicker.csproj -p:Platform=x64 -p:ReloadVer
 ```
 
 Launch the built executable. The opt-in test changes language through the actual
-ComboBox, checks replacement and native localization, retained window identity and
-engine/appearance state, input-pause cleanup, subscriptions, and closed windows.
-It restores the original preference and appearance override setting, writes
+ComboBox and checks typed state identity, retained selection and native localization,
+window identity/bounds, closing/reopening both sections, repeated reloads, input-pause
+cleanup, and compatibility with stateless registration. It restores the original language preference, writes
 `reload-verification.txt` beside the executable, and closes the app. Test code is
 excluded from ordinary builds. The style override accommodates existing `IDE0008`
 diagnostics elsewhere in the repository; it does not disable compiler errors.

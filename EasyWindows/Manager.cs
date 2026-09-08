@@ -3,6 +3,7 @@ using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 using Windows.UI;
@@ -23,7 +24,10 @@ public static partial class EasyWindows {
 	};
 
 	private static Dictionary<object, WindowController> WindowControllers { get; } = new();
-	private static Dictionary<object, WindowOptions> WindowConfigs { get; } = new();
+	private static Dictionary<object, WindowOptionsBase> WindowConfigs { get; } = new();
+	/// <summary>Read-only view of all registrations, including windows that are currently closed.</summary>
+	public static IReadOnlyDictionary<object, WindowOptionsBase> Windows { get; } =
+		new ReadOnlyDictionary<object, WindowOptionsBase>(WindowConfigs);
 	private static BackdropValueSource BackdropValues { get; set; }
 
 	private enum BackdropValueSource {
@@ -35,7 +39,7 @@ public static partial class EasyWindows {
 	[SuppressMessage("Design", "CA1515:Consider making public types internal", Justification = "Will be extracted to separate package")]
 	public static event EventHandler? ThemeChanged;
 
-	public static void RegisterWindow(object key, WindowOptions options) {
+	public static void RegisterWindow(object key, WindowOptionsBase options) {
 		ArgumentNullException.ThrowIfNull(key);
 		ArgumentNullException.ThrowIfNull(options);
 
@@ -69,9 +73,9 @@ public static partial class EasyWindows {
 		if (window == null) throw new InvalidOperationException($"Window {key} not created.");
 		return window.AppWindow;
 	}
-	internal static WindowOptions GetWindowOptions(object key) {
-		if (!WindowConfigs.TryGetValue(key, out WindowOptions? options)) {
-			throw new ArgumentException($"WindowOptions {key} not registered.", nameof(key));
+	internal static WindowOptionsBase GetWindowOptions(object key) {
+		if (!WindowConfigs.TryGetValue(key, out WindowOptionsBase? options)) {
+			throw new ArgumentException($"Window options {key} not registered.", nameof(key));
 		}
 		return options;
 	}
@@ -108,8 +112,8 @@ public static partial class EasyWindows {
 	}
 
 	public static void CreateWindow(object key) {
-		if (!WindowConfigs.TryGetValue(key, out WindowOptions? options)) {
-			throw new ArgumentException($"WindowOptions for {key} not found.");
+		if (!WindowConfigs.TryGetValue(key, out WindowOptionsBase? options)) {
+			throw new ArgumentException($"Window options for {key} not found.");
 		}
 		if (WindowControllers.TryGetValue(key, out WindowController? controller)) {
 			controller.Window.Activate();
