@@ -100,11 +100,11 @@
                     Spacing="5">
                     <TextBlock VerticalAlignment="Center" Text="Hold mode" />
                     <FontIcon
-                        x:Name="HoldModeInfoIcon"
                         VerticalAlignment="Center"
                         FontSize="12"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Glyph="&#xE946;" />
+                        Glyph="&#xE946;"
+                        ToolTipService.ToolTip="While clicking is enabled, hold Mouse 4 (side/back button) to click. Release it to stop. Choose a different button as the click target." />
                 </StackPanel>
                 <ToggleSwitch
                     x:Name="HoldModeToggleSwitch"

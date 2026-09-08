@@ -3,7 +3,6 @@ using Microsoft.UI.Xaml.Media;
 using System;
 using GamiAutoClicker.Components;
 using Microsoft.UI.Xaml.Controls;
-using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.System;
@@ -13,9 +12,7 @@ namespace GamiAutoClicker;
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1001", Justification = "The window's Closed handler cancels, awaits and disposes the clicking lifetime.")]
 public sealed partial class MainWindow : Window
 {
-	private const double InitialDelayMilliseconds = 100d;
 	private bool _isSynchronizingTiming;
-	private double _delayMilliseconds = InitialDelayMilliseconds;
 	private readonly ClickEngine _engine = new();
 	private readonly CancellationTokenSource _clickingCancellation = new();
 	private readonly Task _clickingTask;
@@ -29,26 +26,16 @@ public sealed partial class MainWindow : Window
 		MouseButtonComboBox.SelectionChanged += OnMouseButtonSelectionChanged;
 		HoldModeToggleSwitch.Toggled += OnHoldModeToggled;
 		_engine.ToggleRequested += () => ClickingEnabledToggleSwitch.IsOn = !ClickingEnabledToggleSwitch.IsOn;
+		_engine.ClickingFailed += OnClickingFailed;
 		ToolTipService.SetToolTip(ClickingEnabledToggleSwitch, $"{_engine.ToggleKey}: enable or disable clicking globally");
-		ToolTipService.SetToolTip(HoldModeInfoIcon, "While clicking is enabled, hold Mouse 4 (side/back button) to click. Release it to stop. Choose a different button as the click target.");
-		_clickingTask = RunClickingAsync();
+		_clickingTask = _engine.RunAsync(_clickingCancellation.Token);
 	}
 
-	private async Task RunClickingAsync()
+	private void OnClickingFailed(string message)
 	{
-		while (!_clickingCancellation.IsCancellationRequested)
-		{
-			try
-			{
-				await _engine.RunAsync(_clickingCancellation.Token).ConfigureAwait(true);
-			}
-			catch (Exception exception) when (exception is Win32Exception or InvalidOperationException)
-			{
-				ClickingEnabledToggleSwitch.IsOn = false;
-				StatusTextBlock.Text = "Blocked";
-				ToolTipService.SetToolTip(StatusTextBlock, exception.Message);
-			}
-		}
+		ClickingEnabledToggleSwitch.IsOn = false;
+		StatusTextBlock.Text = "Blocked";
+		ToolTipService.SetToolTip(StatusTextBlock, message);
 	}
 
 	private void OnMouseButtonSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -76,7 +63,6 @@ public sealed partial class MainWindow : Window
 		double delay = Math.Clamp(args.NewValue, DelayNumberBox.Minimum, DelayNumberBox.Maximum);
 		if (!double.IsFinite(delay) || delay <= 0) return;
 
-		_delayMilliseconds = delay;
 		_engine.IntervalMilliseconds = delay;
 
 		SyncTimingInputs(updateDelayBox: false, updateCpsBox: true);
@@ -89,8 +75,7 @@ public sealed partial class MainWindow : Window
 		double cps = Math.Clamp(args.NewValue, CpsNumberBox.Minimum, CpsNumberBox.Maximum);
 		if (!double.IsFinite(cps) || cps <= 0) return;
 
-		_delayMilliseconds = 1000d / cps;
-		_engine.IntervalMilliseconds = _delayMilliseconds;
+		_engine.IntervalMilliseconds = 1000d / cps;
 
 		SyncTimingInputs(updateDelayBox: true, updateCpsBox: false);
 	}
@@ -108,13 +93,13 @@ public sealed partial class MainWindow : Window
 		{
 			if (updateDelayBox)
 			{
-				DelayNumberBox.Value = _delayMilliseconds;
+				DelayNumberBox.Value = _engine.IntervalMilliseconds;
 			}
 
 			if (updateCpsBox)
 			{
 				// UnitNumberBox rounds only its display; retain the exact reciprocal here.
-				CpsNumberBox.Value = 1000d / _delayMilliseconds;
+				CpsNumberBox.Value = 1000d / _engine.IntervalMilliseconds;
 			}
 		}
 		finally

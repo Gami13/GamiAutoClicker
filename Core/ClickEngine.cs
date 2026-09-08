@@ -19,6 +19,7 @@ internal sealed class ClickEngine
 	public VirtualKey MouseButton { get; set; } = VirtualKey.LeftButton;
 
 	public event Action? ToggleRequested;
+	public event Action<string>? ClickingFailed;
 
 	public async Task RunAsync(CancellationToken cancellationToken)
 	{
@@ -40,13 +41,21 @@ internal sealed class ClickEngine
 				// A trigger must differ from the output; injected releases would otherwise affect its state.
 				if (Enabled && HoldMode && HoldKey == MouseButton)
 				{
-					throw new InvalidOperationException("The hold button and click target must be different. Choose another click target or turn off hold mode.");
+					DisableClicking("The hold button and click target must be different. Choose another click target or turn off hold mode.");
 				}
 				bool active = Enabled && (!HoldMode || IsKeyDown(HoldKey));
 				if (active && (!wasActive || Stopwatch.GetElapsedTime(lastClick).TotalMilliseconds >= IntervalMilliseconds))
 				{
-					Click();
-					lastClick = Stopwatch.GetTimestamp();
+					try
+					{
+						Click();
+						lastClick = Stopwatch.GetTimestamp();
+					}
+					catch (Exception exception) when (exception is Win32Exception or InvalidOperationException)
+					{
+						DisableClicking(exception.Message);
+						active = false;
+					}
 				}
 				wasActive = active;
 
@@ -65,6 +74,12 @@ internal sealed class ClickEngine
 		{
 			Enabled = false;
 		}
+	}
+
+	private void DisableClicking(string message)
+	{
+		Enabled = false;
+		ClickingFailed?.Invoke(message);
 	}
 
 	private void Click()
