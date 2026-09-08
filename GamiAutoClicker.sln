@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
 VisualStudioVersion = 18.10.12120.281
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamiAutoClicker", "GamiAutoClicker.csproj", "{B10C792F-3724-4B9B-8D78-EA6CCB53D517}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GamiAutoClicker", "GamiAutoClicker\GamiAutoClicker.csproj", "{B10C792F-3724-4B9B-8D78-EA6CCB53D517}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EasyWindows", "EasyWindows\EasyWindows.csproj", "{4E38E232-367F-42B1-8BE8-DC98262F85B0}"
 EndProject

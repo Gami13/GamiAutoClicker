@@ -25,11 +25,7 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	<ItemGroup>
-		<Compile Remove="EasyWindows\**" />
-		<EmbeddedResource Remove="EasyWindows\**" />
-		<None Remove="EasyWindows\**" />
-		<Page Remove="EasyWindows\**" />
-		<ProjectReference Include="EasyWindows\EasyWindows.csproj" />
+		<ProjectReference Include="..\EasyWindows\EasyWindows.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

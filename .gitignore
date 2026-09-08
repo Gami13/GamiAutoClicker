@@ -1,6 +1,4 @@
-/bin
-/obj
-/EasyWindows/bin
-/EasyWindows/obj
+bin/
+obj/
 /.vs
 GamiAutoClicker.csproj.user
