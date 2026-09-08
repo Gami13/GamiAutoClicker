@@ -1,187 +1,82 @@
-using Gami;
-using GamiAutoClicker.Components;
-using Microsoft.UI.Composition.SystemBackdrops;
-using Microsoft.UI.System;
+using GamiAutoClicker.Pages.Settings;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Windows.UI;
+using Microsoft.UI.Xaml.Media;
+using System;
+using Windows.Foundation;
 
 namespace GamiAutoClicker;
 
 internal sealed partial class SettingsWindow : Window {
-	private bool _isSynchronizing;
+	private readonly AppearancePage _appearancePage = new();
+	private readonly GeneralPage _generalPage = new();
+	private FrameworkElement? _navigationContent;
 
 	public SettingsWindow() {
 		InitializeComponent();
-		UpdateSwitches(EasyWindows.Theme);
+		SettingsNavigation.SelectedItem = AppearanceNavigationItem;
+		UpdateContentMargin(SettingsNavigation.DisplayMode);
 	}
 
-	private void OnRootGridLoaded(object sender, RoutedEventArgs e) {
-		UpdateResponsiveLayout(RootGrid.ActualWidth);
+	private void OnNavigationDisplayModeChanged(NavigationView sender, NavigationViewDisplayModeChangedEventArgs args) {
+		UpdateContentMargin(args.DisplayMode);
+		UpdateOverlayClip(sender.IsPaneOpen);
 	}
 
-	private void OnRootGridSizeChanged(object sender, SizeChangedEventArgs e) {
-		UpdateResponsiveLayout(e.NewSize.Width);
+	private void OnNavigationLoaded(object sender, RoutedEventArgs args) {
+		// Clip the complete content surface, including NavigationView's page background.
+		_navigationContent = FindSplitView(SettingsNavigation)?.Content as FrameworkElement;
+		UpdateOverlayClip(SettingsNavigation.IsPaneOpen);
 	}
 
-	private void OnMaterialChange(object sender, SelectionChangedEventArgs e) {
-		if (_isSynchronizing) return;
+	private static SplitView? FindSplitView(DependencyObject root) {
+		if (root is SplitView splitView) return splitView;
+		for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++) {
+			if (FindSplitView(VisualTreeHelper.GetChild(root, i)) is { } result) return result;
+		}
+		return null;
+	}
 
-		var comboBox = (ComboBox)sender;
-		var selectedItem = comboBox.SelectedItem;
+	private void OnNavigationSizeChanged(object sender, SizeChangedEventArgs args) {
+		UpdateOverlayClip(SettingsNavigation.IsPaneOpen);
+	}
 
-		switch (selectedItem) {
-			case "Acrylic":
-				EasyWindows.SetBackdropMaterial(EasyWindows.BackdropMaterial.Acrylic);
-				break;
-			case "AcrylicThin":
-				EasyWindows.SetBackdropMaterial(EasyWindows.BackdropMaterial.AcrylicThin);
-				break;
-			case "Mica":
-				EasyWindows.SetBackdropMaterial(EasyWindows.BackdropMaterial.Mica);
-				break;
-			case "MicaAlt":
-				EasyWindows.SetBackdropMaterial(EasyWindows.BackdropMaterial.MicaAlt);
-				break;
-			default:
-				break;
+	private void OnPaneOpening(NavigationView sender, object args) => UpdateOverlayClip(true);
+
+	private void OnPaneClosed(NavigationView sender, object args) => UpdateOverlayClip(false);
+
+	private void UpdateOverlayClip(bool isPaneOpen) {
+		if (_navigationContent is null) return;
+		if (!isPaneOpen || SettingsNavigation.DisplayMode == NavigationViewDisplayMode.Expanded) {
+			_navigationContent.Clip = null;
+			return;
 		}
 
-		UpdateAppearanceSummary(EasyWindows.Theme);
-	}
-
-	private void OnThemeChange(object sender, SelectionChangedEventArgs e) {
-		if (_isSynchronizing) return;
-
-		var comboBox = (ComboBox)sender;
-		var selectedItem = comboBox.SelectedItem;
-
-		switch (selectedItem) {
-			case "Dark":
-				EasyWindows.ApplyTheme(SystemBackdropTheme.Dark);
-				break;
-			case "Light":
-				EasyWindows.ApplyTheme(SystemBackdropTheme.Light);
-				break;
-			case "Default":
-				EasyWindows.ApplyTheme(SystemBackdropTheme.Default);
-				break;
-			default:
-				break;
-		}
-
-		UpdateAppearanceSummary(EasyWindows.Theme);
-	}
-
-	private void OnOverridesChange(object sender, RoutedEventArgs e) {
-		if (_isSynchronizing) return;
-
-		var toggleSwitch = (ToggleSwitch)sender;
-		EasyWindows.SetOverrides(toggleSwitch.IsOn);
-		UpdateSwitches(EasyWindows.Theme);
-	}
-
-#pragma warning disable CA1822 // XAML event handlers must be instance methods
-	private void OnFallbackColorChange(ColorPicker sender, ColorChangedEventArgs args) {
-		if (_isSynchronizing) return;
-
-		EasyWindows.SetFallbackColor(args.NewColor);
-	}
-	private void OnTintColorChange(ColorPicker sender, ColorChangedEventArgs args) {
-		if (_isSynchronizing) return;
-
-		EasyWindows.SetTintColor(args.NewColor);
-	}
-#pragma warning restore CA1822
-
-	private void OnTintOpacityChange(object sender, RoutedEventArgs e) {
-		if (_isSynchronizing || sender is not LabeledPercentageSlider slider) return;
-
-		EasyWindows.SetTintOpacity((float)slider.Percentage);
-	}
-
-	private void OnLuminosityOpacityChange(object sender, RoutedEventArgs e) {
-		if (_isSynchronizing || sender is not LabeledPercentageSlider slider) return;
-
-		EasyWindows.SetLuminosityOpacity((float)slider.Percentage);
-	}
-
-	private void OnRestoreDefaultsClick(object sender, RoutedEventArgs e) {
-		EasyWindows.RestoreThemeDefaults();
-		UpdateSwitches(EasyWindows.Theme);
-	}
-
-	public void UpdateSwitches(EasyWindows.ThemeSettings settings) {
-		_isSynchronizing = true;
-		try {
-			BackdropMaterialComboBox.SelectedItem = settings.BackdropMaterial.ToString();
-			ThemeComboBox.SelectedItem = settings.Theme.ToString();
-			OverrideDefaultsToggleSwitch.IsOn = settings.ShouldOverride;
-			FallbackColorPicker.Color = settings.FallbackColor;
-			TintColorPicker.Color = settings.TintColor;
-			TintOpacitySlider.Percentage = settings.TintOpacity;
-			LuminosityOpacitySlider.Percentage = settings.LuminosityOpacity;
-		}
-		finally {
-			_isSynchronizing = false;
-		}
-
-		UpdateAdvancedControlState(settings.ShouldOverride);
-		UpdateAppearanceSummary(settings);
-	}
-
-	private void UpdateAdvancedControlState(bool isEnabled) {
-		AdvancedControlsPanel.Opacity = isEnabled ? 1 : 0.55;
-		FallbackColorPicker.IsEnabled = isEnabled;
-		TintColorPicker.IsEnabled = isEnabled;
-		TintOpacitySlider.IsEnabled = isEnabled;
-		LuminosityOpacitySlider.IsEnabled = isEnabled;
-		AdvancedControlsHint.Text = isEnabled
-			? "Custom colors are applied immediately to every open window."
-			: "Enable custom backdrop colors to edit these values.";
-	}
-
-	private void UpdateAppearanceSummary(EasyWindows.ThemeSettings settings) {
-		PreviewMaterialText.Text = FormatBackdropMaterial(settings.BackdropMaterial);
-		PreviewThemeText.Text = settings.Theme switch {
-			SystemBackdropTheme.Default => "Follows Windows color mode",
-			_ => $"{settings.Theme} color mode"
+		double contentLeft = _navigationContent.TransformToVisual(SettingsNavigation).TransformPoint(new Point()).X;
+		double coveredWidth = Math.Clamp(SettingsNavigation.OpenPaneLength - contentLeft, 0, _navigationContent.ActualWidth);
+		_navigationContent.Clip = new RectangleGeometry {
+			Rect = new Rect(coveredWidth, 0, Math.Max(0, _navigationContent.ActualWidth - coveredWidth), _navigationContent.ActualHeight)
 		};
-		PreviewOverrideText.Text = settings.ShouldOverride
-			? "Custom color tuning is active"
-			: "Using system material defaults";
 	}
 
-	private static string FormatBackdropMaterial(EasyWindows.BackdropMaterial material) => material switch {
-		EasyWindows.BackdropMaterial.MicaAlt => "Mica Alt",
-		EasyWindows.BackdropMaterial.AcrylicThin => "Thin Acrylic",
-		_ => material.ToString()
-	};
+	private void UpdateContentMargin(NavigationViewDisplayMode displayMode) {
+		if (SettingsContent is null) return;
 
-	private void UpdateResponsiveLayout(double width) {
-		bool useTwoSettingsColumns = width >= 820;
-		SettingsLeftColumn.Width = new GridLength(1, GridUnitType.Star);
-		SettingsRightColumn.Width = useTwoSettingsColumns
-			? new GridLength(1, GridUnitType.Star)
-			: new GridLength(0);
-		SettingsPreviewRow.Height = GridLength.Auto;
-		SettingsBaseRow.Height = GridLength.Auto;
-		SettingsAdvancedRow.Height = useTwoSettingsColumns
-			? new GridLength(0)
-			: GridLength.Auto;
-		Grid.SetColumn(AdvancedTuningCard, useTwoSettingsColumns ? 1 : 0);
-		Grid.SetRow(AdvancedTuningCard, useTwoSettingsColumns ? 0 : 2);
-		Grid.SetRowSpan(AdvancedTuningCard, useTwoSettingsColumns ? 2 : 1);
+		// Minimal navigation overlays its menu button on the content's top-left corner.
+		SettingsContent.Margin = displayMode == NavigationViewDisplayMode.Minimal
+			? new Thickness(0, 24, 0, 0)
+			: new Thickness(0);
+	}
 
-		bool useTwoColorPickers = width >= 620;
-		FallbackColorColumn.Width = new GridLength(1, GridUnitType.Star);
-		TintColorColumn.Width = useTwoColorPickers
-			? new GridLength(1, GridUnitType.Star)
-			: new GridLength(0);
-		TintColorRow.Height = useTwoColorPickers
-			? new GridLength(0)
-			: GridLength.Auto;
-		Grid.SetColumn(TintColorPicker, useTwoColorPickers ? 1 : 0);
-		Grid.SetRow(TintColorPicker, useTwoColorPickers ? 0 : 1);
+	private void OnNavigationSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args) {
+		if (SettingsContent is null) return;
+
+		SettingsContent.Content = ReferenceEquals(args.SelectedItem, AppearanceNavigationItem)
+			? _appearancePage
+			: _generalPage;
+
+		if (sender.DisplayMode != NavigationViewDisplayMode.Expanded) {
+			sender.IsPaneOpen = false;
+		}
 	}
 }

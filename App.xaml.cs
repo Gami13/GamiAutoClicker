@@ -42,7 +42,7 @@ namespace GamiAutoClicker {
 			EasyWindows.RegisterWindow(WindowKey.Settings, new EasyWindows.WindowOptions {
 				Factory = () => new SettingsWindow(),
 				PresenterKind = AppWindowPresenterKind.Overlapped,
-				Title = "Appearance",
+				Title = "Settings",
 				IsResizable = true,
 				IsMinimizable = true,
 				IsMaximizable = true,
