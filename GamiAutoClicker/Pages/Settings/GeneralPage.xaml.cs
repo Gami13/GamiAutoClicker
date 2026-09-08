@@ -11,13 +11,13 @@ internal sealed partial class GeneralPage : Page {
 	public GeneralPage() {
 		InitializeComponent();
 		_isSynchronizing = true;
-		ToggleKeyComboBox.ItemsSource = GeneralSettings.Keys.Select(GeneralSettings.KeyLabel).ToArray();
-		HoldKeyComboBox.ItemsSource = GeneralSettings.Keys.Select(GeneralSettings.KeyLabel).ToArray();
 		RefreshControls();
 	}
 
-	private void OnLoaded(object sender, RoutedEventArgs e) { GeneralSettings.IsEditing = true; RefreshControls(); UpdateLayout(RootGrid.ActualWidth); }
-	private void OnUnloaded(object sender, RoutedEventArgs e) => GeneralSettings.IsEditing = false;
+	private void OnLoaded(object sender, RoutedEventArgs e) {
+        RefreshControls();
+        UpdateLayout(RootGrid.ActualWidth);
+    }
 	private void OnSizeChanged(object sender, SizeChangedEventArgs e) => UpdateLayout(e.NewSize.Width);
 
 	private void UpdateLayout(double width) {
@@ -30,9 +30,12 @@ internal sealed partial class GeneralPage : Page {
 
 	private void RefreshControls() {
 		_isSynchronizing = true;
+		ToggleKeyComboBox.ItemsSource = GeneralSettings.Keys.Select(GeneralSettings.KeyLabel).ToArray();
+		HoldKeyComboBox.ItemsSource = GeneralSettings.Keys.Select(GeneralSettings.KeyLabel).ToArray();
+		LanguageComboBox.ItemsSource = new[] { Localization.Get("FollowWindows"), "English", "Polski" };
 		ToggleKeyComboBox.SelectedIndex = System.Array.IndexOf(GeneralSettings.Keys, GeneralSettings.ToggleKey);
 		HoldKeyComboBox.SelectedIndex = System.Array.IndexOf(GeneralSettings.Keys, GeneralSettings.HoldKey);
-		LanguageComboBox.SelectedIndex = GeneralSettings.Language == "en" ? 1 : 0;
+		LanguageComboBox.SelectedIndex = System.Array.IndexOf(Localization.Languages, GeneralSettings.Language);
 		_isSynchronizing = false;
 	}
 
@@ -41,7 +44,7 @@ internal sealed partial class GeneralPage : Page {
 			return;
 		}
 
-		Save(GeneralSettings.Keys[ToggleKeyComboBox.SelectedIndex], GeneralSettings.Keys[HoldKeyComboBox.SelectedIndex], LanguageComboBox.SelectedIndex == 1 ? "en" : "system");
+		Save(GeneralSettings.Keys[ToggleKeyComboBox.SelectedIndex], GeneralSettings.Keys[HoldKeyComboBox.SelectedIndex], Localization.Languages[LanguageComboBox.SelectedIndex]);
 	}
 
 	private void Save(VirtualKey toggle, VirtualKey hold, string language) {

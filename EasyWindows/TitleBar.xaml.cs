@@ -20,7 +20,7 @@ internal sealed partial class TitleBar : UserControl {
 		InitializeComponent();
 		this.windowKey = windowKey;
 		EasyWindows.WindowOptions options = EasyWindows.GetWindowOptions(windowKey);
-		this.TitleBarTextBlock.Text = options.Title;
+		RefreshText();
 
 		if (options.Button is { } button) {
 			this.TitleBarButton.Visibility = Visibility.Visible;
@@ -28,6 +28,16 @@ internal sealed partial class TitleBar : UserControl {
 			this.TitleBarButton.Click += button.Action;
 		}
 	}
+
+    internal void RefreshText() {
+        EasyWindows.WindowOptions options = EasyWindows.GetWindowOptions(windowKey);
+        TitleBarTextBlock.Text = options.TitleProvider?.Invoke() ?? options.Title;
+        if (options.Button?.AccessibleNameProvider is { } nameProvider) {
+            string name = nameProvider();
+            Microsoft.UI.Xaml.Automation.AutomationProperties.SetName(TitleBarButton, name);
+            ToolTipService.SetToolTip(TitleBarButton, name);
+        }
+    }
 
 	internal void SetActive(bool isActive) {
 		VisualStateManager.GoToState(this, isActive ? "Active" : "Inactive", false);

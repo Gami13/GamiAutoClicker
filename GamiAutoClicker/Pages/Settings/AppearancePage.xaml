@@ -24,11 +24,10 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Spacing="2">
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Appearance" />
+                <TextBlock x:Name="Localized1" x:Uid="AppearancePage_Localized1" Style="{ThemeResource SubtitleTextBlockStyle}" />
                 <TextBlock
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+ x:Name="Localized2" x:Uid="AppearancePage_Localized2"                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
-                    Text="Customize the backdrop used by every app window."
                     TextWrapping="Wrap" />
             </StackPanel>
             <components:RestoreDefaultsButton
@@ -64,14 +63,13 @@
                             Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                             Glyph="&#xE790;" />
                         <TextBlock
-                            VerticalAlignment="Center"
+ x:Name="Localized3" x:Uid="AppearancePage_Localized3"                            VerticalAlignment="Center"
                             Style="{ThemeResource BodyStrongTextBlockStyle}"
-                            Text="Current appearance" />
+                            />
                     </StackPanel>
                     <TextBlock
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+ x:Name="Localized4" x:Uid="AppearancePage_Localized4"                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Style="{ThemeResource CaptionTextBlockStyle}"
-                        Text="Changes are applied immediately to every open window."
                         TextWrapping="Wrap" />
                     <StackPanel
                         Padding="12"
@@ -96,32 +94,27 @@
 
                 <StackPanel Grid.Row="1" Style="{StaticResource CardStyle}">
                     <StackPanel Spacing="2">
-                        <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Base appearance" />
+                        <TextBlock x:Name="Localized5" x:Uid="AppearancePage_Localized5" Style="{ThemeResource BodyStrongTextBlockStyle}" />
                         <TextBlock
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+ x:Name="Localized6" x:Uid="AppearancePage_Localized6"                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Style="{ThemeResource CaptionTextBlockStyle}"
-                            Text="Choose the material and theme."
                             TextWrapping="Wrap" />
                     </StackPanel>
 
                     <ComboBox
-                        x:Name="BackdropMaterialComboBox"
-                        Header="Backdrop material"
+                        x:Name="BackdropMaterialComboBox" x:Uid="AppearancePage_BackdropMaterialComboBox"
                         SelectionChanged="OnMaterialChange" />
                     <TextBlock
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+ x:Name="Localized7" x:Uid="AppearancePage_Localized7"                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Style="{ThemeResource CaptionTextBlockStyle}"
-                        Text="Mica uses wallpaper; Acrylic is translucent; Thin Acrylic is the lightest option."
                         TextWrapping="Wrap" />
 
                     <ComboBox
-                        x:Name="ThemeComboBox"
-                        Header="Color mode"
+                        x:Name="ThemeComboBox" x:Uid="AppearancePage_ThemeComboBox"
                         SelectionChanged="OnThemeChange" />
                     <TextBlock
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+ x:Name="Localized8" x:Uid="AppearancePage_Localized8"                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Style="{ThemeResource CaptionTextBlockStyle}"
-                        Text="Default follows your Windows color mode."
                         TextWrapping="Wrap" />
                 </StackPanel>
 
@@ -130,19 +123,15 @@
                     Grid.Row="2"
                     Style="{StaticResource CardStyle}">
                     <StackPanel Spacing="2">
-                        <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Advanced color tuning" />
+                        <TextBlock x:Name="Localized9" x:Uid="AppearancePage_Localized9" Style="{ThemeResource BodyStrongTextBlockStyle}" />
                         <TextBlock
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+ x:Name="Localized10" x:Uid="AppearancePage_Localized10"                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Style="{ThemeResource CaptionTextBlockStyle}"
-                            Text="Override the system material defaults with custom colors."
                             TextWrapping="Wrap" />
                     </StackPanel>
 
                     <ToggleSwitch
-                        x:Name="OverrideDefaultsToggleSwitch"
-                        Header="Use custom backdrop colors"
-                        OffContent="System defaults"
-                        OnContent="Custom colors"
+                        x:Name="OverrideDefaultsToggleSwitch" x:Uid="AppearancePage_OverrideDefaultsToggleSwitch"
                         Toggled="OnOverridesChange" />
 
                     <StackPanel x:Name="AdvancedControlsPanel" Spacing="10">
@@ -157,24 +146,22 @@
                                 <RowDefinition x:Name="TintColorRow" Height="0" />
                             </Grid.RowDefinitions>
                             <components:ColorPickerFlyoutButton
-                                x:Name="FallbackColorPicker"
+                                x:Name="FallbackColorPicker" x:Uid="AppearancePage_FallbackColorPicker"
                                 ColorChanged="OnFallbackColorChange"
-                                Header="Fallback color" />
+                                />
                             <components:ColorPickerFlyoutButton
-                                x:Name="TintColorPicker"
+                                x:Name="TintColorPicker" x:Uid="AppearancePage_TintColorPicker"
                                 Grid.Column="1"
                                 ColorChanged="OnTintColorChange"
-                                Header="Tint color" />
+                                />
                         </Grid>
 
                         <components:LabeledPercentageSlider
-                            x:Name="TintOpacitySlider"
-                            Header="Tint opacity"
+                            x:Name="TintOpacitySlider" x:Uid="AppearancePage_TintOpacitySlider"
                             PercentageChanged="OnTintOpacityChange" />
 
                         <components:LabeledPercentageSlider
-                            x:Name="LuminosityOpacitySlider"
-                            Header="Luminosity opacity"
+                            x:Name="LuminosityOpacitySlider" x:Uid="AppearancePage_LuminosityOpacitySlider"
                             PercentageChanged="OnLuminosityOpacityChange" />
                     </StackPanel>
                 </StackPanel>

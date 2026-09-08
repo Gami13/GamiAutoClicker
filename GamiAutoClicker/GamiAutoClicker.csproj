@@ -1,9 +1,10 @@
-?<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
 		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
 		<RootNamespace>GamiAutoClicker</RootNamespace>
+		<NeutralLanguage>en</NeutralLanguage>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<Platforms>x86;x64;ARM64</Platforms>
 		<Platform>x64</Platform>
@@ -27,6 +28,13 @@
 	<ItemGroup>
 		<ProjectReference Include="..\EasyWindows\EasyWindows.csproj" />
 		<ProjectReference Include="..\GamiToolkit\GamiToolkit.csproj" />
+	</ItemGroup>
+
+	<PropertyGroup Condition="'$(ReloadVerification)' == 'true'">
+		<DefineConstants>$(DefineConstants);RELOAD_VERIFICATION</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup Condition="'$(ReloadVerification)' == 'true'">
+		<Compile Include="..\tests\ReloadVerification.cs" Link="Tests\ReloadVerification.cs" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -54,19 +62,6 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2705" />
 		<PackageReference Include="Microsoft.WindowsAppSDK" Version="2.4.0" />
-	</ItemGroup>
-	<ItemGroup>
-		<Page Update="SettingsWindow.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-	</ItemGroup>
-	<ItemGroup>
-		<Page Update="Components\TopWindowBar.xaml">
-			<Generator>MSBuild:Compile</Generator>
-		</Page>
-	</ItemGroup>
-	<ItemGroup>
-		<Folder Include="Windows\" />
 	</ItemGroup>
 
 	<PropertyGroup Label="Globals">

@@ -43,7 +43,7 @@ internal sealed class ClickEngine
 				// A trigger must differ from the output; injected releases would otherwise affect its state.
 				if (Enabled && (ToggleKey == MouseButton || (HoldMode && HoldKey == MouseButton)))
 				{
-					DisableClicking("The active keybinds and click target must be different. Choose another keybind or click target.");
+					DisableClicking(Localization.Get("TheactivekeybindsandclicktargetmustbedifferentChooseanotherkeybindorclicktarget"));
 				}
 				bool active = Enabled && !GeneralSettings.IsEditing && (!HoldMode || IsKeyDown(HoldKey));
 				if (active && (!wasActive || Stopwatch.GetElapsedTime(lastClick).TotalMilliseconds >= IntervalMilliseconds))
@@ -93,7 +93,7 @@ internal sealed class ClickEngine
 			VirtualKey.MiddleButton => (0x0020u, 0x0040u, 0u),
 			VirtualKey.XButton1 => (0x0080u, 0x0100u, 1u),
 			VirtualKey.XButton2 => (0x0080u, 0x0100u, 2u),
-			_ => throw new InvalidOperationException("Choose a mouse button as the click target.")
+			_ => throw new InvalidOperationException(Localization.Get("Chooseamousebuttonastheclicktarget"))
 		};
 		Input[] inputs =
 		[
@@ -109,7 +109,7 @@ internal sealed class ClickEngine
 				// Attempt the release if Windows accepted only the press.
 				_ = SendInput(1, [inputs[1]], Marshal.SizeOf<Input>());
 			}
-			throw new Win32Exception(error, "Windows blocked the click. Clicking has been disabled.");
+			throw new Win32Exception(error, Localization.Get("WindowsblockedtheclickClickinghasbeendisabled"));
 		}
 	}
 

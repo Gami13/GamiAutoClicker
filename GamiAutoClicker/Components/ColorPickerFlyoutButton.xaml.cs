@@ -10,13 +10,11 @@ using EasyWindows = Gami.EasyWindows;
 
 namespace GamiAutoClicker.Components;
 
-internal sealed partial class ColorPickerFlyoutButton : UserControl
-{
+internal sealed partial class ColorPickerFlyoutButton : UserControl {
 	private readonly SolidColorBrush _colorDisplayBrush = new();
 	private ElementTheme? _flyoutTheme;
 
-	public Color Color
-	{
+	public Color Color {
 		get => ColorPickerControl.Color;
 		set => ColorPickerControl.Color = value;
 	}
@@ -28,27 +26,23 @@ internal sealed partial class ColorPickerFlyoutButton : UserControl
 		typeof(ColorPickerFlyoutButton),
 		new PropertyMetadata("", OnHeaderChanged));
 
-	public string Header
-	{
+	public string Header {
 		get => (string)GetValue(HeaderProperty);
 		set => SetValue(HeaderProperty, value);
 	}
 
-	public event TypedEventHandler<ColorPicker, ColorChangedEventArgs>? ColorChanged
-	{
+	public event TypedEventHandler<ColorPicker, ColorChangedEventArgs>? ColorChanged {
 		add => ColorPickerControl.ColorChanged += value;
 		remove => ColorPickerControl.ColorChanged -= value;
 	}
 
-	public ColorPickerFlyoutButton()
-	{
+	public ColorPickerFlyoutButton() {
 		InitializeComponent();
 		Loaded += OnLoaded;
 		Unloaded += OnUnloaded;
 	}
 
-	private void OnLoaded(object sender, RoutedEventArgs e)
-	{
+	private void OnLoaded(object sender, RoutedEventArgs e) {
 		ColorPickerControl.ColorChanged += OnColorPickerColorChanged;
 		ColorPickerFlyout.Opening += OnFlyoutOpening;
 		EasyWindows.ThemeChanged += OnEasyWindowsThemeChanged;
@@ -57,27 +51,22 @@ internal sealed partial class ColorPickerFlyoutButton : UserControl
 		UpdateFlyoutTheme();
 	}
 
-	private void OnUnloaded(object sender, RoutedEventArgs e)
-	{
+	private void OnUnloaded(object sender, RoutedEventArgs e) {
 		ColorPickerControl.ColorChanged -= OnColorPickerColorChanged;
 		ColorPickerFlyout.Opening -= OnFlyoutOpening;
 		EasyWindows.ThemeChanged -= OnEasyWindowsThemeChanged;
 	}
 
-	private void OnFlyoutOpening(object? sender, object e)
-	{
+	private void OnFlyoutOpening(object? sender, object e) {
 		UpdateFlyoutTheme();
 	}
 
-	private void OnEasyWindowsThemeChanged(object? sender, EventArgs e)
-	{
+	private void OnEasyWindowsThemeChanged(object? sender, EventArgs e) {
 		UpdateFlyoutTheme();
 	}
 
-	private void UpdateFlyoutTheme()
-	{
-		var elementTheme = EasyWindows.Theme.Theme switch
-		{
+	private void UpdateFlyoutTheme() {
+		ElementTheme elementTheme = EasyWindows.Theme.Theme switch {
 			Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Light => ElementTheme.Light,
 			Microsoft.UI.Composition.SystemBackdrops.SystemBackdropTheme.Dark => ElementTheme.Dark,
 			_ => ElementTheme.Default
@@ -85,56 +74,45 @@ internal sealed partial class ColorPickerFlyoutButton : UserControl
 
 		if (_flyoutTheme == elementTheme) return;
 
-		if (ColorPickerFlyout?.Content is FrameworkElement contentElement)
-		{
+		if (ColorPickerFlyout?.Content is FrameworkElement contentElement) {
 			contentElement.RequestedTheme = elementTheme;
 			_flyoutTheme = elementTheme;
 		}
 	}
 
-	private static void OnHeaderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-	{
-		if (d is ColorPickerFlyoutButton control)
-		{
+	private static void OnHeaderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+		if (d is ColorPickerFlyoutButton control) {
 			control.UpdateHeader();
 		}
 	}
 
-	private void OnColorPickerColorChanged(ColorPicker sender, ColorChangedEventArgs args)
-	{
+	private void OnColorPickerColorChanged(ColorPicker sender, ColorChangedEventArgs args) {
 		UpdateColorDisplay(args.NewColor);
 	}
 
-	private void UpdateColorDisplay(Color color)
-	{
+	private void UpdateColorDisplay(Color color) {
 		var formattedColor = FormatColor(color);
 
-		if (ColorDisplayFill != null)
-		{
+		if (ColorDisplayFill != null) {
 			_colorDisplayBrush.Color = color;
 			ColorDisplayFill.Fill = _colorDisplayBrush;
 		}
-		if (ColorValueText != null)
-		{
+		if (ColorValueText != null) {
 			ColorValueText.Text = formattedColor;
 		}
-		if (ColorButton != null)
-		{
+		if (ColorButton != null) {
 			AutomationProperties.SetName(ColorButton, $"{Header}: {formattedColor}");
 		}
 	}
 
-	private void UpdateHeader()
-	{
-		if (HeaderText != null)
-		{
+	private void UpdateHeader() {
+		if (ColorPickerControl != null) UpdateColorDisplay(ColorPickerControl.Color);
+		if (HeaderText != null) {
 			HeaderText.Text = Header;
-			if (string.IsNullOrEmpty(Header))
-			{
+			if (string.IsNullOrEmpty(Header)) {
 				HeaderText.Visibility = Visibility.Collapsed;
 			}
-			else
-			{
+			else {
 				HeaderText.Visibility = Visibility.Visible;
 			}
 		}
@@ -144,12 +122,10 @@ internal sealed partial class ColorPickerFlyoutButton : UserControl
 
 
 	//Yoinked from Windows Community Toolkit
-	private async void ColorDisplay_Loaded(object sender, RoutedEventArgs e)
-	{
+	private async void ColorDisplay_Loaded(object sender, RoutedEventArgs e) {
 
 
-		if (sender is Border border)
-		{
+		if (sender is Border border) {
 			int width = Convert.ToInt32(border.ActualWidth);
 			int height = Convert.ToInt32(border.ActualHeight);
 
@@ -158,8 +134,7 @@ internal sealed partial class ColorPickerFlyoutButton : UserControl
 				height,
 				Utilities.CheckerBackgroundColor).ConfigureAwait(true);
 
-			if (bitmap != null)
-			{
+			if (bitmap != null) {
 				border.Background = await Utilities.BitmapToBrushAsync(bitmap, width, height).ConfigureAwait(true);
 			}
 		}

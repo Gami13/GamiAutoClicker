@@ -1,0 +1,384 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="Acrylic">
+    <value>Acrylic</value>
+  </data>
+  <data xml:space="preserve" name="Advancedcolortuning">
+    <value>Advanced color tuning</value>
+  </data>
+  <data xml:space="preserve" name="Appearance">
+    <value>Appearance</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_BackdropMaterialComboBox.Header">
+    <value>Backdrop material</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_FallbackColorPicker.Header">
+    <value>Fallback color</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized1.Text">
+    <value>Appearance</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized10.Text">
+    <value>Override the system material defaults with custom colors.</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized2.Text">
+    <value>Customize the backdrop used by every app window.</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized3.Text">
+    <value>Current appearance</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized4.Text">
+    <value>Changes are applied immediately to every open window.</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized5.Text">
+    <value>Base appearance</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized6.Text">
+    <value>Choose the material and theme.</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized7.Text">
+    <value>Mica uses wallpaper; Acrylic is translucent; Thin Acrylic is the lightest option.</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized8.Text">
+    <value>Default follows your Windows color mode.</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized9.Text">
+    <value>Advanced color tuning</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_LuminosityOpacitySlider.Header">
+    <value>Luminosity opacity</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_OverrideDefaultsToggleSwitch.Header">
+    <value>Use custom backdrop colors</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_OverrideDefaultsToggleSwitch.OffContent">
+    <value>System defaults</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_OverrideDefaultsToggleSwitch.OnContent">
+    <value>Custom colors</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_ThemeComboBox.Header">
+    <value>Color mode</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_TintColorPicker.Header">
+    <value>Tint color</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_TintOpacitySlider.Header">
+    <value>Tint opacity</value>
+  </data>
+  <data xml:space="preserve" name="Applanguage">
+    <value>App language</value>
+  </data>
+  <data xml:space="preserve" name="Backdropmaterial">
+    <value>Backdrop material</value>
+  </data>
+  <data xml:space="preserve" name="Baseappearance">
+    <value>Base appearance</value>
+  </data>
+  <data xml:space="preserve" name="Blocked">
+    <value>Blocked</value>
+  </data>
+  <data xml:space="preserve" name="Changesareappliedimmediatelytoeveryopenwindow">
+    <value>Changes are applied immediately to every open window.</value>
+  </data>
+  <data xml:space="preserve" name="ChangessaveautomaticallyGlobalcontrolsarepausedwhilethispageisopen">
+    <value>Changes save automatically. Global controls are paused while this page is open.</value>
+  </data>
+  <data xml:space="preserve" name="Chooseamousebuttonastheclicktarget">
+    <value>Choose a mouse button as the click target.</value>
+  </data>
+  <data xml:space="preserve" name="Chooseasupportedkeyormousebutton">
+    <value>Choose a supported key or mouse button.</value>
+  </data>
+  <data xml:space="preserve" name="Choosedifferentbuttonsfortoggleclickingandholdtoclick">
+    <value>Choose different buttons for toggle clicking and hold to click.</value>
+  </data>
+  <data xml:space="preserve" name="Choosethematerialandtheme">
+    <value>Choose the material and theme.</value>
+  </data>
+  <data xml:space="preserve" name="Chooseyourcontrolsandlanguagepreference">
+    <value>Choose your controls and language preference.</value>
+  </data>
+  <data xml:space="preserve" name="Clicktarget">
+    <value>Click target</value>
+  </data>
+  <data xml:space="preserve" name="ColorModeSummary">
+    <value>{0} color mode</value>
+  </data>
+  <data xml:space="preserve" name="Colormode">
+    <value>Color mode</value>
+  </data>
+  <data xml:space="preserve" name="Currentappearance">
+    <value>Current appearance</value>
+  </data>
+  <data xml:space="preserve" name="Customcolors">
+    <value>Custom colors</value>
+  </data>
+  <data xml:space="preserve" name="Customcolortuningisactive">
+    <value>Custom color tuning is active</value>
+  </data>
+  <data xml:space="preserve" name="Customizethebackdropusedbyeveryappwindow">
+    <value>Customize the backdrop used by every app window.</value>
+  </data>
+  <data xml:space="preserve" name="Dark">
+    <value>Dark</value>
+  </data>
+  <data xml:space="preserve" name="Default">
+    <value>Default</value>
+  </data>
+  <data xml:space="preserve" name="DefaultfollowsyourWindowscolormode">
+    <value>Default follows your Windows color mode.</value>
+  </data>
+  <data xml:space="preserve" name="Delete">
+    <value>Delete</value>
+  </data>
+  <data xml:space="preserve" name="Disabled">
+    <value>Disabled</value>
+  </data>
+  <data xml:space="preserve" name="Enableclicking">
+    <value>Enable clicking</value>
+  </data>
+  <data xml:space="preserve" name="Enabled">
+    <value>Enabled</value>
+  </data>
+  <data xml:space="preserve" name="End">
+    <value>End</value>
+  </data>
+  <data xml:space="preserve" name="Fallbackcolor">
+    <value>Fallback color</value>
+  </data>
+  <data xml:space="preserve" name="FollowWindows">
+    <value>Follow Windows</value>
+  </data>
+  <data xml:space="preserve" name="FollowsWindowscolormode">
+    <value>Follows Windows color mode</value>
+  </data>
+  <data xml:space="preserve" name="Frequency">
+    <value>Frequency</value>
+  </data>
+  <data xml:space="preserve" name="General">
+    <value>General</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_HoldKeyComboBox.Header">
+    <value>Hold to click</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_LanguageComboBox.Header">
+    <value>App language</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized1.Text">
+    <value>General</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized2.Text">
+    <value>Choose your controls and language preference.</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized3.Text">
+    <value>Keybinds</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized4.Text">
+    <value>Changes save automatically. Global controls are paused while this page is open.</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized5.Text">
+    <value>Press once to enable clicking; press again to disable it.</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized6.Text">
+    <value>While clicking and hold mode are enabled, hold this button to click. Release it to stop.</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized7.Text">
+    <value>Use different buttons for each action. Mouse bindings must also differ from the click target.</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized8.Text">
+    <value>Language</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized9.Text">
+    <value>Language changes apply immediately. Unavailable translations use English.</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_ToggleKeyComboBox.Header">
+    <value>Toggle clicking</value>
+  </data>
+  <data xml:space="preserve" name="HoldHint">
+    <value>While clicking is enabled, hold {0} to click. Release it to stop. Choose a different button as the click target.</value>
+  </data>
+  <data xml:space="preserve" name="Holdmode">
+    <value>Hold mode</value>
+  </data>
+  <data xml:space="preserve" name="Holdtoclick">
+    <value>Hold to click</value>
+  </data>
+  <data xml:space="preserve" name="Home">
+    <value>Home</value>
+  </data>
+  <data xml:space="preserve" name="Insert">
+    <value>Insert</value>
+  </data>
+  <data xml:space="preserve" name="Interval">
+    <value>Interval</value>
+  </data>
+  <data xml:space="preserve" name="Keybinds">
+    <value>Keybinds</value>
+  </data>
+  <data xml:space="preserve" name="Language">
+    <value>Language</value>
+  </data>
+  <data xml:space="preserve" name="LanguageSaveFailed">
+    <value>Could not save the language preference. Please try again.</value>
+  </data>
+  <data xml:space="preserve" name="LanguagechangesapplyimmediatelyUnavailabletranslationsuseEnglish">
+    <value>Language changes apply immediately. Unavailable translations use English.</value>
+  </data>
+  <data xml:space="preserve" name="LeftAlt">
+    <value>Left Alt</value>
+  </data>
+  <data xml:space="preserve" name="LeftCtrl">
+    <value>Left Ctrl</value>
+  </data>
+  <data xml:space="preserve" name="LeftShift">
+    <value>Left Shift</value>
+  </data>
+  <data xml:space="preserve" name="Light">
+    <value>Light</value>
+  </data>
+  <data xml:space="preserve" name="Luminosityopacity">
+    <value>Luminosity opacity</value>
+  </data>
+  <data xml:space="preserve" name="MainWindow_Localized1.Text">
+    <value>Interval</value>
+  </data>
+  <data xml:space="preserve" name="MainWindow_Localized2.Text">
+    <value>Frequency</value>
+  </data>
+  <data xml:space="preserve" name="MainWindow_Localized3.Text">
+    <value>Click target</value>
+  </data>
+  <data xml:space="preserve" name="MainWindow_Localized4.Text">
+    <value>Hold mode</value>
+  </data>
+  <data xml:space="preserve" name="MainWindow_Localized5.Text">
+    <value>Enable clicking</value>
+  </data>
+  <data xml:space="preserve" name="Mica">
+    <value>Mica</value>
+  </data>
+  <data xml:space="preserve" name="MicaAlt">
+    <value>Mica Alt</value>
+  </data>
+  <data xml:space="preserve" name="MicauseswallpaperAcrylicistranslucentThinAcrylicisthelightestoption">
+    <value>Mica uses wallpaper; Acrylic is translucent; Thin Acrylic is the lightest option.</value>
+  </data>
+  <data xml:space="preserve" name="Mouse1left">
+    <value>Mouse 1 (left)</value>
+  </data>
+  <data xml:space="preserve" name="Mouse2right">
+    <value>Mouse 2 (right)</value>
+  </data>
+  <data xml:space="preserve" name="Mouse3middle">
+    <value>Mouse 3 (middle)</value>
+  </data>
+  <data xml:space="preserve" name="Mouse4back">
+    <value>Mouse 4 (back)</value>
+  </data>
+  <data xml:space="preserve" name="Mouse5forward">
+    <value>Mouse 5 (forward)</value>
+  </data>
+  <data xml:space="preserve" name="MouseTarget">
+    <value>Mouse {0}</value>
+  </data>
+  <data xml:space="preserve" name="Overridethesystemmaterialdefaultswithcustomcolors">
+    <value>Override the system material defaults with custom colors.</value>
+  </data>
+  <data xml:space="preserve" name="PageDown">
+    <value>Page Down</value>
+  </data>
+  <data xml:space="preserve" name="PageUp">
+    <value>Page Up</value>
+  </data>
+  <data xml:space="preserve" name="Pressoncetoenableclickingpressagaintodisableit">
+    <value>Press once to enable clicking; press again to disable it.</value>
+  </data>
+  <data xml:space="preserve" name="RestoreDefaultsButton_RestoreButton.ToolTipService.ToolTip">
+    <value>Restore defaults</value>
+  </data>
+  <data xml:space="preserve" name="RestoreDefaultsButton_RestoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name">
+    <value>Restore defaults</value>
+  </data>
+  <data xml:space="preserve" name="RestoreDefaultsButton_RestoreText.Text">
+    <value>Restore defaults</value>
+  </data>
+  <data xml:space="preserve" name="Restoredefaults">
+    <value>Restore defaults</value>
+  </data>
+  <data xml:space="preserve" name="RightAlt">
+    <value>Right Alt</value>
+  </data>
+  <data xml:space="preserve" name="RightCtrl">
+    <value>Right Ctrl</value>
+  </data>
+  <data xml:space="preserve" name="RightShift">
+    <value>Right Shift</value>
+  </data>
+  <data xml:space="preserve" name="Settings">
+    <value>Settings</value>
+  </data>
+  <data xml:space="preserve" name="SettingsWindow_AppearanceNavigationItem.Content">
+    <value>Appearance</value>
+  </data>
+  <data xml:space="preserve" name="SettingsWindow_GeneralNavigationItem.Content">
+    <value>General</value>
+  </data>
+  <data xml:space="preserve" name="SettingsWindow_SettingsNavigation.PaneTitle">
+    <value>Settings</value>
+  </data>
+  <data xml:space="preserve" name="Space">
+    <value>Space</value>
+  </data>
+  <data xml:space="preserve" name="Systemdefaults">
+    <value>System defaults</value>
+  </data>
+  <data xml:space="preserve" name="TheactivekeybindsandclicktargetmustbedifferentChooseanotherkeybindorclicktarget">
+    <value>The active keybinds and click target must be different. Choose another keybind or click target.</value>
+  </data>
+  <data xml:space="preserve" name="ThinAcrylic">
+    <value>Thin Acrylic</value>
+  </data>
+  <data xml:space="preserve" name="Tintcolor">
+    <value>Tint color</value>
+  </data>
+  <data xml:space="preserve" name="Tintopacity">
+    <value>Tint opacity</value>
+  </data>
+  <data xml:space="preserve" name="ToggleHint">
+    <value>{0}: enable or disable clicking globally</value>
+  </data>
+  <data xml:space="preserve" name="Toggleclicking">
+    <value>Toggle clicking</value>
+  </data>
+  <data xml:space="preserve" name="UnsupportedLanguage">
+    <value>Choose a supported language.</value>
+  </data>
+  <data xml:space="preserve" name="Usecustombackdropcolors">
+    <value>Use custom backdrop colors</value>
+  </data>
+  <data xml:space="preserve" name="UsedifferentbuttonsforeachactionMousebindingsmustalsodifferfromtheclicktarget">
+    <value>Use different buttons for each action. Mouse bindings must also differ from the click target.</value>
+  </data>
+  <data xml:space="preserve" name="Usingsystemmaterialdefaults">
+    <value>Using system material defaults</value>
+  </data>
+  <data xml:space="preserve" name="WhileclickingandholdmodeareenabledholdthisbuttontoclickReleaseittostop">
+    <value>While clicking and hold mode are enabled, hold this button to click. Release it to stop.</value>
+  </data>
+  <data xml:space="preserve" name="WindowsblockedtheclickClickinghasbeendisabled">
+    <value>Windows blocked the click. Clicking has been disabled.</value>
+  </data>
+</root>

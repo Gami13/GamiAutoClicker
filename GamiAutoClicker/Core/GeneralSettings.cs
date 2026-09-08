@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Windows.System;
 
@@ -16,30 +17,34 @@ internal static class GeneralSettings
 
     public static VirtualKey ToggleKey { get; private set; } = VirtualKey.F8;
     public static VirtualKey HoldKey { get; private set; } = VirtualKey.XButton1;
-    public static string Language { get; private set; } = "system";
-    public static bool IsEditing { get; set; }
+    public static string Language => Localization.Preference;
+    private static readonly HashSet<object> EditingViews = new();
+    public static bool IsEditing => EditingViews.Count != 0;
+    internal static void BeginEditing(object view) => EditingViews.Add(view);
+    internal static void EndEditing(object view) => EditingViews.Remove(view);
     public static event Action? Changed;
 
     public static bool TryApply(VirtualKey toggle, VirtualKey hold, string language, out string error)
     {
         error = "";
-        if (!Keys.Contains(toggle) || !Keys.Contains(hold)) { error = "Choose a supported key or mouse button."; return false; }
-        if (toggle == hold) { error = "Choose different buttons for toggle clicking and hold to click."; return false; }
+        if (!Keys.Contains(toggle) || !Keys.Contains(hold)) { error = Localization.Get("Chooseasupportedkeyormousebutton"); return false; }
+        if (toggle == hold) { error = Localization.Get("Choosedifferentbuttonsfortoggleclickingandholdtoclick"); return false; }
+        if (!Localization.TrySetLanguage(language, out error)) return false;
         ToggleKey = toggle;
         HoldKey = hold;
-        Language = language;
         Changed?.Invoke();
         return true;
     }
 
     public static string KeyLabel(VirtualKey key) => key switch
     {
-        VirtualKey.LeftButton => "Mouse 1 (left)", VirtualKey.RightButton => "Mouse 2 (right)",
-        VirtualKey.MiddleButton => "Mouse 3 (middle)", VirtualKey.XButton1 => "Mouse 4 (back)", VirtualKey.XButton2 => "Mouse 5 (forward)",
-        VirtualKey.LeftShift => "Left Shift", VirtualKey.RightShift => "Right Shift",
-        VirtualKey.LeftControl => "Left Ctrl", VirtualKey.RightControl => "Right Ctrl",
-        VirtualKey.LeftMenu => "Left Alt", VirtualKey.RightMenu => "Right Alt",
-        VirtualKey.PageUp => "Page Up", VirtualKey.PageDown => "Page Down",
+        VirtualKey.LeftButton => Localization.Get("Mouse1left"), VirtualKey.RightButton => Localization.Get("Mouse2right"),
+        VirtualKey.MiddleButton => Localization.Get("Mouse3middle"), VirtualKey.XButton1 => Localization.Get("Mouse4back"), VirtualKey.XButton2 => Localization.Get("Mouse5forward"),
+        VirtualKey.LeftShift => Localization.Get("LeftShift"), VirtualKey.RightShift => Localization.Get("RightShift"),
+        VirtualKey.LeftControl => Localization.Get("LeftCtrl"), VirtualKey.RightControl => Localization.Get("RightCtrl"),
+        VirtualKey.LeftMenu => Localization.Get("LeftAlt"), VirtualKey.RightMenu => Localization.Get("RightAlt"),
+        VirtualKey.PageUp => Localization.Get("PageUp"), VirtualKey.PageDown => Localization.Get("PageDown"),
+        VirtualKey.Space or VirtualKey.Insert or VirtualKey.Delete or VirtualKey.Home or VirtualKey.End => Localization.Get(key.ToString()),
         _ => key.ToString().Replace("Number", "", StringComparison.Ordinal)
     };
 }

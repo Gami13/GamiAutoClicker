@@ -68,7 +68,7 @@ internal static class BackdropHelper {
 
 	internal static void RefreshTint(Color currentColor, Action<Color> setTintColor) {
 		// Workaround for https://github.com/microsoft/microsoft-ui-xaml/issues/10717
-		var temporaryColor = currentColor;
+		Color temporaryColor = currentColor;
 		temporaryColor.A = (byte)(currentColor.A < 255 ? currentColor.A + 1 : currentColor.A - 1);
 		setTintColor(temporaryColor);
 		setTintColor(currentColor);

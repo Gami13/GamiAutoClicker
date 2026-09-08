@@ -4,7 +4,6 @@ using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using System;
-using Windows.Graphics;
 
 namespace Gami;
 
@@ -16,6 +15,7 @@ public static partial class EasyWindows {
 		private readonly object _windowKey;
 		private readonly SystemBackdropConfiguration _backdropConfig;
 		private readonly TitleBar _topWindowBar;
+		private readonly ContentControl _contentHost;
 		public IBackdropAdapter? Adapter { get; private set; }
 		private bool _disposed;
 		private bool _windowClosed;
@@ -30,7 +30,7 @@ public static partial class EasyWindows {
 		}
 
 		private WindowController(Window window, object windowKey) {
-			if (!WindowConfigs.TryGetValue(windowKey, out var options)) {
+			if (!WindowConfigs.TryGetValue(windowKey, out WindowOptions? options)) {
 				throw new ArgumentException($"WindowOptions for {windowKey} not found.");
 			}
 			_windowKey = windowKey;
@@ -39,12 +39,18 @@ public static partial class EasyWindows {
 			WindowsSystemDispatcherQueueHelper.EnsureWindowsSystemDispatcherQueueController();
 
 			_topWindowBar = new TitleBar(windowKey);
-			var root = CreateRoot(window, _topWindowBar);
+			RefreshText();
+			_contentHost = new ContentControl {
+				HorizontalContentAlignment = HorizontalAlignment.Stretch,
+				VerticalContentAlignment = VerticalAlignment.Stretch
+			};
+			Grid root = CreateRoot(window, _topWindowBar, _contentHost);
 
 			_backdropConfig = new SystemBackdropConfiguration { IsInputActive = true };
 			SetTheme();
 
 			CreateAdapter();
+			ReloadContent();
 
 			Window.AppWindow.SetPresenter(options.PresenterKind);
 			Window.AppWindow.Resize(options.DefaultSize);
@@ -76,8 +82,31 @@ public static partial class EasyWindows {
 
 		}
 
-		private static Grid CreateRoot(Window window, TitleBar titleBar) {
-			var content = window.Content as UIElement;
+		internal void RefreshText() {
+			WindowOptions options = GetWindowOptions(_windowKey);
+			Window.Title = options.TitleProvider?.Invoke() ?? options.Title;
+			_topWindowBar.RefreshText();
+		}
+
+		internal void ValidateReload() {
+			if (!Window.DispatcherQueue.HasThreadAccess)
+				throw new InvalidOperationException("ReloadAllWindows must run on the windows' UI thread.");
+		}
+
+		internal void ReloadContent() {
+			ValidateReload();
+			if (_disposed) return;
+			UIElement replacement = GetWindowOptions(_windowKey).ContentFactory()
+				?? throw new InvalidOperationException("ContentFactory must return fresh content.");
+			object previous = _contentHost.Content;
+			if (ReferenceEquals(previous, replacement))
+				throw new InvalidOperationException("ContentFactory must return a new content instance on every call.");
+			_contentHost.Content = replacement;
+			(previous as IDisposable)?.Dispose();
+			RefreshText();
+		}
+
+		private static Grid CreateRoot(Window window, TitleBar titleBar, ContentControl contentHost) {
 			var root = new Grid();
 			root.RowDefinitions.Add(new RowDefinition {
 				Height = GridLength.Auto
@@ -86,18 +115,9 @@ public static partial class EasyWindows {
 				Height = new GridLength(1, GridUnitType.Star)
 			});
 
-			window.Content = null;
 			root.Children.Add(titleBar);
-
-			if (content is not null) {
-				if (content is FrameworkElement frameworkElement) {
-					Grid.SetRow(frameworkElement, 1);
-				}
-				else {
-					content.SetValue(Grid.RowProperty, 1);
-				}
-				root.Children.Add(content);
-			}
+			Grid.SetRow(contentHost, 1);
+			root.Children.Add(contentHost);
 
 			window.Content = root;
 			window.SetTitleBar(titleBar);
@@ -131,7 +151,7 @@ public static partial class EasyWindows {
 
 		public void SetTheme() {
 			if (Window.Content is FrameworkElement root) {
-				var requestedTheme = Theme.Theme switch {
+				ElementTheme requestedTheme = Theme.Theme switch {
 					SystemBackdropTheme.Light => ElementTheme.Light,
 					SystemBackdropTheme.Dark => ElementTheme.Dark,
 					_ => ElementTheme.Default
@@ -164,6 +184,7 @@ public static partial class EasyWindows {
 		private void OnClosed(object sender, WindowEventArgs args) {
 			_windowClosed = true;
 			DisposeCore();
+			GetWindowOptions(_windowKey).Closed?.Invoke();
 		}
 
 		public void Dispose() {
@@ -184,6 +205,8 @@ public static partial class EasyWindows {
 			}
 
 			_disposed = true;
+			(_contentHost.Content as IDisposable)?.Dispose();
+			_contentHost.Content = null;
 
 			Window.Activated -= OnActivated;
 			Window.Closed -= OnClosed;

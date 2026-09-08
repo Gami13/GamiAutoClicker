@@ -22,6 +22,7 @@ public static partial class EasyWindows {
 	public sealed class ButtonOptions {
 		public required Symbol Icon { get; init; }
 		public required RoutedEventHandler Action { get; init; }
+		public Func<string>? AccessibleNameProvider { get; init; }
 	}
 
 	[SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "Consumers intentionally use the cohesive EasyWindows.ThemeSettings API.")]
@@ -39,8 +40,11 @@ public static partial class EasyWindows {
 
 	[SuppressMessage("Design", "CA1034:Nested types should not be visible", Justification = "Consumers intentionally use the cohesive EasyWindows.WindowOptions API.")]
 	public sealed class WindowOptions {
-		public required Func<Window> Factory { get; init; }
+		/// <summary>Creates fresh content on opening and every reload. Disposable content is disposed on replacement or close.</summary>
+		public required Func<UIElement> ContentFactory { get; init; }
+		public Action? Closed { get; init; }
 		public required string Title { get; init; }
+		public Func<string>? TitleProvider { get; init; }
 		public required SizeInt32 DefaultSize { get; init; }
 		public SizeInt32 MinimumSize { get; init; }
 		public SizeInt32 MaximumSize { get; init; }

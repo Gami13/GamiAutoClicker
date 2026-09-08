@@ -1,0 +1,384 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms</value>
+  </resheader>
+  <data xml:space="preserve" name="Acrylic">
+    <value>Akryl</value>
+  </data>
+  <data xml:space="preserve" name="Advancedcolortuning">
+    <value>Zaawansowane ustawienia kolorów</value>
+  </data>
+  <data xml:space="preserve" name="Appearance">
+    <value>Wygląd</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_BackdropMaterialComboBox.Header">
+    <value>Materiał tła</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_FallbackColorPicker.Header">
+    <value>Kolor zastępczy</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized1.Text">
+    <value>Wygląd</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized10.Text">
+    <value>Zastąp domyślne kolory materiału własnymi kolorami.</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized2.Text">
+    <value>Dostosuj tło wszystkich okien aplikacji.</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized3.Text">
+    <value>Bieżący wygląd</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized4.Text">
+    <value>Zmiany są stosowane od razu we wszystkich otwartych oknach.</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized5.Text">
+    <value>Podstawowy wygląd</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized6.Text">
+    <value>Wybierz materiał i motyw.</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized7.Text">
+    <value>Mica korzysta z tapety. Akryl jest półprzezroczysty, a cienki akryl jest najlżejszą opcją.</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized8.Text">
+    <value>Tryb domyślny używa ustawień kolorów systemu Windows.</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_Localized9.Text">
+    <value>Zaawansowane ustawienia kolorów</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_LuminosityOpacitySlider.Header">
+    <value>Krycie jasności</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_OverrideDefaultsToggleSwitch.Header">
+    <value>Użyj własnych kolorów tła</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_OverrideDefaultsToggleSwitch.OffContent">
+    <value>Domyślne ustawienia systemu</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_OverrideDefaultsToggleSwitch.OnContent">
+    <value>Własne kolory</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_ThemeComboBox.Header">
+    <value>Tryb kolorów</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_TintColorPicker.Header">
+    <value>Kolor odcienia</value>
+  </data>
+  <data xml:space="preserve" name="AppearancePage_TintOpacitySlider.Header">
+    <value>Krycie odcienia</value>
+  </data>
+  <data xml:space="preserve" name="Applanguage">
+    <value>Język aplikacji</value>
+  </data>
+  <data xml:space="preserve" name="Backdropmaterial">
+    <value>Materiał tła</value>
+  </data>
+  <data xml:space="preserve" name="Baseappearance">
+    <value>Podstawowy wygląd</value>
+  </data>
+  <data xml:space="preserve" name="Blocked">
+    <value>Zablokowane</value>
+  </data>
+  <data xml:space="preserve" name="Changesareappliedimmediatelytoeveryopenwindow">
+    <value>Zmiany są stosowane od razu we wszystkich otwartych oknach.</value>
+  </data>
+  <data xml:space="preserve" name="ChangessaveautomaticallyGlobalcontrolsarepausedwhilethispageisopen">
+    <value>Zmiany są zapisywane automatycznie. Skróty globalne są wstrzymane, gdy ta strona jest otwarta.</value>
+  </data>
+  <data xml:space="preserve" name="Chooseamousebuttonastheclicktarget">
+    <value>Wybierz przycisk myszy do klikania.</value>
+  </data>
+  <data xml:space="preserve" name="Chooseasupportedkeyormousebutton">
+    <value>Wybierz obsługiwany klawisz lub przycisk myszy.</value>
+  </data>
+  <data xml:space="preserve" name="Choosedifferentbuttonsfortoggleclickingandholdtoclick">
+    <value>Wybierz różne przyciski do przełączania klikania i przytrzymania.</value>
+  </data>
+  <data xml:space="preserve" name="Choosethematerialandtheme">
+    <value>Wybierz materiał i motyw.</value>
+  </data>
+  <data xml:space="preserve" name="Chooseyourcontrolsandlanguagepreference">
+    <value>Wybierz przyciski sterujące i język.</value>
+  </data>
+  <data xml:space="preserve" name="Clicktarget">
+    <value>Przycisk kliknięcia</value>
+  </data>
+  <data xml:space="preserve" name="ColorModeSummary">
+    <value>Tryb kolorów: {0}</value>
+  </data>
+  <data xml:space="preserve" name="Colormode">
+    <value>Tryb kolorów</value>
+  </data>
+  <data xml:space="preserve" name="Currentappearance">
+    <value>Bieżący wygląd</value>
+  </data>
+  <data xml:space="preserve" name="Customcolors">
+    <value>Własne kolory</value>
+  </data>
+  <data xml:space="preserve" name="Customcolortuningisactive">
+    <value>Własne ustawienia kolorów są aktywne</value>
+  </data>
+  <data xml:space="preserve" name="Customizethebackdropusedbyeveryappwindow">
+    <value>Dostosuj tło wszystkich okien aplikacji.</value>
+  </data>
+  <data xml:space="preserve" name="Dark">
+    <value>Ciemny</value>
+  </data>
+  <data xml:space="preserve" name="Default">
+    <value>Domyślny</value>
+  </data>
+  <data xml:space="preserve" name="DefaultfollowsyourWindowscolormode">
+    <value>Tryb domyślny używa ustawień kolorów systemu Windows.</value>
+  </data>
+  <data xml:space="preserve" name="Delete">
+    <value>Delete</value>
+  </data>
+  <data xml:space="preserve" name="Disabled">
+    <value>Wyłączone</value>
+  </data>
+  <data xml:space="preserve" name="Enableclicking">
+    <value>Włącz klikanie</value>
+  </data>
+  <data xml:space="preserve" name="Enabled">
+    <value>Włączone</value>
+  </data>
+  <data xml:space="preserve" name="End">
+    <value>End</value>
+  </data>
+  <data xml:space="preserve" name="Fallbackcolor">
+    <value>Kolor zastępczy</value>
+  </data>
+  <data xml:space="preserve" name="FollowWindows">
+    <value>Zgodnie z systemem Windows</value>
+  </data>
+  <data xml:space="preserve" name="FollowsWindowscolormode">
+    <value>Zgodnie z trybem kolorów systemu Windows</value>
+  </data>
+  <data xml:space="preserve" name="Frequency">
+    <value>Częstotliwość</value>
+  </data>
+  <data xml:space="preserve" name="General">
+    <value>Ogólne</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_HoldKeyComboBox.Header">
+    <value>Przytrzymaj, aby klikać</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_LanguageComboBox.Header">
+    <value>Język aplikacji</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized1.Text">
+    <value>Ogólne</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized2.Text">
+    <value>Wybierz przyciski sterujące i język.</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized3.Text">
+    <value>Skróty klawiszowe</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized4.Text">
+    <value>Zmiany są zapisywane automatycznie. Skróty globalne są wstrzymane, gdy ta strona jest otwarta.</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized5.Text">
+    <value>Naciśnij raz, aby włączyć klikanie. Naciśnij ponownie, aby je wyłączyć.</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized6.Text">
+    <value>Gdy klikanie i tryb przytrzymania są włączone, przytrzymaj ten przycisk, aby klikać. Zwolnij go, aby zatrzymać klikanie.</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized7.Text">
+    <value>Użyj różnych przycisków dla każdej akcji. Skróty myszy muszą też różnić się od przycisku kliknięcia.</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized8.Text">
+    <value>Język</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_Localized9.Text">
+    <value>Zmiana języka działa od razu. Brakujące tłumaczenia są wyświetlane po angielsku.</value>
+  </data>
+  <data xml:space="preserve" name="GeneralPage_ToggleKeyComboBox.Header">
+    <value>Włączanie i wyłączanie klikania</value>
+  </data>
+  <data xml:space="preserve" name="HoldHint">
+    <value>Gdy klikanie jest włączone, przytrzymaj {0}, aby klikać. Zwolnij przycisk, aby zatrzymać klikanie. Wybierz inny przycisk do klikania.</value>
+  </data>
+  <data xml:space="preserve" name="Holdmode">
+    <value>Tryb przytrzymania</value>
+  </data>
+  <data xml:space="preserve" name="Holdtoclick">
+    <value>Przytrzymaj, aby klikać</value>
+  </data>
+  <data xml:space="preserve" name="Home">
+    <value>Home</value>
+  </data>
+  <data xml:space="preserve" name="Insert">
+    <value>Insert</value>
+  </data>
+  <data xml:space="preserve" name="Interval">
+    <value>Odstęp</value>
+  </data>
+  <data xml:space="preserve" name="Keybinds">
+    <value>Skróty klawiszowe</value>
+  </data>
+  <data xml:space="preserve" name="Language">
+    <value>Język</value>
+  </data>
+  <data xml:space="preserve" name="LanguageSaveFailed">
+    <value>Nie udało się zapisać języka. Spróbuj ponownie.</value>
+  </data>
+  <data xml:space="preserve" name="LanguagechangesapplyimmediatelyUnavailabletranslationsuseEnglish">
+    <value>Zmiana języka działa od razu. Brakujące tłumaczenia są wyświetlane po angielsku.</value>
+  </data>
+  <data xml:space="preserve" name="LeftAlt">
+    <value>Lewy Alt</value>
+  </data>
+  <data xml:space="preserve" name="LeftCtrl">
+    <value>Lewy Ctrl</value>
+  </data>
+  <data xml:space="preserve" name="LeftShift">
+    <value>Lewy Shift</value>
+  </data>
+  <data xml:space="preserve" name="Light">
+    <value>Jasny</value>
+  </data>
+  <data xml:space="preserve" name="Luminosityopacity">
+    <value>Krycie jasności</value>
+  </data>
+  <data xml:space="preserve" name="MainWindow_Localized1.Text">
+    <value>Odstęp</value>
+  </data>
+  <data xml:space="preserve" name="MainWindow_Localized2.Text">
+    <value>Częstotliwość</value>
+  </data>
+  <data xml:space="preserve" name="MainWindow_Localized3.Text">
+    <value>Przycisk kliknięcia</value>
+  </data>
+  <data xml:space="preserve" name="MainWindow_Localized4.Text">
+    <value>Tryb przytrzymania</value>
+  </data>
+  <data xml:space="preserve" name="MainWindow_Localized5.Text">
+    <value>Włącz klikanie</value>
+  </data>
+  <data xml:space="preserve" name="Mica">
+    <value>Mica</value>
+  </data>
+  <data xml:space="preserve" name="MicaAlt">
+    <value>Mica Alt</value>
+  </data>
+  <data xml:space="preserve" name="MicauseswallpaperAcrylicistranslucentThinAcrylicisthelightestoption">
+    <value>Mica korzysta z tapety. Akryl jest półprzezroczysty, a cienki akryl jest najlżejszą opcją.</value>
+  </data>
+  <data xml:space="preserve" name="Mouse1left">
+    <value>Mysz 1 (lewy)</value>
+  </data>
+  <data xml:space="preserve" name="Mouse2right">
+    <value>Mysz 2 (prawy)</value>
+  </data>
+  <data xml:space="preserve" name="Mouse3middle">
+    <value>Mysz 3 (środkowy)</value>
+  </data>
+  <data xml:space="preserve" name="Mouse4back">
+    <value>Mysz 4 (wstecz)</value>
+  </data>
+  <data xml:space="preserve" name="Mouse5forward">
+    <value>Mysz 5 (dalej)</value>
+  </data>
+  <data xml:space="preserve" name="MouseTarget">
+    <value>Mysz {0}</value>
+  </data>
+  <data xml:space="preserve" name="Overridethesystemmaterialdefaultswithcustomcolors">
+    <value>Zastąp domyślne kolory materiału własnymi kolorami.</value>
+  </data>
+  <data xml:space="preserve" name="PageDown">
+    <value>Page Down</value>
+  </data>
+  <data xml:space="preserve" name="PageUp">
+    <value>Page Up</value>
+  </data>
+  <data xml:space="preserve" name="Pressoncetoenableclickingpressagaintodisableit">
+    <value>Naciśnij raz, aby włączyć klikanie. Naciśnij ponownie, aby je wyłączyć.</value>
+  </data>
+  <data xml:space="preserve" name="RestoreDefaultsButton_RestoreButton.ToolTipService.ToolTip">
+    <value>Przywróć domyślne</value>
+  </data>
+  <data xml:space="preserve" name="RestoreDefaultsButton_RestoreButton.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name">
+    <value>Przywróć domyślne</value>
+  </data>
+  <data xml:space="preserve" name="RestoreDefaultsButton_RestoreText.Text">
+    <value>Przywróć domyślne</value>
+  </data>
+  <data xml:space="preserve" name="Restoredefaults">
+    <value>Przywróć domyślne</value>
+  </data>
+  <data xml:space="preserve" name="RightAlt">
+    <value>Prawy Alt</value>
+  </data>
+  <data xml:space="preserve" name="RightCtrl">
+    <value>Prawy Ctrl</value>
+  </data>
+  <data xml:space="preserve" name="RightShift">
+    <value>Prawy Shift</value>
+  </data>
+  <data xml:space="preserve" name="Settings">
+    <value>Ustawienia</value>
+  </data>
+  <data xml:space="preserve" name="SettingsWindow_AppearanceNavigationItem.Content">
+    <value>Wygląd</value>
+  </data>
+  <data xml:space="preserve" name="SettingsWindow_GeneralNavigationItem.Content">
+    <value>Ogólne</value>
+  </data>
+  <data xml:space="preserve" name="SettingsWindow_SettingsNavigation.PaneTitle">
+    <value>Ustawienia</value>
+  </data>
+  <data xml:space="preserve" name="Space">
+    <value>Spacja</value>
+  </data>
+  <data xml:space="preserve" name="Systemdefaults">
+    <value>Domyślne ustawienia systemu</value>
+  </data>
+  <data xml:space="preserve" name="TheactivekeybindsandclicktargetmustbedifferentChooseanotherkeybindorclicktarget">
+    <value>Aktywne skróty i przycisk kliknięcia muszą być różne. Wybierz inny skrót lub przycisk kliknięcia.</value>
+  </data>
+  <data xml:space="preserve" name="ThinAcrylic">
+    <value>Cienki akryl</value>
+  </data>
+  <data xml:space="preserve" name="Tintcolor">
+    <value>Kolor odcienia</value>
+  </data>
+  <data xml:space="preserve" name="Tintopacity">
+    <value>Krycie odcienia</value>
+  </data>
+  <data xml:space="preserve" name="ToggleHint">
+    <value>{0}: włącz lub wyłącz klikanie globalnie</value>
+  </data>
+  <data xml:space="preserve" name="Toggleclicking">
+    <value>Włączanie i wyłączanie klikania</value>
+  </data>
+  <data xml:space="preserve" name="UnsupportedLanguage">
+    <value>Wybierz obsługiwany język.</value>
+  </data>
+  <data xml:space="preserve" name="Usecustombackdropcolors">
+    <value>Użyj własnych kolorów tła</value>
+  </data>
+  <data xml:space="preserve" name="UsedifferentbuttonsforeachactionMousebindingsmustalsodifferfromtheclicktarget">
+    <value>Użyj różnych przycisków dla każdej akcji. Skróty myszy muszą też różnić się od przycisku kliknięcia.</value>
+  </data>
+  <data xml:space="preserve" name="Usingsystemmaterialdefaults">
+    <value>Domyślne ustawienia materiału systemowego</value>
+  </data>
+  <data xml:space="preserve" name="WhileclickingandholdmodeareenabledholdthisbuttontoclickReleaseittostop">
+    <value>Gdy klikanie i tryb przytrzymania są włączone, przytrzymaj ten przycisk, aby klikać. Zwolnij go, aby zatrzymać klikanie.</value>
+  </data>
+  <data xml:space="preserve" name="WindowsblockedtheclickClickinghasbeendisabled">
+    <value>System Windows zablokował kliknięcie. Klikanie zostało wyłączone.</value>
+  </data>
+</root>

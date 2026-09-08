@@ -14,10 +14,18 @@ internal sealed partial class AppearancePage : Page {
 
 	public AppearancePage() {
 		InitializeComponent();
-		BackdropMaterialComboBox.ItemsSource = Enum.GetValues<EasyWindows.BackdropMaterial>().Cast<object>().ToArray();
-		ThemeComboBox.ItemsSource = new object[] { SystemBackdropTheme.Dark, SystemBackdropTheme.Light, SystemBackdropTheme.Default };
+		RefreshLanguage();
 		RefreshControls(EasyWindows.Theme);
 	}
+
+    private void RefreshLanguage() {
+        _isSynchronizing = true;
+        BackdropMaterialComboBox.ItemsSource = Enum.GetValues<EasyWindows.BackdropMaterial>()
+            .Select(value => new ComboBoxItem { Content = FormatBackdropMaterial(value), Tag = value }).ToArray();
+        ThemeComboBox.ItemsSource = new[] { SystemBackdropTheme.Dark, SystemBackdropTheme.Light, SystemBackdropTheme.Default }
+            .Select(value => new ComboBoxItem { Content = Localization.Get(value.ToString()), Tag = value }).ToArray();
+        RefreshControls(EasyWindows.Theme);
+    }
 
 	private void OnRootGridLoaded(object sender, RoutedEventArgs e) {
 		UpdateResponsiveLayout(RootGrid.ActualWidth);
@@ -29,14 +37,14 @@ internal sealed partial class AppearancePage : Page {
 
 	private void OnMaterialChange(object sender, SelectionChangedEventArgs e) {
 		if (_isSynchronizing ||
-			BackdropMaterialComboBox.SelectedItem is not EasyWindows.BackdropMaterial material) return;
+			BackdropMaterialComboBox.SelectedItem is not ComboBoxItem { Tag: EasyWindows.BackdropMaterial material }) return;
 
 		EasyWindows.SetBackdropMaterial(material);
 		UpdateAppearanceSummary(EasyWindows.Theme);
 	}
 
 	private void OnThemeChange(object sender, SelectionChangedEventArgs e) {
-		if (_isSynchronizing || ThemeComboBox.SelectedItem is not SystemBackdropTheme theme) return;
+		if (_isSynchronizing || ThemeComboBox.SelectedItem is not ComboBoxItem { Tag: SystemBackdropTheme theme }) return;
 
 		EasyWindows.ApplyTheme(theme);
 		UpdateAppearanceSummary(EasyWindows.Theme);
@@ -81,8 +89,8 @@ internal sealed partial class AppearancePage : Page {
 	private void RefreshControls(EasyWindows.ThemeSettings settings) {
 		_isSynchronizing = true;
 		try {
-			BackdropMaterialComboBox.SelectedItem = settings.BackdropMaterial;
-			ThemeComboBox.SelectedItem = settings.Theme;
+			BackdropMaterialComboBox.SelectedItem = BackdropMaterialComboBox.Items.Cast<ComboBoxItem>().First(item => Equals(item.Tag, settings.BackdropMaterial));
+			ThemeComboBox.SelectedItem = ThemeComboBox.Items.Cast<ComboBoxItem>().First(item => Equals(item.Tag, settings.Theme));
 			OverrideDefaultsToggleSwitch.IsOn = settings.ShouldOverride;
 			FallbackColorPicker.Color = settings.FallbackColor;
 			TintColorPicker.Color = settings.TintColor;
@@ -109,18 +117,18 @@ internal sealed partial class AppearancePage : Page {
 	private void UpdateAppearanceSummary(EasyWindows.ThemeSettings settings) {
 		PreviewMaterialText.Text = FormatBackdropMaterial(settings.BackdropMaterial);
 		PreviewThemeText.Text = settings.Theme switch {
-			SystemBackdropTheme.Default => "Follows Windows color mode",
-			_ => $"{settings.Theme} color mode"
+			SystemBackdropTheme.Default => Localization.Get("FollowsWindowscolormode"),
+			_ => Localization.Format("ColorModeSummary", Localization.Get(settings.Theme.ToString()))
 		};
 		PreviewOverrideText.Text = settings.ShouldOverride
-			? "Custom color tuning is active"
-			: "Using system material defaults";
+			? Localization.Get("Customcolortuningisactive")
+			: Localization.Get("Usingsystemmaterialdefaults");
 	}
 
 	private static string FormatBackdropMaterial(EasyWindows.BackdropMaterial material) => material switch {
-		EasyWindows.BackdropMaterial.MicaAlt => "Mica Alt",
-		EasyWindows.BackdropMaterial.AcrylicThin => "Thin Acrylic",
-		_ => material.ToString()
+		EasyWindows.BackdropMaterial.MicaAlt => Localization.Get("MicaAlt"),
+		EasyWindows.BackdropMaterial.AcrylicThin => Localization.Get("ThinAcrylic"),
+		_ => Localization.Get(material.ToString())
 	};
 
 	private const double RestoreDefaultsBreakpoint = 470;

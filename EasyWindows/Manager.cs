@@ -3,8 +3,10 @@ using Microsoft.UI.Composition.SystemBackdrops;
 using Microsoft.UI.Windowing;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Diagnostics.CodeAnalysis;
 using Windows.UI;
+using Microsoft.UI.Xaml;
 
 namespace Gami;
 
@@ -44,20 +46,38 @@ public static partial class EasyWindows {
 
 	internal static bool IsWindowOpen(object key) => WindowControllers.ContainsKey(key);
 
+	private static bool _isReloading;
+
+	/// <summary>
+	/// Recreates content in every open window using its registered factory.
+	/// Call on the windows' UI thread. Window identity and bounds are retained;
+	/// content initializes its own state. Closed windows remain closed.
+	/// </summary>
+	public static void ReloadAllWindows() {
+		if (_isReloading) throw new InvalidOperationException("Window reload is already in progress.");
+		WindowController[] controllers = WindowControllers.Values.ToArray();
+		foreach (WindowController controller in controllers) controller.ValidateReload();
+		_isReloading = true;
+		try {
+			foreach (WindowController controller in controllers) controller.ReloadContent();
+		}
+		finally { _isReloading = false; }
+	}
+
 	internal static AppWindow GetAppWindow(object key) {
-		var window = WindowControllers.TryGetValue(key, out var controller) ? controller.Window : null;
+		Window? window = WindowControllers.TryGetValue(key, out WindowController? controller) ? controller.Window : null;
 		if (window == null) throw new InvalidOperationException($"Window {key} not created.");
 		return window.AppWindow;
 	}
 	internal static WindowOptions GetWindowOptions(object key) {
-		if (!WindowConfigs.TryGetValue(key, out var options)) {
+		if (!WindowConfigs.TryGetValue(key, out WindowOptions? options)) {
 			throw new ArgumentException($"WindowOptions {key} not registered.", nameof(key));
 		}
 		return options;
 	}
 
 	private static void ApplyToAllWindowControllers(Action<WindowController> action) {
-		foreach (var controller in WindowControllers.Values) action(controller);
+		foreach (WindowController controller in WindowControllers.Values) action(controller);
 	}
 
 	private static void UpdateAdapter(
@@ -71,7 +91,7 @@ public static partial class EasyWindows {
 	private static void CaptureSystemBackdropDefaults(bool force = false) {
 		if (BackdropValues != BackdropValueSource.Uninitialized && !force) return;
 
-		foreach (var window in WindowControllers.Values) {
+		foreach (WindowController window in WindowControllers.Values) {
 			if (window.TryCaptureBackdropDefaults()) {
 				BackdropValues = BackdropValueSource.SystemDefaults;
 				break;
@@ -88,16 +108,16 @@ public static partial class EasyWindows {
 	}
 
 	public static void CreateWindow(object key) {
-		if (!WindowConfigs.TryGetValue(key, out var options)) {
+		if (!WindowConfigs.TryGetValue(key, out WindowOptions? options)) {
 			throw new ArgumentException($"WindowOptions for {key} not found.");
 		}
-		if (WindowControllers.TryGetValue(key, out var controller)) {
+		if (WindowControllers.TryGetValue(key, out WindowController? controller)) {
 			controller.Window.Activate();
 			controller.Window.AppWindow.MoveInZOrderAtTop();
 			return;
 		}
 
-		var window = options.Factory();
+		Window window = new();
 		_ = WindowController.Register(window, key);
 		CaptureSystemBackdropDefaults();
 

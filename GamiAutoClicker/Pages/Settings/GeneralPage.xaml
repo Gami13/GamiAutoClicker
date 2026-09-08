@@ -4,8 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:components="using:GamiAutoClicker.Components"
-    Loaded="OnLoaded"
-    Unloaded="OnUnloaded">
+    Loaded="OnLoaded">
     <Grid x:Name="RootGrid" SizeChanged="OnSizeChanged">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -17,11 +16,10 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Spacing="2">
-                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="General" />
+                <TextBlock x:Name="Localized1" x:Uid="GeneralPage_Localized1" Style="{ThemeResource SubtitleTextBlockStyle}" />
                 <TextBlock
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+ x:Name="Localized2" x:Uid="GeneralPage_Localized2"                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
-                    Text="Choose your controls and language preference."
                     TextWrapping="Wrap" />
             </StackPanel>
             <components:RestoreDefaultsButton
@@ -54,37 +52,31 @@
                                 FontSize="18"
                                 Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                 Glyph="&#xE765;" />
-                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Keybinds" />
+                            <TextBlock x:Name="Localized3" x:Uid="GeneralPage_Localized3" Style="{ThemeResource BodyStrongTextBlockStyle}" />
                         </StackPanel>
                         <TextBlock
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+ x:Name="Localized4" x:Uid="GeneralPage_Localized4"                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Style="{ThemeResource CaptionTextBlockStyle}"
-                            Text="Changes save automatically. Global controls are paused while this page is open."
                             TextWrapping="Wrap" />
                         <ComboBox
-                            x:Name="ToggleKeyComboBox"
+                            x:Name="ToggleKeyComboBox" x:Uid="GeneralPage_ToggleKeyComboBox"
                             HorizontalAlignment="Stretch"
-                            Header="Toggle clicking"
                             SelectionChanged="OnSettingChanged" />
                         <TextBlock
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+ x:Name="Localized5" x:Uid="GeneralPage_Localized5"                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Style="{ThemeResource CaptionTextBlockStyle}"
-                            Text="Press once to enable clicking; press again to disable it."
                             TextWrapping="Wrap" />
                         <ComboBox
-                            x:Name="HoldKeyComboBox"
+                            x:Name="HoldKeyComboBox" x:Uid="GeneralPage_HoldKeyComboBox"
                             HorizontalAlignment="Stretch"
-                            Header="Hold to click"
                             SelectionChanged="OnSettingChanged" />
                         <TextBlock
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+ x:Name="Localized6" x:Uid="GeneralPage_Localized6"                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Style="{ThemeResource CaptionTextBlockStyle}"
-                            Text="While clicking and hold mode are enabled, hold this button to click. Release it to stop."
                             TextWrapping="Wrap" />
                         <TextBlock
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+ x:Name="Localized7" x:Uid="GeneralPage_Localized7"                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Style="{ThemeResource CaptionTextBlockStyle}"
-                            Text="Use different buttons for each action. Mouse bindings must also differ from the click target."
                             TextWrapping="Wrap" />
                     </StackPanel>
                     <StackPanel
@@ -96,20 +88,16 @@
                                 FontSize="18"
                                 Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                 Glyph="&#xF2B7;" />
-                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Language" />
+                            <TextBlock x:Name="Localized8" x:Uid="GeneralPage_Localized8" Style="{ThemeResource BodyStrongTextBlockStyle}" />
                         </StackPanel>
                         <ComboBox
-                            x:Name="LanguageComboBox"
+                            x:Name="LanguageComboBox" x:Uid="GeneralPage_LanguageComboBox"
                             HorizontalAlignment="Stretch"
-                            Header="App language"
                             SelectionChanged="OnSettingChanged">
-                            <x:String>Follow Windows</x:String>
-                            <x:String>English</x:String>
                         </ComboBox>
                         <TextBlock
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+ x:Name="Localized9" x:Uid="GeneralPage_Localized9"                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Style="{ThemeResource CaptionTextBlockStyle}"
-                            Text="The interface currently uses English. Your preference is saved for when translations become available."
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </Grid>
