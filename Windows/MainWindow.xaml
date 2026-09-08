@@ -100,11 +100,11 @@
                     Spacing="5">
                     <TextBlock VerticalAlignment="Center" Text="Hold mode" />
                     <FontIcon
+                        x:Name="HoldModeInfoIcon"
                         VerticalAlignment="Center"
                         FontSize="12"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Glyph="&#xE946;"
-                        ToolTipService.ToolTip="Hold mode only activates when Enable clicking is on. Hold-trigger selection will be added in Settings." />
+                        Glyph="&#xE946;" />
                 </StackPanel>
                 <ToggleSwitch
                     x:Name="HoldModeToggleSwitch"
