@@ -37,7 +37,10 @@ internal sealed partial class GeneralPage : Page {
 	}
 
 	private void OnSettingChanged(object sender, SelectionChangedEventArgs e) {
-		if (_isSynchronizing || ToggleKeyComboBox.SelectedIndex < 0 || HoldKeyComboBox.SelectedIndex < 0 || LanguageComboBox.SelectedIndex < 0) return;
+		if (_isSynchronizing || ToggleKeyComboBox.SelectedIndex < 0 || HoldKeyComboBox.SelectedIndex < 0 || LanguageComboBox.SelectedIndex < 0) {
+			return;
+		}
+
 		Save(GeneralSettings.Keys[ToggleKeyComboBox.SelectedIndex], GeneralSettings.Keys[HoldKeyComboBox.SelectedIndex], LanguageComboBox.SelectedIndex == 1 ? "en" : "system");
 	}
 
