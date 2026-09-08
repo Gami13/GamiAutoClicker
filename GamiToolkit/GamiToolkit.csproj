@@ -6,6 +6,7 @@
     <UseWinUI>true</UseWinUI>
     <Nullable>enable</Nullable>
     <Platforms>x86;x64;ARM64</Platforms>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\EasyWindows\EasyWindows.csproj" />

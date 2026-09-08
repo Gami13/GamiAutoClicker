@@ -119,6 +119,11 @@ internal sealed partial class MainPage : Page, IDisposable {
 
 	private void UpdateClickingStatus() {
 		bool isEnabled = ClickingEnabledToggleSwitch.IsOn;
+		DelayNumberBox.IsEnabled = !isEnabled;
+		CpsNumberBox.IsEnabled = !isEnabled;
+		RandomOffsetNumberBox.IsEnabled = !isEnabled;
+		MouseButtonComboBox.IsEnabled = !isEnabled;
+		HoldModeToggleSwitch.IsEnabled = !isEnabled;
 		StatusTextBlock.Text = Localization.Get(isEnabled ? "Enabled" : "Disabled");
 		ToolTipService.SetToolTip(StatusTextBlock, null);
 

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net10.0-windows10.0.26100.0</TargetFramework>
@@ -18,7 +18,8 @@
 		
 		<!-- Packaged Visual Studio builds must remain unpackaged=false. The publish profiles
 		     enable single-file output only during an actual publish. -->
-		<PublishSingleFile>false</PublishSingleFile>
+		<PublishSingleFile>true</PublishSingleFile>
+		<WindowsPackageType>None</WindowsPackageType>
 		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
 		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
 		<AnalysisMode>All</AnalysisMode>
@@ -50,7 +51,6 @@
 	<ItemGroup>
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
-
 	<!-- Generate culture tags from implemented resources before WinUI's first compile pass. -->
 	<Target Name="GenerateSupportedLanguages" BeforeTargets="PrepareForBuild;XamlPreCompile;CoreCompile">
 		<ItemGroup>

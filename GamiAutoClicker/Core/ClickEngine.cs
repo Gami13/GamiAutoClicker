@@ -11,6 +11,8 @@ namespace GamiAutoClicker;
 // Used on the UI thread: awaiting the delay keeps the window responsive without shared state or locks.
 internal sealed class ClickEngine
 {
+	internal const double MinimumIntervalMilliseconds = 15;
+	internal const double MaximumClicksPerSecond = 1000d / MinimumIntervalMilliseconds;
 	public double IntervalMilliseconds { get; set; } = 100;
 	public double RandomOffsetMilliseconds { get; set; }
 	public bool Enabled { get; set; }
@@ -82,7 +84,7 @@ internal sealed class ClickEngine
 	}
 
 	// Sample once per click, not once per keyboard poll. Offset is the full range width.
-	internal double GetNextIntervalMilliseconds() => Math.Max(1,
+	internal double GetNextIntervalMilliseconds() => Math.Max(MinimumIntervalMilliseconds,
 		IntervalMilliseconds + (Random.Shared.NextDouble() - 0.5) * RandomOffsetMilliseconds);
 
 	private void DisableClicking(string message)

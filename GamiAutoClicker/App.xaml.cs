@@ -31,6 +31,8 @@ namespace GamiAutoClicker {
                 System.IO.Path.Combine(System.AppContext.BaseDirectory, "reload-verification.txt"), "FAIL: " + args.Exception);
 #endif
 			SettingsStore.Load();
+			_engine.ToggleKey = GeneralSettings.ToggleKey;
+			_engine.HoldKey = GeneralSettings.HoldKey;
 			Localization.Initialize();
 			InitializeComponent();
 			EasyWindows.RegisterWindow(WindowKey.Main, new EasyWindows.WindowOptions {

@@ -39,11 +39,11 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 		}
 
 		// Each target receives its own configuration and Acrylic controller.
-		var config = GetDefaultSystemBackdropConfiguration(connectedTarget, xamlRoot);
+		SystemBackdropConfiguration config = GetDefaultSystemBackdropConfiguration(connectedTarget, xamlRoot);
 		config.Theme = EasyWindows.Theme.Theme;
 
-		var kind = GetFlyoutAcrylicKind(EasyWindows.Theme);
-		var controller = BackdropHelper.CreateAcrylicController(kind, config, connectedTarget, EasyWindows.Theme);
+		DesktopAcrylicKind kind = GetFlyoutAcrylicKind(EasyWindows.Theme);
+		DesktopAcrylicController controller = BackdropHelper.CreateAcrylicController(kind, config, connectedTarget, EasyWindows.Theme);
 
 		_targets[connectedTarget] = new TargetState(controller, config, kind);
 
@@ -59,7 +59,7 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 		// longer references the disconnected XAML object.
 		base.OnTargetDisconnected(disconnectedTarget);
 
-		if (_targets.Remove(disconnectedTarget, out var state)) {
+		if (_targets.Remove(disconnectedTarget, out TargetState? state)) {
 			state.Controller.RemoveSystemBackdropTarget(disconnectedTarget);
 			state.Controller.Dispose();
 		}
@@ -74,8 +74,8 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 		// supplied by WinUI. Refresh only the affected target's configuration.
 		base.OnDefaultSystemBackdropConfigurationChanged(target, xamlRoot);
 
-		if (_targets.TryGetValue(target, out var state)) {
-			var newConfig = GetDefaultSystemBackdropConfiguration(target, xamlRoot);
+		if (_targets.TryGetValue(target, out TargetState? state)) {
+			SystemBackdropConfiguration newConfig = GetDefaultSystemBackdropConfiguration(target, xamlRoot);
 			newConfig.Theme = EasyWindows.Theme.Theme;
 			state.Configuration = newConfig;
 			state.Controller.SetSystemBackdropConfiguration(newConfig);
@@ -87,8 +87,8 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 		// EasyWindows owns the global settings. Existing flyout targets either get
 		// their current values applied in place or receive a new controller when
 		// the Acrylic kind or override state requires one.
-		var theme = EasyWindows.Theme;
-		var requiredKind = GetFlyoutAcrylicKind(theme);
+		EasyWindows.ThemeSettings theme = EasyWindows.Theme;
+		DesktopAcrylicKind requiredKind = GetFlyoutAcrylicKind(theme);
 
 		foreach (var (target, state) in _targets) {
 			state.Configuration.Theme = theme.Theme;
