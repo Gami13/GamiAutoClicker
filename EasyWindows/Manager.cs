@@ -114,7 +114,7 @@ public static partial class EasyWindows {
 		}
 
 		Theme.ShouldOverride = state;
-		ApplyToAllWindowControllers(theme => theme.SetOverrides());
+		ApplyToAllWindowControllers(window => window.CreateAdapter());
 		NotifyThemeChanged();
 	}
 

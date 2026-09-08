@@ -119,10 +119,6 @@ public static partial class EasyWindows {
 			previous?.Dispose();
 		}
 
-		public void SetOverrides() {
-			CreateAdapter();
-		}
-
 		internal bool TryCaptureBackdropDefaults() {
 			if (Adapter is not { } adapter) return false;
 

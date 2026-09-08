@@ -40,7 +40,7 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 
 		// Each target receives its own configuration and Acrylic controller.
 		var config = GetDefaultSystemBackdropConfiguration(connectedTarget, xamlRoot);
-		UpdateConfigurationTheme(config, EasyWindows.Theme);
+		config.Theme = EasyWindows.Theme.Theme;
 
 		var kind = GetFlyoutAcrylicKind(EasyWindows.Theme);
 		var controller = BackdropHelper.CreateAcrylicController(kind, config, connectedTarget, EasyWindows.Theme);
@@ -76,7 +76,7 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 
 		if (_targets.TryGetValue(target, out var state)) {
 			var newConfig = GetDefaultSystemBackdropConfiguration(target, xamlRoot);
-			UpdateConfigurationTheme(newConfig, EasyWindows.Theme);
+			newConfig.Theme = EasyWindows.Theme.Theme;
 			state.Configuration = newConfig;
 			state.Controller.SetSystemBackdropConfiguration(newConfig);
 		}
@@ -91,7 +91,7 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 		var requiredKind = GetFlyoutAcrylicKind(theme);
 
 		foreach (var (target, state) in _targets) {
-			UpdateConfigurationTheme(state.Configuration, theme);
+			state.Configuration.Theme = theme.Theme;
 			state.Controller.SetSystemBackdropConfiguration(state.Configuration);
 
 			if (state.Kind != requiredKind) {
@@ -110,9 +110,6 @@ public partial class EasyWindowsBackdrop : SystemBackdrop {
 			}
 		}
 	}
-
-	private static void UpdateConfigurationTheme(SystemBackdropConfiguration config, EasyWindows.ThemeSettings theme) =>
-		config.Theme = theme.Theme;
 
 	// Flyouts use Acrylic even when windows use Mica. Only the Acrylic variant
 	// (Base versus Thin) is selected from the global backdrop setting.

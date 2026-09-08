@@ -43,16 +43,14 @@
                             <Setter Property="Padding" Value="12" />
                         </Style>
                     </Flyout.FlyoutPresenterStyle>
-                    <StackPanel>
-                        <ColorPicker
-                            x:Name="ColorPickerControl"
-                            ColorSpectrumShape="Ring"
-                            IsAlphaEnabled="True"
-                            IsColorChannelTextInputVisible="True"
-                            IsColorSliderVisible="True"
-                            IsHexInputVisible="True"
-                            IsMoreButtonVisible="True" />
-                    </StackPanel>
+                    <ColorPicker
+                        x:Name="ColorPickerControl"
+                        ColorSpectrumShape="Ring"
+                        IsAlphaEnabled="True"
+                        IsColorChannelTextInputVisible="True"
+                        IsColorSliderVisible="True"
+                        IsHexInputVisible="True"
+                        IsMoreButtonVisible="True" />
                 </Flyout>
             </DropDownButton.Flyout>
 
@@ -60,7 +58,6 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
                 <Border

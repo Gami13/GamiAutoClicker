@@ -1,19 +1,33 @@
 using Gami;
+using System;
+using System.Linq;
 using GamiAutoClicker.Components;
 using Microsoft.UI.Composition.SystemBackdrops;
-using Microsoft.UI.System;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Windows.UI;
 
 namespace GamiAutoClicker.Pages.Settings;
 
 internal sealed partial class AppearancePage : Page {
+	// Keep enums in managed code; WinUI only sees a standard item with string content.
+	private sealed partial class EnumComboBoxItem<T> : ComboBoxItem where T : struct, Enum {
+		public T Value { get; }
+
+		public EnumComboBoxItem(T value) {
+			Value = value;
+			Content = value.ToString();
+		}
+	}
+
 	private bool _isSynchronizing;
 
 	public AppearancePage() {
 		InitializeComponent();
-		UpdateSwitches(EasyWindows.Theme);
+		foreach (var material in Enum.GetValues<EasyWindows.BackdropMaterial>())
+			BackdropMaterialComboBox.Items.Add(new EnumComboBoxItem<EasyWindows.BackdropMaterial>(material));
+		foreach (var theme in new[] { SystemBackdropTheme.Dark, SystemBackdropTheme.Light, SystemBackdropTheme.Default })
+			ThemeComboBox.Items.Add(new EnumComboBoxItem<SystemBackdropTheme>(theme));
+		RefreshControls(EasyWindows.Theme);
 	}
 
 	private void OnRootGridLoaded(object sender, RoutedEventArgs e) {
@@ -25,51 +39,17 @@ internal sealed partial class AppearancePage : Page {
 	}
 
 	private void OnMaterialChange(object sender, SelectionChangedEventArgs e) {
-		if (_isSynchronizing) return;
+		if (_isSynchronizing ||
+			BackdropMaterialComboBox.SelectedItem is not EnumComboBoxItem<EasyWindows.BackdropMaterial> item) return;
 
-		var comboBox = (ComboBox)sender;
-		var selectedItem = comboBox.SelectedItem;
-
-		switch (selectedItem) {
-			case "Acrylic":
-				EasyWindows.SetBackdropMaterial(EasyWindows.BackdropMaterial.Acrylic);
-				break;
-			case "AcrylicThin":
-				EasyWindows.SetBackdropMaterial(EasyWindows.BackdropMaterial.AcrylicThin);
-				break;
-			case "Mica":
-				EasyWindows.SetBackdropMaterial(EasyWindows.BackdropMaterial.Mica);
-				break;
-			case "MicaAlt":
-				EasyWindows.SetBackdropMaterial(EasyWindows.BackdropMaterial.MicaAlt);
-				break;
-			default:
-				break;
-		}
-
+		EasyWindows.SetBackdropMaterial(item.Value);
 		UpdateAppearanceSummary(EasyWindows.Theme);
 	}
 
 	private void OnThemeChange(object sender, SelectionChangedEventArgs e) {
-		if (_isSynchronizing) return;
+		if (_isSynchronizing || ThemeComboBox.SelectedItem is not EnumComboBoxItem<SystemBackdropTheme> item) return;
 
-		var comboBox = (ComboBox)sender;
-		var selectedItem = comboBox.SelectedItem;
-
-		switch (selectedItem) {
-			case "Dark":
-				EasyWindows.ApplyTheme(SystemBackdropTheme.Dark);
-				break;
-			case "Light":
-				EasyWindows.ApplyTheme(SystemBackdropTheme.Light);
-				break;
-			case "Default":
-				EasyWindows.ApplyTheme(SystemBackdropTheme.Default);
-				break;
-			default:
-				break;
-		}
-
+		EasyWindows.ApplyTheme(item.Value);
 		UpdateAppearanceSummary(EasyWindows.Theme);
 	}
 
@@ -78,10 +58,9 @@ internal sealed partial class AppearancePage : Page {
 
 		var toggleSwitch = (ToggleSwitch)sender;
 		EasyWindows.SetOverrides(toggleSwitch.IsOn);
-		UpdateSwitches(EasyWindows.Theme);
+		RefreshControls(EasyWindows.Theme);
 	}
 
-#pragma warning disable CA1822 // XAML event handlers must be instance methods
 	private void OnFallbackColorChange(ColorPicker sender, ColorChangedEventArgs args) {
 		if (_isSynchronizing) return;
 
@@ -92,7 +71,6 @@ internal sealed partial class AppearancePage : Page {
 
 		EasyWindows.SetTintColor(args.NewColor);
 	}
-#pragma warning restore CA1822
 
 	private void OnTintOpacityChange(object sender, RoutedEventArgs e) {
 		if (_isSynchronizing || sender is not LabeledPercentageSlider slider) return;
@@ -108,14 +86,16 @@ internal sealed partial class AppearancePage : Page {
 
 	private void OnRestoreDefaultsClick(object sender, RoutedEventArgs e) {
 		EasyWindows.RestoreThemeDefaults();
-		UpdateSwitches(EasyWindows.Theme);
+		RefreshControls(EasyWindows.Theme);
 	}
 
-	private void UpdateSwitches(EasyWindows.ThemeSettings settings) {
+	private void RefreshControls(EasyWindows.ThemeSettings settings) {
 		_isSynchronizing = true;
 		try {
-			BackdropMaterialComboBox.SelectedItem = settings.BackdropMaterial.ToString();
-			ThemeComboBox.SelectedItem = settings.Theme.ToString();
+			BackdropMaterialComboBox.SelectedItem = BackdropMaterialComboBox.Items
+				.Cast<EnumComboBoxItem<EasyWindows.BackdropMaterial>>().First(item => item.Value == settings.BackdropMaterial);
+			ThemeComboBox.SelectedItem = ThemeComboBox.Items
+				.Cast<EnumComboBoxItem<SystemBackdropTheme>>().First(item => item.Value == settings.Theme);
 			OverrideDefaultsToggleSwitch.IsOn = settings.ShouldOverride;
 			FallbackColorPicker.Color = settings.FallbackColor;
 			TintColorPicker.Color = settings.TintColor;
@@ -156,28 +136,22 @@ internal sealed partial class AppearancePage : Page {
 		_ => material.ToString()
 	};
 
-	private void UpdateResponsiveLayout(double width) {
-		bool isCompactButton = width < 470;
-		RestoreDefaultsButtonText.Visibility = isCompactButton ? Visibility.Collapsed : Visibility.Visible;
-		if (isCompactButton) {
-			RestoreDefaultsIcon.FontSize = 16;
-			RestoreDefaultsButton.Width = 38;
-			RestoreDefaultsButton.Height = 38;
-			RestoreDefaultsButton.Padding = new Thickness(0);
-		} else {
-			RestoreDefaultsIcon.FontSize = 14;
-			RestoreDefaultsButton.Width = double.NaN;
-			RestoreDefaultsButton.Height = double.NaN;
-			RestoreDefaultsButton.Padding = new Thickness(11, 5, 11, 6);
-		}
+	private const double CompactRestoreButtonWidth = 470;
+	private const double TwoSettingsColumnsWidth = 590;
+	private const double TwoColorPickersWidth = 820;
 
-		bool useTwoSettingsColumns = width >= 600;
-		SettingsLeftColumn.Width = new GridLength(1, GridUnitType.Star);
+	private void UpdateResponsiveLayout(double width) {
+		bool isCompactButton = width < CompactRestoreButtonWidth;
+		RestoreDefaultsButtonText.Visibility = isCompactButton ? Visibility.Collapsed : Visibility.Visible;
+		RestoreDefaultsIcon.FontSize = isCompactButton ? 16 : 14;
+		RestoreDefaultsButton.Width = isCompactButton ? 38 : double.NaN;
+		RestoreDefaultsButton.Height = isCompactButton ? 38 : double.NaN;
+		RestoreDefaultsButton.Padding = isCompactButton ? new Thickness(0) : new Thickness(11, 5, 11, 6);
+
+		bool useTwoSettingsColumns = width >= TwoSettingsColumnsWidth;
 		SettingsRightColumn.Width = useTwoSettingsColumns
 			? new GridLength(1, GridUnitType.Star)
 			: new GridLength(0);
-		SettingsPreviewRow.Height = GridLength.Auto;
-		SettingsBaseRow.Height = GridLength.Auto;
 		SettingsAdvancedRow.Height = useTwoSettingsColumns
 			? new GridLength(0)
 			: GridLength.Auto;
@@ -185,8 +159,7 @@ internal sealed partial class AppearancePage : Page {
 		Grid.SetRow(AdvancedTuningCard, useTwoSettingsColumns ? 0 : 2);
 		Grid.SetRowSpan(AdvancedTuningCard, useTwoSettingsColumns ? 2 : 1);
 
-		bool useTwoColorPickers = width >= 820;
-		FallbackColorColumn.Width = new GridLength(1, GridUnitType.Star);
+		bool useTwoColorPickers = width >= TwoColorPickersWidth;
 		TintColorColumn.Width = useTwoColorPickers
 			? new GridLength(1, GridUnitType.Star)
 			: new GridLength(0);
