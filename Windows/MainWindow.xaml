@@ -101,7 +101,7 @@
                     <TextBlock VerticalAlignment="Center" Text="Hold mode" />
                     <FontIcon
                         VerticalAlignment="Center"
-                        FontSize="12"
+                        x:Name="HoldModeInfoIcon" FontSize="12"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Glyph="&#xE946;"
                         ToolTipService.ToolTip="While clicking is enabled, hold Mouse 4 (side/back button) to click. Release it to stop. Choose a different button as the click target." />

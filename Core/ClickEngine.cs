@@ -25,6 +25,7 @@ internal sealed class ClickEngine
 	{
 		bool toggleWasDown = IsKeyDown(ToggleKey);
 		bool wasActive = false;
+        bool wasEditing = GeneralSettings.IsEditing;
 		long lastClick = 0;
 
 		try
@@ -32,18 +33,19 @@ internal sealed class ClickEngine
 			while (!cancellationToken.IsCancellationRequested)
 			{
 				bool toggleDown = IsKeyDown(ToggleKey);
-				if (toggleDown && !toggleWasDown)
+				if (toggleDown && !toggleWasDown && !GeneralSettings.IsEditing && !wasEditing)
 				{
 					ToggleRequested?.Invoke();
 				}
 				toggleWasDown = toggleDown;
+                wasEditing = GeneralSettings.IsEditing;
 
 				// A trigger must differ from the output; injected releases would otherwise affect its state.
-				if (Enabled && HoldMode && HoldKey == MouseButton)
+				if (Enabled && (ToggleKey == MouseButton || (HoldMode && HoldKey == MouseButton)))
 				{
-					DisableClicking("The hold button and click target must be different. Choose another click target or turn off hold mode.");
+					DisableClicking("The active keybinds and click target must be different. Choose another keybind or click target.");
 				}
-				bool active = Enabled && (!HoldMode || IsKeyDown(HoldKey));
+				bool active = Enabled && !GeneralSettings.IsEditing && (!HoldMode || IsKeyDown(HoldKey));
 				if (active && (!wasActive || Stopwatch.GetElapsedTime(lastClick).TotalMilliseconds >= IntervalMilliseconds))
 				{
 					try

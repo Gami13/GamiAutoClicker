@@ -27,11 +27,21 @@ public sealed partial class MainWindow : Window
 		HoldModeToggleSwitch.Toggled += OnHoldModeToggled;
 		_engine.ToggleRequested += () => ClickingEnabledToggleSwitch.IsOn = !ClickingEnabledToggleSwitch.IsOn;
 		_engine.ClickingFailed += OnClickingFailed;
-		ToolTipService.SetToolTip(ClickingEnabledToggleSwitch, $"{_engine.ToggleKey}: enable or disable clicking globally");
+		GeneralSettings.Changed += ApplyGeneralSettings;
+        ApplyGeneralSettings();
 		_clickingTask = _engine.RunAsync(_clickingCancellation.Token);
 	}
 
-	private void OnClickingFailed(string message)
+	private void ApplyGeneralSettings()
+    {
+        ClickingEnabledToggleSwitch.IsOn = false;
+        _engine.ToggleKey = GeneralSettings.ToggleKey;
+        _engine.HoldKey = GeneralSettings.HoldKey;
+        ToolTipService.SetToolTip(ClickingEnabledToggleSwitch, $"{GeneralSettings.KeyLabel(_engine.ToggleKey)}: enable or disable clicking globally");
+        ToolTipService.SetToolTip(HoldModeInfoIcon, $"While clicking is enabled, hold {GeneralSettings.KeyLabel(_engine.HoldKey)} to click. Release it to stop. Choose a different button as the click target.");
+    }
+
+    private void OnClickingFailed(string message)
 	{
 		ClickingEnabledToggleSwitch.IsOn = false;
 		StatusTextBlock.Text = "Blocked";
@@ -123,10 +133,11 @@ public sealed partial class MainWindow : Window
 
 	private async void MainWindow_Closed(object? sender, WindowEventArgs args)
 	{
-		_clickingCancellation.Cancel();
+		GeneralSettings.Changed -= ApplyGeneralSettings;
+        GeneralSettings.IsEditing = false;
+        _clickingCancellation.Cancel();
 		await _clickingTask.ConfigureAwait(true);
 		_clickingCancellation.Dispose();
 		Application.Current.Exit();
 	}
 }
-

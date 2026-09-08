@@ -123,18 +123,12 @@ internal sealed partial class AppearancePage : Page {
 		_ => material.ToString()
 	};
 
-	private const double CompactRestoreButtonWidth = 470;
+	private const double RestoreDefaultsBreakpoint = 470;
 	private const double TwoSettingsColumnsWidth = 590;
 	private const double TwoColorPickersWidth = 820;
 
 	private void UpdateResponsiveLayout(double width) {
-		bool isCompactButton = width < CompactRestoreButtonWidth;
-		RestoreDefaultsButtonText.Visibility = isCompactButton ? Visibility.Collapsed : Visibility.Visible;
-		RestoreDefaultsIcon.FontSize = isCompactButton ? 16 : 14;
-		RestoreDefaultsButton.Width = isCompactButton ? 38 : double.NaN;
-		RestoreDefaultsButton.Height = isCompactButton ? 38 : double.NaN;
-		RestoreDefaultsButton.Padding = isCompactButton ? new Thickness(0) : new Thickness(11, 5, 11, 6);
-
+		RestoreDefaultsControl.IsExpanded = width >= RestoreDefaultsBreakpoint;
 		bool useTwoSettingsColumns = width >= TwoSettingsColumnsWidth;
 		SettingsRightColumn.Width = useTwoSettingsColumns
 			? new GridLength(1, GridUnitType.Star)

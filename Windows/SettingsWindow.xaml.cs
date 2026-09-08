@@ -15,6 +15,7 @@ internal sealed partial class SettingsWindow : Window
 	public SettingsWindow()
 	{
 		InitializeComponent();
+        Closed += (_, _) => GeneralSettings.IsEditing = false;
 		SettingsNavigation.SelectedItem = AppearanceNavigationItem;
 	}
 

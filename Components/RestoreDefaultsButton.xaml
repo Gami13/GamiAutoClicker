@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="GamiAutoClicker.Components.RestoreDefaultsButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Button
+        x:Name="RestoreButton"
+        MinWidth="0"
+        Padding="11,5,11,6"
+        VerticalAlignment="Center"
+        AutomationProperties.Name="Restore defaults"
+        ToolTipService.ToolTip="Restore defaults">
+        <StackPanel
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Orientation="Horizontal"
+            Spacing="8">
+            <FontIcon x:Name="RestoreIcon" FontSize="14" Glyph="&#xE72C;" />
+            <TextBlock x:Name="RestoreText" Text="Restore defaults" />
+        </StackPanel>
+    </Button>
+</UserControl>

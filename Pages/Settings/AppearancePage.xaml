@@ -31,25 +31,11 @@
                     Text="Customize the backdrop used by every app window."
                     TextWrapping="Wrap" />
             </StackPanel>
-            <Button
-                x:Name="RestoreDefaultsButton"
+            <components:RestoreDefaultsButton
+                x:Name="RestoreDefaultsControl"
                 Grid.Column="1"
-                MinWidth="0"
                 VerticalAlignment="Center"
-                Click="OnRestoreDefaultsClick"
-                ToolTipService.ToolTip="Restore defaults">
-                <StackPanel
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="8">
-                    <FontIcon
-                        x:Name="RestoreDefaultsIcon"
-                        FontSize="14"
-                        Glyph="&#xE72C;" />
-                    <TextBlock x:Name="RestoreDefaultsButtonText" Text="Restore defaults" />
-                </StackPanel>
-            </Button>
+                Click="OnRestoreDefaultsClick" />
         </Grid>
 
         <ScrollViewer
@@ -161,9 +147,7 @@
 
                     <StackPanel x:Name="AdvancedControlsPanel" Spacing="10">
 
-                        <Grid
-                            ColumnSpacing="10"
-                            RowSpacing="10">
+                        <Grid ColumnSpacing="10" RowSpacing="10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition x:Name="TintColorColumn" Width="*" />
