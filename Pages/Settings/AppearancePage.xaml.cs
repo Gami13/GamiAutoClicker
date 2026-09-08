@@ -9,24 +9,13 @@ using Microsoft.UI.Xaml.Controls;
 namespace GamiAutoClicker.Pages.Settings;
 
 internal sealed partial class AppearancePage : Page {
-	// Keep enums in managed code; WinUI only sees a standard item with string content.
-	private sealed partial class EnumComboBoxItem<T> : ComboBoxItem where T : struct, Enum {
-		public T Value { get; }
-
-		public EnumComboBoxItem(T value) {
-			Value = value;
-			Content = value.ToString();
-		}
-	}
 
 	private bool _isSynchronizing;
 
 	public AppearancePage() {
 		InitializeComponent();
-		foreach (var material in Enum.GetValues<EasyWindows.BackdropMaterial>())
-			BackdropMaterialComboBox.Items.Add(new EnumComboBoxItem<EasyWindows.BackdropMaterial>(material));
-		foreach (var theme in new[] { SystemBackdropTheme.Dark, SystemBackdropTheme.Light, SystemBackdropTheme.Default })
-			ThemeComboBox.Items.Add(new EnumComboBoxItem<SystemBackdropTheme>(theme));
+		BackdropMaterialComboBox.ItemsSource = Enum.GetValues<EasyWindows.BackdropMaterial>().Cast<object>().ToArray();
+		ThemeComboBox.ItemsSource = new object[] { SystemBackdropTheme.Dark, SystemBackdropTheme.Light, SystemBackdropTheme.Default };
 		RefreshControls(EasyWindows.Theme);
 	}
 
@@ -40,16 +29,16 @@ internal sealed partial class AppearancePage : Page {
 
 	private void OnMaterialChange(object sender, SelectionChangedEventArgs e) {
 		if (_isSynchronizing ||
-			BackdropMaterialComboBox.SelectedItem is not EnumComboBoxItem<EasyWindows.BackdropMaterial> item) return;
+			BackdropMaterialComboBox.SelectedItem is not EasyWindows.BackdropMaterial material) return;
 
-		EasyWindows.SetBackdropMaterial(item.Value);
+		EasyWindows.SetBackdropMaterial(material);
 		UpdateAppearanceSummary(EasyWindows.Theme);
 	}
 
 	private void OnThemeChange(object sender, SelectionChangedEventArgs e) {
-		if (_isSynchronizing || ThemeComboBox.SelectedItem is not EnumComboBoxItem<SystemBackdropTheme> item) return;
+		if (_isSynchronizing || ThemeComboBox.SelectedItem is not SystemBackdropTheme theme) return;
 
-		EasyWindows.ApplyTheme(item.Value);
+		EasyWindows.ApplyTheme(theme);
 		UpdateAppearanceSummary(EasyWindows.Theme);
 	}
 
@@ -92,10 +81,8 @@ internal sealed partial class AppearancePage : Page {
 	private void RefreshControls(EasyWindows.ThemeSettings settings) {
 		_isSynchronizing = true;
 		try {
-			BackdropMaterialComboBox.SelectedItem = BackdropMaterialComboBox.Items
-				.Cast<EnumComboBoxItem<EasyWindows.BackdropMaterial>>().First(item => item.Value == settings.BackdropMaterial);
-			ThemeComboBox.SelectedItem = ThemeComboBox.Items
-				.Cast<EnumComboBoxItem<SystemBackdropTheme>>().First(item => item.Value == settings.Theme);
+			BackdropMaterialComboBox.SelectedItem = settings.BackdropMaterial;
+			ThemeComboBox.SelectedItem = settings.Theme;
 			OverrideDefaultsToggleSwitch.IsOn = settings.ShouldOverride;
 			FallbackColorPicker.Color = settings.FallbackColor;
 			TintColorPicker.Color = settings.TintColor;
