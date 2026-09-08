@@ -2,18 +2,21 @@
 <Page
     x:Class="GamiAutoClicker.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Unloaded="OnUnloaded">
     <NavigationView
         x:Name="SettingsNavigation" x:Uid="SettingsWindow_SettingsNavigation"
         CompactModeThresholdWidth="0"
         ExpandedModeThresholdWidth="750"
         IsBackButtonVisible="Collapsed"
+        IsPaneOpen="{x:Bind State.IsPaneOpen, Mode=TwoWay}"
         IsSettingsVisible="False"
         IsTitleBarAutoPaddingEnabled="False"
         Loaded="OnNavigationLoaded"
         OpenPaneLength="150"
         PaneDisplayMode="Auto"
         PaneOpening="OnPaneOpening"
+        SelectedItem="{x:Bind GetNavigationItem(State.SelectedSection), Mode=TwoWay, BindBack=UpdateSelectedSection}"
         SelectionChanged="OnNavigationSelectionChanged">
         <NavigationView.Resources>
             <ResourceDictionary>
@@ -47,6 +50,7 @@
         </NavigationView.MenuItems>
         <ContentControl
             x:Name="SettingsContent"
+            Content="{x:Bind GetSectionPage(State.SelectedSection), Mode=OneWay}"
             HorizontalContentAlignment="Stretch"
             VerticalContentAlignment="Stretch" />
     </NavigationView>

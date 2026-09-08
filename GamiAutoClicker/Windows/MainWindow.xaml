@@ -33,7 +33,10 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock x:Name="Localized1" x:Uid="MainWindow_Localized1" VerticalAlignment="Center" />
+                <TextBlock
+                    x:Name="Localized1"
+                    x:Uid="MainWindow_Localized1"
+                    VerticalAlignment="Center" />
                 <components:UnitNumberBox
                     x:Name="DelayNumberBox"
                     Grid.Column="1"
@@ -43,12 +46,13 @@
                     Minimum="1"
                     SmallChange="1"
                     Unit="ms"
-                    ValueChanged="OnDelayValueChanged" />
+                    ValueChanged="OnTimingValueChanged" />
 
                 <TextBlock
- x:Name="Localized2" x:Uid="MainWindow_Localized2"                    Grid.Row="1"
-                    VerticalAlignment="Center"
-                    />
+                    x:Name="Localized2"
+                    x:Uid="MainWindow_Localized2"
+                    Grid.Row="1"
+                    VerticalAlignment="Center" />
                 <components:UnitNumberBox
                     x:Name="CpsNumberBox"
                     Grid.Row="1"
@@ -59,7 +63,7 @@
                     Minimum="0.001"
                     SmallChange="0.001"
                     Unit="CPS"
-                    ValueChanged="OnCpsValueChanged" />
+                    ValueChanged="OnTimingValueChanged" />
             </Grid>
         </Border>
 
@@ -80,22 +84,28 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <TextBlock x:Name="Localized3" x:Uid="MainWindow_Localized3" VerticalAlignment="Center" />
+                <TextBlock
+                    x:Name="Localized3"
+                    x:Uid="MainWindow_Localized3"
+                    VerticalAlignment="Center" />
                 <ComboBox
                     x:Name="MouseButtonComboBox"
                     Grid.Column="1"
                     Width="120"
-                    SelectedIndex="0">
-                </ComboBox>
+                    SelectedIndex="0" />
 
                 <StackPanel
                     Grid.Row="1"
                     Orientation="Horizontal"
                     Spacing="5">
-                    <TextBlock x:Name="Localized4" x:Uid="MainWindow_Localized4" VerticalAlignment="Center" />
+                    <TextBlock
+                        x:Name="Localized4"
+                        x:Uid="MainWindow_Localized4"
+                        VerticalAlignment="Center" />
                     <FontIcon
+                        x:Name="HoldModeInfoIcon"
                         VerticalAlignment="Center"
-                        x:Name="HoldModeInfoIcon" FontSize="12"
+                        FontSize="12"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Glyph="&#xE946;" />
                 </StackPanel>
@@ -104,8 +114,8 @@
                     Grid.Row="1"
                     Grid.Column="1"
                     Width="40"
-                    HorizontalAlignment="Right"
                     MinWidth="0"
+                    HorizontalAlignment="Right"
                     OffContent="{x:Null}"
                     OnContent="{x:Null}" />
             </Grid>
@@ -128,7 +138,10 @@
                     VerticalAlignment="Center"
                     Orientation="Horizontal"
                     Spacing="8">
-                    <TextBlock x:Name="Localized5" x:Uid="MainWindow_Localized5" VerticalAlignment="Center" />
+                    <TextBlock
+                        x:Name="Localized5"
+                        x:Uid="MainWindow_Localized5"
+                        VerticalAlignment="Center" />
                     <ToggleSwitch
                         x:Name="ClickingEnabledToggleSwitch"
                         MinWidth="0"

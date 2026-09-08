@@ -1,8 +1,8 @@
 using GamiAutoClicker.Pages.Settings;
-using Gami;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media;
+using System.ComponentModel;
 
 namespace GamiAutoClicker;
 
@@ -11,91 +11,97 @@ internal enum SettingsSection {
 	General
 }
 
-internal sealed class SettingsWindowState {
-	public SettingsSection SelectedSection { get; set; } = SettingsSection.Appearance;
-	public bool IsPaneOpen { get; set; } = true;
+internal sealed class SettingsWindowState : INotifyPropertyChanged {
+	public event PropertyChangedEventHandler? PropertyChanged;
+
+	public SettingsSection SelectedSection {
+		get;
+		set {
+			if (field == value) return;
+			field = value;
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedSection)));
+		}
+	} = SettingsSection.Appearance;
+
+	public bool IsPaneOpen {
+		get;
+		set {
+			if (field == value) return;
+			field = value;
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsPaneOpen)));
+		}
+	} = true;
 }
 
 internal sealed partial class SettingsPage : Page, System.IDisposable {
-	private readonly SettingsWindowState _state = EasyWindows.Windows[WindowKey.Settings].GetState<SettingsWindowState>();
+	internal SettingsWindowState State { get; }
 	private readonly AppearancePage _appearancePage = new();
 	private readonly GeneralPage _generalPage = new();
 	private SplitView? _splitView;
 	private long _displayModeCallbackToken;
-	private long? _paneOpenCallbackToken;
 
-	internal bool IsGeneralSelected => ReferenceEquals(SettingsNavigation.SelectedItem, GeneralNavigationItem);
-	internal bool IsPaneOpen => SettingsNavigation.IsPaneOpen;
-
-	public SettingsPage() {
+	public SettingsPage(SettingsWindowState state) {
+		State = state;
 		InitializeComponent();
-		SettingsNavigation.IsPaneOpen = _state.IsPaneOpen;
-		SettingsNavigation.SelectedItem = _state.SelectedSection == SettingsSection.General
-			? GeneralNavigationItem
-			: AppearanceNavigationItem;
-		Unloaded += OnUnloaded;
 	}
 
 	public void Dispose() {
+		SettingsNavigation.Loaded -= OnNavigationLoaded;
 		SettingsNavigation.SelectionChanged -= OnNavigationSelectionChanged;
-		DetachPaneStateCallback();
+		Bindings.StopTracking();
 		GeneralSettings.EndEditing(this);
 		_splitView?.UnregisterPropertyChangedCallback(SplitView.DisplayModeProperty, _displayModeCallbackToken);
 		_splitView = null;
 	}
 
+	private void OnNavigationLoaded(object sender, RoutedEventArgs e) {
+		// Restore retained values after NavigationView's adaptive template initialization.
+		Bindings.Update();
+		UpdateInputPause();
+		AttachSplitViewCallback();
+	}
+
+	private void OnUnloaded(object sender, RoutedEventArgs e) {
+		Bindings.StopTracking();
+		GeneralSettings.EndEditing(this);
+	}
+
+	private void OnNavigationSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args) => UpdateInputPause();
+
 	private void UpdateInputPause() {
-		if (SettingsNavigation.IsLoaded && _state.SelectedSection == SettingsSection.General) GeneralSettings.BeginEditing(this);
+		if (SettingsNavigation.IsLoaded && ReferenceEquals(SettingsNavigation.SelectedItem, GeneralNavigationItem)) GeneralSettings.BeginEditing(this);
 		else GeneralSettings.EndEditing(this);
 	}
 
-	private void OnNavigationLoaded(object sender, RoutedEventArgs e) {
-		// Restore the model after template initialization, before observing UI changes.
-		DetachPaneStateCallback();
-		SettingsNavigation.IsPaneOpen = _state.IsPaneOpen;
-		_paneOpenCallbackToken = SettingsNavigation.RegisterPropertyChangedCallback(
-			NavigationView.IsPaneOpenProperty, OnPaneOpenChanged);
-		UpdateInputPause();
+	private NavigationViewItem GetNavigationItem(SettingsSection section) =>
+		section == SettingsSection.General ? GeneralNavigationItem : AppearanceNavigationItem;
+
+	private Page GetSectionPage(SettingsSection section) =>
+		section == SettingsSection.General ? _generalPage : _appearancePage;
+
+	private void UpdateSelectedSection(object item) {
+		if (ReferenceEquals(item, GeneralNavigationItem)) State.SelectedSection = SettingsSection.General;
+		else if (ReferenceEquals(item, AppearanceNavigationItem)) State.SelectedSection = SettingsSection.Appearance;
+	}
+
+	private void AttachSplitViewCallback() {
 		SplitView? splitView = FindSplitView(SettingsNavigation);
 		if (ReferenceEquals(_splitView, splitView)) return;
 
 		_splitView?.UnregisterPropertyChangedCallback(SplitView.DisplayModeProperty, _displayModeCallbackToken);
 		_splitView = splitView;
-		if (_splitView is not null) {
-			// Keep the compact pane pushing content aside instead of opening over it.
-			// NavigationView resets its internal SplitView mode as the window adapts.
-			EnsureCompactInlineMode(_splitView);
-			_displayModeCallbackToken = _splitView.RegisterPropertyChangedCallback(SplitView.DisplayModeProperty, (s, dp) => {
-				if (s is SplitView sv) {
-					EnsureCompactInlineMode(sv);
-				}
-			});
-		}
+		if (_splitView is null) return;
+
+		// Keep the compact pane pushing content aside as NavigationView adapts.
+		EnsureCompactInlineMode(_splitView);
+		_displayModeCallbackToken = _splitView.RegisterPropertyChangedCallback(
+			SplitView.DisplayModeProperty, static (sender, _) => EnsureCompactInlineMode((SplitView)sender));
 	}
 
-	private void OnPaneOpenChanged(DependencyObject sender, DependencyProperty property) {
-		_state.IsPaneOpen = SettingsNavigation.IsPaneOpen;
-	}
+	private void OnPaneOpening(NavigationView sender, object args) => EnsureCompactInlineMode(_splitView);
 
-	private void OnUnloaded(object sender, RoutedEventArgs e) {
-		DetachPaneStateCallback();
-		GeneralSettings.EndEditing(this);
-	}
-
-	private void DetachPaneStateCallback() {
-		if (_paneOpenCallbackToken is not { } token) return;
-		SettingsNavigation.UnregisterPropertyChangedCallback(NavigationView.IsPaneOpenProperty, token);
-		_paneOpenCallbackToken = null;
-	}
-
-	private void OnPaneOpening(NavigationView sender, object args) {
-		if (_splitView is not null) {
-			EnsureCompactInlineMode(_splitView);
-		}
-	}
-
-	private static void EnsureCompactInlineMode(SplitView splitView) {
-		if (splitView.DisplayMode == SplitViewDisplayMode.CompactOverlay) {
+	private static void EnsureCompactInlineMode(SplitView? splitView) {
+		if (splitView?.DisplayMode == SplitViewDisplayMode.CompactOverlay) {
 			splitView.DisplayMode = SplitViewDisplayMode.CompactInline;
 		}
 	}
@@ -106,19 +112,5 @@ internal sealed partial class SettingsPage : Page, System.IDisposable {
 			if (FindSplitView(VisualTreeHelper.GetChild(root, i)) is { } result) return result;
 		}
 		return null;
-	}
-
-	private void OnNavigationSelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args) {
-		if (SettingsContent is null) return;
-		if (!ReferenceEquals(args.SelectedItem, AppearanceNavigationItem)
-			&& !ReferenceEquals(args.SelectedItem, GeneralNavigationItem)) return;
-		_state.SelectedSection = ReferenceEquals(args.SelectedItem, AppearanceNavigationItem)
-			? SettingsSection.Appearance
-			: SettingsSection.General;
-
-		SettingsContent.Content = _state.SelectedSection == SettingsSection.Appearance
-			? _appearancePage
-			: _generalPage;
-		UpdateInputPause();
 	}
 }

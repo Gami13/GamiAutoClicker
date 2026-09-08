@@ -45,7 +45,7 @@ For window-specific state, use the typed options:
 ```csharp
 EasyWindows.RegisterWindow(WindowKey.Settings, new EasyWindows.WindowOptions<SettingsWindowState> {
     State = new SettingsWindowState(),
-    ContentFactory = _ => new SettingsPage(),
+    ContentFactory = state => new SettingsPage(state),
     Title = "Settings",
     DefaultSize = new SizeInt32(860, 600)
 });
@@ -71,16 +71,19 @@ changes the registered state. Reassigning the local variable does not replace th
 registered object. Missing keys throw `KeyNotFoundException`; missing state or an
 incompatible requested type throws `InvalidOperationException`.
 
-The factory still receives state for callers who prefer constructor passing
-(`ContentFactory = state => new SomePage(state)`). Settings ignores that argument
-and uses the lookup instead.
+Settings accepts the factory's state in its constructor. Each registration can
+therefore create the same page type with a different state instance. The lookup
+remains available to other code, including while the window is closed.
 
 `SettingsWindowState` is the model for Settings navigation: `SelectedSection` and
-`IsPaneOpen`. SettingsPage initializes its controls from that model and writes UI
-changes back to it. Language changes and closing/reopening retain both values.
+`IsPaneOpen`. It implements `INotifyPropertyChanged`; SettingsPage uses compiled
+two-way `x:Bind` bindings so model changes update the live controls and UI changes
+update the model. Change bound state on the window's UI thread. The selected-section
+binding maps the enum to page-local navigation items; the state retains no controls.
+Language changes and closing/reopening retain both values.
 The page keeps only view instances and callback bookkeeping locally; global theme
 and general settings remain in their existing shared models. Discarded views detach
-their callbacks so they cannot change the retained model.
+their bindings and callbacks so they cannot observe or change the retained model.
 
 Root content that implements `IDisposable` is disposed on replacement and window
 closure. Use this to detach subscriptions to long-lived services and release owned
@@ -107,7 +110,8 @@ dotnet build GamiAutoClicker/GamiAutoClicker.csproj -p:Platform=x64 -p:ReloadVer
 
 Launch the built executable. The opt-in test changes language through the actual
 ComboBox and checks typed state identity, retained selection and native localization,
-window identity/bounds, closing/reopening both sections, repeated reloads, input-pause
+window identity/bounds, live model-to-view updates, independent registrations of the
+same page type, closing/reopening both sections, repeated reloads, input-pause
 cleanup, and compatibility with stateless registration. It restores the original language preference, writes
 `reload-verification.txt` beside the executable, and closes the app. Test code is
 excluded from ordinary builds. The style override accommodates existing `IDE0008`
