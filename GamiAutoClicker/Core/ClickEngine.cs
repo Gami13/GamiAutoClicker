@@ -12,6 +12,7 @@ namespace GamiAutoClicker;
 internal sealed class ClickEngine
 {
 	public double IntervalMilliseconds { get; set; } = 100;
+	public double RandomOffsetMilliseconds { get; set; }
 	public bool Enabled { get; set; }
 	public bool HoldMode { get; set; }
 	public VirtualKey ToggleKey { get; set; } = VirtualKey.F8;
@@ -27,6 +28,7 @@ internal sealed class ClickEngine
 		bool wasActive = false;
         bool wasEditing = GeneralSettings.IsEditing;
 		long lastClick = 0;
+		double nextInterval = IntervalMilliseconds;
 
 		try
 		{
@@ -46,12 +48,13 @@ internal sealed class ClickEngine
 					DisableClicking(Localization.Get("TheactivekeybindsandclicktargetmustbedifferentChooseanotherkeybindorclicktarget"));
 				}
 				bool active = Enabled && !GeneralSettings.IsEditing && (!HoldMode || IsKeyDown(HoldKey));
-				if (active && (!wasActive || Stopwatch.GetElapsedTime(lastClick).TotalMilliseconds >= IntervalMilliseconds))
+				if (active && (!wasActive || Stopwatch.GetElapsedTime(lastClick).TotalMilliseconds >= nextInterval))
 				{
 					try
 					{
 						Click();
 						lastClick = Stopwatch.GetTimestamp();
+						nextInterval = GetNextIntervalMilliseconds();
 					}
 					catch (Exception exception) when (exception is Win32Exception or InvalidOperationException)
 					{
@@ -63,7 +66,7 @@ internal sealed class ClickEngine
 
 				// Check keys frequently even when the interval is several minutes long.
 				double delay = active
-					? Math.Clamp(IntervalMilliseconds - Stopwatch.GetElapsedTime(lastClick).TotalMilliseconds, 1, 10)
+					? Math.Clamp(nextInterval - Stopwatch.GetElapsedTime(lastClick).TotalMilliseconds, 1, 10)
 					: 10;
 				await Task.Delay(TimeSpan.FromMilliseconds(delay), cancellationToken).ConfigureAwait(true);
 			}
@@ -77,6 +80,10 @@ internal sealed class ClickEngine
 			Enabled = false;
 		}
 	}
+
+	// Sample once per click, not once per keyboard poll. Offset is the full range width.
+	internal double GetNextIntervalMilliseconds() => Math.Max(1,
+		IntervalMilliseconds + (Random.Shared.NextDouble() - 0.5) * RandomOffsetMilliseconds);
 
 	private void DisableClicking(string message)
 	{

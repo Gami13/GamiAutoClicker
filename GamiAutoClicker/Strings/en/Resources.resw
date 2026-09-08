@@ -381,4 +381,13 @@
   <data xml:space="preserve" name="WindowsblockedtheclickClickinghasbeendisabled">
     <value>Windows blocked the click. Clicking has been disabled.</value>
   </data>
+  <data xml:space="preserve" name="MainWindow_RandomOffset.Text">
+    <value>Random offset</value>
+  </data>
+  <data xml:space="preserve" name="RandomOffset">
+    <value>Random offset</value>
+  </data>
+  <data xml:space="preserve" name="RandomOffsetHint">
+    <value>Full random range in milliseconds: 100 ms delay with 20 ms offset gives 90–110 ms. Zero disables variation. Delays are limited to at least 1 ms.</value>
+  </data>
 </root>

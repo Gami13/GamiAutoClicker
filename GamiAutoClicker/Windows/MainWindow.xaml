@@ -31,6 +31,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <TextBlock
@@ -64,6 +65,22 @@
                     SmallChange="0.001"
                     Unit="CPS"
                     ValueChanged="OnTimingValueChanged" />
+
+                <TextBlock
+                    x:Uid="MainWindow_RandomOffset"
+                    Grid.Row="2"
+                    VerticalAlignment="Center" />
+                <components:UnitNumberBox
+                    x:Name="RandomOffsetNumberBox"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Width="170"
+                    DecimalPlaces="0"
+                    Maximum="1000000"
+                    Minimum="0"
+                    SmallChange="1"
+                    Unit="ms"
+                    ValueChanged="OnRandomOffsetValueChanged" />
             </Grid>
         </Border>
 

@@ -35,6 +35,7 @@ internal sealed partial class MainPage : Page, IDisposable {
 		ClickingEnabledToggleSwitch.Toggled -= OnClickingEnabledToggled;
 		DelayNumberBox.ValueChanged -= OnTimingValueChanged;
 		CpsNumberBox.ValueChanged -= OnTimingValueChanged;
+		RandomOffsetNumberBox.ValueChanged -= OnRandomOffsetValueChanged;
 		_engine.ToggleRequested -= OnToggleRequested;
 		_engine.ClickingFailed -= OnClickingFailed;
 		GeneralSettings.Changed -= ApplyGeneralSettings;
@@ -46,6 +47,9 @@ internal sealed partial class MainPage : Page, IDisposable {
 		MouseButtonComboBox.SelectedIndex = Math.Max(0, Array.IndexOf(MouseButtons, _engine.MouseButton));
 		HoldModeToggleSwitch.IsOn = _engine.HoldMode;
 		ClickingEnabledToggleSwitch.IsOn = _engine.Enabled;
+		RandomOffsetNumberBox.Value = _engine.RandomOffsetMilliseconds;
+		AutomationProperties.SetName(RandomOffsetNumberBox, Localization.Get("RandomOffset"));
+		ToolTipService.SetToolTip(RandomOffsetNumberBox, Localization.Get("RandomOffsetHint"));
 		SyncTimingInputs();
 		UpdateClickingStatus();
 		UpdateKeyHints();
@@ -80,6 +84,11 @@ internal sealed partial class MainPage : Page, IDisposable {
 
 		_engine.IntervalMilliseconds = ReferenceEquals(sender, DelayNumberBox) ? value : 1000d / value;
 		SyncTimingInputs(editedBox: sender);
+	}
+
+	private void OnRandomOffsetValueChanged(UnitNumberBox sender, NumberBoxValueChangedEventArgs args) {
+		if (_isSynchronizing || !double.IsFinite(args.NewValue)) return;
+		_engine.RandomOffsetMilliseconds = Math.Clamp(args.NewValue, sender.Minimum, sender.Maximum);
 	}
 
 	private void SyncTimingInputs(UnitNumberBox? editedBox = null) {

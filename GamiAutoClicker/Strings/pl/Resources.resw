@@ -381,4 +381,13 @@
   <data xml:space="preserve" name="WindowsblockedtheclickClickinghasbeendisabled">
     <value>System Windows zablokował kliknięcie. Klikanie zostało wyłączone.</value>
   </data>
+  <data xml:space="preserve" name="MainWindow_RandomOffset.Text">
+    <value>Losowy zakres</value>
+  </data>
+  <data xml:space="preserve" name="RandomOffset">
+    <value>Losowy zakres</value>
+  </data>
+  <data xml:space="preserve" name="RandomOffsetHint">
+    <value>Pełny zakres losowania w milisekundach: opóźnienie 100 ms z zakresem 20 ms daje 90–110 ms. Zero wyłącza losowanie. Minimalne opóźnienie to 1 ms.</value>
+  </data>
 </root>
