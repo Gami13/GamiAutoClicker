@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 using Windows.Graphics;
-using GamiToolkit.Settings;
+
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -30,10 +30,9 @@ namespace GamiAutoClicker {
             UnhandledException += (_, args) => System.IO.File.WriteAllText(
                 System.IO.Path.Combine(System.AppContext.BaseDirectory, "reload-verification.txt"), "FAIL: " + args.Exception);
 #endif
+			SettingsStore.Load();
 			Localization.Initialize();
 			InitializeComponent();
-			ThemeSettingsStore.Load();
-			EasyWindows.ThemeChanged += (_, _) => ThemeSettingsStore.Save();
 			EasyWindows.RegisterWindow(WindowKey.Main, new EasyWindows.WindowOptions {
 				ContentFactory = () => new MainPage(_engine),
 				Closed = OnMainWindowClosed,
@@ -56,6 +55,7 @@ namespace GamiAutoClicker {
 			EasyWindows.RegisterWindow(WindowKey.Settings, new EasyWindows.WindowOptions<SettingsWindowState> {
 				State = new SettingsWindowState(),
 				ContentFactory = state => new SettingsPage(state),
+				Closed = SettingsStore.DiscardChanges,
 				PresenterKind = AppWindowPresenterKind.Overlapped,
 				Title = "Settings",
 				TitleProvider = () => Localization.Get("Settings"),

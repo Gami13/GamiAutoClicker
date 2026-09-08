@@ -94,7 +94,7 @@
     <value>Zmiany są stosowane od razu we wszystkich otwartych oknach.</value>
   </data>
   <data xml:space="preserve" name="ChangessaveautomaticallyGlobalcontrolsarepausedwhilethispageisopen">
-    <value>Zmiany są zapisywane automatycznie. Skróty globalne są wstrzymane, gdy ta strona jest otwarta.</value>
+    <value>Zmiany są stosowane od razu. Sterowanie globalne jest wstrzymane, gdy ta strona jest otwarta.</value>
   </data>
   <data xml:space="preserve" name="Chooseamousebuttonastheclicktarget">
     <value>Wybierz przycisk myszy do klikania.</value>
@@ -187,7 +187,7 @@
     <value>Skróty klawiszowe</value>
   </data>
   <data xml:space="preserve" name="GeneralPage_Localized4.Text">
-    <value>Zmiany są zapisywane automatycznie. Skróty globalne są wstrzymane, gdy ta strona jest otwarta.</value>
+    <value>Zmiany są stosowane od razu. Skróty globalne są wstrzymane, gdy ta strona jest otwarta.</value>
   </data>
   <data xml:space="preserve" name="GeneralPage_Localized5.Text">
     <value>Naciśnij raz, aby włączyć klikanie. Naciśnij ponownie, aby je wyłączyć.</value>
@@ -390,4 +390,7 @@
   <data xml:space="preserve" name="RandomOffsetHint">
     <value>Pełny zakres losowania w milisekundach: opóźnienie 100 ms z zakresem 20 ms daje 90–110 ms. Zero wyłącza losowanie. Minimalne opóźnienie to 1 ms.</value>
   </data>
+  <data name="SettingsSaveButton.Content" xml:space="preserve"><value>Zapisz</value></data>
+  <data name="SettingsSaveHint.Text" xml:space="preserve"><value>Zmiany są stosowane od razu. Zapisz, aby je zachować. Zamknięcie odrzuca niezapisane zmiany.</value></data>
+  <data name="SettingsSaveFailed" xml:space="preserve"><value>Nie udało się zapisać ustawień. Zmiany pozostają aktywne; spróbuj ponownie przed zamknięciem.</value></data>
 </root>

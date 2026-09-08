@@ -51,6 +51,38 @@
 		<Manifest Include="$(ApplicationManifest)" />
 	</ItemGroup>
 
+	<!-- Generate culture tags from implemented resources before WinUI's first compile pass. -->
+	<Target Name="GenerateSupportedLanguages" BeforeTargets="PrepareForBuild;XamlPreCompile;CoreCompile">
+		<ItemGroup>
+			<_LanguageResource Include="Strings\*\Resources.resw" />
+			<_LanguageResource Update="@(_LanguageResource)">
+				<Folder>$([System.IO.Path]::GetDirectoryName('%(FullPath)'))</Folder>
+			</_LanguageResource>
+			<_LanguageResource Update="@(_LanguageResource)">
+				<Tag>$([System.IO.Path]::GetFileName('%(Folder)'))</Tag>
+			</_LanguageResource>
+			<_LanguageResource Update="@(_LanguageResource)">
+				<Culture>$([System.Globalization.CultureInfo]::GetCultureInfo('%(Tag)').Name)</Culture>
+			</_LanguageResource>
+			<_LanguageTag Include="@(_LanguageResource->'%(Culture)')" />
+			<_DistinctLanguageTag Include="@(_LanguageTag->Distinct())" />
+		</ItemGroup>
+		<PropertyGroup>
+			<_SupportedLanguagesSource>// &lt;auto-generated /&gt;
+namespace GamiAutoClicker {
+internal static class SupportedLanguages {
+internal static readonly string[] Tags = [@(_DistinctLanguageTag->'&quot;%(Identity)&quot;', ', ')]%3B
+}
+}</_SupportedLanguagesSource>
+		</PropertyGroup>
+		<WriteLinesToFile File="$(IntermediateOutputPath)SupportedLanguages.g.cs"
+			Lines="$(_SupportedLanguagesSource)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+		<ItemGroup>
+			<Compile Include="$(IntermediateOutputPath)SupportedLanguages.g.cs" />
+			<FileWrites Include="$(IntermediateOutputPath)SupportedLanguages.g.cs" />
+		</ItemGroup>
+	</Target>
+
 	<!--
     Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
     Tools extension to be activated for this project even if the Windows App SDK Nuget

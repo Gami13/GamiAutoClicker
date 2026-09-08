@@ -32,28 +32,33 @@ internal sealed partial class GeneralPage : Page {
 		_isSynchronizing = true;
 		ToggleKeyComboBox.ItemsSource = GeneralSettings.Keys.Select(GeneralSettings.KeyLabel).ToArray();
 		HoldKeyComboBox.ItemsSource = GeneralSettings.Keys.Select(GeneralSettings.KeyLabel).ToArray();
-		LanguageComboBox.ItemsSource = new[] { Localization.Get("FollowWindows"), "English", "Polski" };
+		LanguageComboBox.ItemsSource = Localization.Languages.Select(language => new ComboBoxItem {
+			Content = Localization.LanguageLabel(language),
+			Tag = language
+		}).ToArray();
 		ToggleKeyComboBox.SelectedIndex = System.Array.IndexOf(GeneralSettings.Keys, GeneralSettings.ToggleKey);
 		HoldKeyComboBox.SelectedIndex = System.Array.IndexOf(GeneralSettings.Keys, GeneralSettings.HoldKey);
-		LanguageComboBox.SelectedIndex = System.Array.IndexOf(Localization.Languages, GeneralSettings.Language);
+		LanguageComboBox.SelectedItem = LanguageComboBox.Items.OfType<ComboBoxItem>()
+			.FirstOrDefault(item => item.Tag is string language && language == GeneralSettings.Language);
 		_isSynchronizing = false;
 	}
 
 	private void OnSettingChanged(object sender, SelectionChangedEventArgs e) {
-		if (_isSynchronizing || ToggleKeyComboBox.SelectedIndex < 0 || HoldKeyComboBox.SelectedIndex < 0 || LanguageComboBox.SelectedIndex < 0) {
+		if (_isSynchronizing || ToggleKeyComboBox.SelectedIndex < 0 || HoldKeyComboBox.SelectedIndex < 0
+			|| LanguageComboBox.SelectedItem is not ComboBoxItem { Tag: string language }) {
 			return;
 		}
 
-		Save(GeneralSettings.Keys[ToggleKeyComboBox.SelectedIndex], GeneralSettings.Keys[HoldKeyComboBox.SelectedIndex], Localization.Languages[LanguageComboBox.SelectedIndex]);
+		Apply(GeneralSettings.Keys[ToggleKeyComboBox.SelectedIndex], GeneralSettings.Keys[HoldKeyComboBox.SelectedIndex], language);
 	}
 
-	private void Save(VirtualKey toggle, VirtualKey hold, string language) {
+	private void Apply(VirtualKey toggle, VirtualKey hold, string language) {
 		ErrorInfo.IsOpen = !GeneralSettings.TryApply(toggle, hold, language, out string error);
 		ErrorInfo.Message = error;
 		RefreshControls();
 	}
 
-	private void OnRestoreDefaultsClick(object sender, RoutedEventArgs e) => Save(VirtualKey.F8, VirtualKey.XButton1, "system");
+	private void OnRestoreDefaultsClick(object sender, RoutedEventArgs e) => Apply(VirtualKey.F8, VirtualKey.XButton1, "system");
 
 	private const double RestoreDefaultsBreakpoint = 470;
 }

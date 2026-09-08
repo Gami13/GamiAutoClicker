@@ -94,7 +94,7 @@
     <value>Changes are applied immediately to every open window.</value>
   </data>
   <data xml:space="preserve" name="ChangessaveautomaticallyGlobalcontrolsarepausedwhilethispageisopen">
-    <value>Changes save automatically. Global controls are paused while this page is open.</value>
+    <value>Changes apply immediately. Global controls are paused while this page is open.</value>
   </data>
   <data xml:space="preserve" name="Chooseamousebuttonastheclicktarget">
     <value>Choose a mouse button as the click target.</value>
@@ -187,7 +187,7 @@
     <value>Keybinds</value>
   </data>
   <data xml:space="preserve" name="GeneralPage_Localized4.Text">
-    <value>Changes save automatically. Global controls are paused while this page is open.</value>
+    <value>Changes apply immediately. Global controls are paused while this page is open.</value>
   </data>
   <data xml:space="preserve" name="GeneralPage_Localized5.Text">
     <value>Press once to enable clicking; press again to disable it.</value>
@@ -390,4 +390,7 @@
   <data xml:space="preserve" name="RandomOffsetHint">
     <value>Full random range in milliseconds: 100 ms delay with 20 ms offset gives 90–110 ms. Zero disables variation. Delays are limited to at least 1 ms.</value>
   </data>
+  <data name="SettingsSaveButton.Content" xml:space="preserve"><value>Save</value></data>
+  <data name="SettingsSaveHint.Text" xml:space="preserve"><value>Changes apply immediately. Save to keep them. Closing discards unsaved changes.</value></data>
+  <data name="SettingsSaveFailed" xml:space="preserve"><value>Could not save settings. Your changes are still active; try again before closing.</value></data>
 </root>

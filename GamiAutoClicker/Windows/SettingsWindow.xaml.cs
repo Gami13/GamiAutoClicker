@@ -45,8 +45,18 @@ internal sealed partial class SettingsPage : Page, System.IDisposable {
 		InitializeComponent();
 	}
 
+	private void OnNavigationItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args) {
+		if (ReferenceEquals(args.InvokedItemContainer, SaveButton)) SaveSettings();
+	}
+
+	private void SaveSettings() {
+		SaveError.IsOpen = !SettingsStore.TrySave(out string error);
+		SaveError.Message = error;
+	}
+
 	public void Dispose() {
 		SettingsNavigation.Loaded -= OnNavigationLoaded;
+		SettingsNavigation.ItemInvoked -= OnNavigationItemInvoked;
 		SettingsNavigation.SelectionChanged -= OnNavigationSelectionChanged;
 		Bindings.StopTracking();
 		GeneralSettings.EndEditing(this);

@@ -13,6 +13,7 @@
         IsSettingsVisible="False"
         IsTitleBarAutoPaddingEnabled="False"
         Loaded="OnNavigationLoaded"
+        ItemInvoked="OnNavigationItemInvoked"
         OpenPaneLength="150"
         PaneDisplayMode="Auto"
         PaneOpening="OnPaneOpening"
@@ -48,10 +49,66 @@
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
         </NavigationView.MenuItems>
-        <ContentControl
-            x:Name="SettingsContent"
-            Content="{x:Bind GetSectionPage(State.SelectedSection), Mode=OneWay}"
-            HorizontalContentAlignment="Stretch"
-            VerticalContentAlignment="Stretch" />
+        <NavigationView.FooterMenuItems>
+            <NavigationViewItem x:Name="SaveButton" x:Uid="SettingsSaveButton"
+                                SelectsOnInvoked="False">
+                <NavigationViewItem.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.ThemeDictionaries>
+                            <ResourceDictionary x:Key="Default">
+                                <StaticResource x:Key="NavigationViewItemBackground" ResourceKey="AccentButtonBackground" />
+                                <StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="AccentButtonBackgroundPointerOver" />
+                                <StaticResource x:Key="NavigationViewItemBackgroundPressed" ResourceKey="AccentButtonBackgroundPressed" />
+                                <StaticResource x:Key="NavigationViewItemBackgroundDisabled" ResourceKey="AccentButtonBackgroundDisabled" />
+                                <StaticResource x:Key="NavigationViewItemForeground" ResourceKey="AccentButtonForeground" />
+                                <StaticResource x:Key="NavigationViewItemForegroundPointerOver" ResourceKey="AccentButtonForegroundPointerOver" />
+                                <StaticResource x:Key="NavigationViewItemForegroundPressed" ResourceKey="AccentButtonForegroundPressed" />
+                                <StaticResource x:Key="NavigationViewItemForegroundDisabled" ResourceKey="AccentButtonForegroundDisabled" />
+                            </ResourceDictionary>
+                            <ResourceDictionary x:Key="Light">
+                                <StaticResource x:Key="NavigationViewItemBackground" ResourceKey="AccentButtonBackground" />
+                                <StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="AccentButtonBackgroundPointerOver" />
+                                <StaticResource x:Key="NavigationViewItemBackgroundPressed" ResourceKey="AccentButtonBackgroundPressed" />
+                                <StaticResource x:Key="NavigationViewItemBackgroundDisabled" ResourceKey="AccentButtonBackgroundDisabled" />
+                                <StaticResource x:Key="NavigationViewItemForeground" ResourceKey="AccentButtonForeground" />
+                                <StaticResource x:Key="NavigationViewItemForegroundPointerOver" ResourceKey="AccentButtonForegroundPointerOver" />
+                                <StaticResource x:Key="NavigationViewItemForegroundPressed" ResourceKey="AccentButtonForegroundPressed" />
+                                <StaticResource x:Key="NavigationViewItemForegroundDisabled" ResourceKey="AccentButtonForegroundDisabled" />
+                            </ResourceDictionary>
+                            <ResourceDictionary x:Key="HighContrast">
+                                <StaticResource x:Key="NavigationViewItemBackground" ResourceKey="AccentButtonBackground" />
+                                <StaticResource x:Key="NavigationViewItemBackgroundPointerOver" ResourceKey="AccentButtonBackgroundPointerOver" />
+                                <StaticResource x:Key="NavigationViewItemBackgroundPressed" ResourceKey="AccentButtonBackgroundPressed" />
+                                <StaticResource x:Key="NavigationViewItemBackgroundDisabled" ResourceKey="AccentButtonBackgroundDisabled" />
+                                <StaticResource x:Key="NavigationViewItemForeground" ResourceKey="AccentButtonForeground" />
+                                <StaticResource x:Key="NavigationViewItemForegroundPointerOver" ResourceKey="AccentButtonForegroundPointerOver" />
+                                <StaticResource x:Key="NavigationViewItemForegroundPressed" ResourceKey="AccentButtonForegroundPressed" />
+                                <StaticResource x:Key="NavigationViewItemForegroundDisabled" ResourceKey="AccentButtonForegroundDisabled" />
+                            </ResourceDictionary>
+                        </ResourceDictionary.ThemeDictionaries>
+                    </ResourceDictionary>
+                </NavigationViewItem.Resources>
+                <NavigationViewItem.Icon>
+                    <SymbolIcon Symbol="Save" />
+                </NavigationViewItem.Icon>
+                <ToolTipService.ToolTip>
+                    <ToolTip>
+                        <TextBlock x:Uid="SettingsSaveHint" TextWrapping="Wrap" MaxWidth="280" />
+                    </ToolTip>
+                </ToolTipService.ToolTip>
+            </NavigationViewItem>
+        </NavigationView.FooterMenuItems>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <InfoBar x:Name="SaveError" Severity="Error" IsOpen="False" />
+            <ContentControl Grid.Row="1"
+                x:Name="SettingsContent"
+                Content="{x:Bind GetSectionPage(State.SelectedSection), Mode=OneWay}"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch" />
+        </Grid>
     </NavigationView>
 </Page>
