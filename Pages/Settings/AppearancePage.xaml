@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="GamiAutoClicker.Pages.Settings.AppearancePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:components="using:GamiAutoClicker.Components"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:GamiAutoClicker"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid
+        x:Name="RootGrid"
+        Loaded="OnRootGridLoaded"
+        SizeChanged="OnRootGridSizeChanged">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Margin="24,16,24,12" ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Spacing="2">
+                <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Appearance" />
+                <TextBlock
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Style="{ThemeResource CaptionTextBlockStyle}"
+                    Text="Customize the backdrop used by every open Gami AutoClicker window. Changes are applied live."
+                    TextWrapping="Wrap" />
+            </StackPanel>
+            <Button
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Click="OnRestoreDefaultsClick"
+                Content="Restore defaults" />
+        </Grid>
+
+        <ScrollViewer
+            Grid.Row="1"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <Grid Margin="24,0,24,16">
+                <Grid
+                    x:Name="SettingsPanel"
+                    ColumnSpacing="12"
+                    RowSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition x:Name="SettingsLeftColumn" Width="*" />
+                        <ColumnDefinition x:Name="SettingsRightColumn" Width="0" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition x:Name="SettingsPreviewRow" Height="Auto" />
+                        <RowDefinition x:Name="SettingsBaseRow" Height="Auto" />
+                        <RowDefinition x:Name="SettingsAdvancedRow" Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel
+                        x:Name="PreviewCard"
+                        Style="{StaticResource CardStyle}">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <FontIcon
+                                VerticalAlignment="Center"
+                                FontSize="18"
+                                Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                Glyph="&#xE790;" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Style="{ThemeResource BodyStrongTextBlockStyle}"
+                                Text="Current appearance" />
+                        </StackPanel>
+                        <TextBlock
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Text="Changes are applied immediately to every open window."
+                            TextWrapping="Wrap" />
+                        <StackPanel
+                            Padding="12"
+                            Background="{ThemeResource ControlFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="8"
+                            Spacing="3">
+                            <TextBlock x:Name="PreviewMaterialText" Style="{ThemeResource BodyStrongTextBlockStyle}" />
+                            <TextBlock
+                                x:Name="PreviewThemeText"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                TextWrapping="Wrap" />
+                            <TextBlock
+                                x:Name="PreviewOverrideText"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Row="1"
+                        Style="{StaticResource CardStyle}">
+                        <StackPanel Spacing="2">
+                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Base appearance" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Text="Choose a material and the color mode it follows." TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <ComboBox
+                            x:Name="BackdropMaterialComboBox"
+                            Header="Backdrop material"
+                            SelectionChanged="OnMaterialChange">
+                            <x:String>Mica</x:String>
+                            <x:String>MicaAlt</x:String>
+                            <x:String>Acrylic</x:String>
+                            <x:String>AcrylicThin</x:String>
+                        </ComboBox>
+                        <TextBlock
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Text="Mica uses wallpaper; Acrylic is translucent; Thin Acrylic is the lightest option."
+                            TextWrapping="Wrap" />
+
+                        <ComboBox
+                            x:Name="ThemeComboBox"
+                            Header="Color mode"
+                            SelectionChanged="OnThemeChange">
+                            <x:String>Dark</x:String>
+                            <x:String>Light</x:String>
+                            <x:String>Default</x:String>
+                        </ComboBox>
+                        <TextBlock
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Style="{ThemeResource CaptionTextBlockStyle}"
+                            Text="Default follows your Windows color mode." TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <StackPanel
+                        x:Name="AdvancedTuningCard"
+                        Grid.Row="2"
+                        Style="{StaticResource CardStyle}">
+                        <StackPanel Spacing="2">
+                            <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Advanced color tuning" />
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Text="Override the system material defaults with custom colors." TextWrapping="Wrap" />
+                        </StackPanel>
+
+                        <ToggleSwitch
+                            x:Name="OverrideDefaultsToggleSwitch"
+                            Header="Use custom backdrop colors"
+                            OffContent="System defaults"
+                            OnContent="Custom colors"
+                            Toggled="OnOverridesChange" />
+
+                        <StackPanel x:Name="AdvancedControlsPanel" Spacing="10">
+                            <TextBlock
+                                x:Name="AdvancedControlsHint"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Text="Enable custom backdrop colors to edit these values."
+                                TextWrapping="Wrap" />
+
+                            <Grid
+                                x:Name="ColorPickersGrid"
+                                ColumnSpacing="10"
+                                RowSpacing="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition x:Name="FallbackColorColumn" Width="*" />
+                                    <ColumnDefinition x:Name="TintColorColumn" Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition x:Name="TintColorRow" Height="0" />
+                                </Grid.RowDefinitions>
+                                <components:ColorPickerFlyoutButton
+                                    x:Name="FallbackColorPicker"
+                                    ColorChanged="OnFallbackColorChange"
+                                    Header="Fallback color" />
+                                <components:ColorPickerFlyoutButton
+                                    x:Name="TintColorPicker"
+                                    Grid.Column="1"
+                                    ColorChanged="OnTintColorChange"
+                                    Header="Tint color" />
+                            </Grid>
+
+                            <components:LabeledPercentageSlider
+                                x:Name="TintOpacitySlider"
+                                Header="Tint opacity"
+                                PercentageChanged="OnTintOpacityChange" />
+
+                            <components:LabeledPercentageSlider
+                                x:Name="LuminosityOpacitySlider"
+                                Header="Luminosity opacity"
+                                PercentageChanged="OnLuminosityOpacityChange" />
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+
+    </Grid>
+</Page>
