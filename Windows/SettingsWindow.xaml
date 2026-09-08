@@ -6,33 +6,31 @@
     Title="Settings">
     <NavigationView
         x:Name="SettingsNavigation"
-        PaneTitle="Settings"
-        PaneDisplayMode="Auto"
-        OpenPaneLength="200"
-        CompactModeThresholdWidth="640"
-        ExpandedModeThresholdWidth="800"
+        CompactModeThresholdWidth="0"
+        ExpandedModeThresholdWidth="750"
         IsBackButtonVisible="Collapsed"
         IsSettingsVisible="False"
         IsTitleBarAutoPaddingEnabled="False"
         Loaded="OnNavigationLoaded"
-        SizeChanged="OnNavigationSizeChanged"
+        OpenPaneLength="150"
+        PaneDisplayMode="Auto"
         PaneOpening="OnPaneOpening"
-        PaneClosed="OnPaneClosed"
-        DisplayModeChanged="OnNavigationDisplayModeChanged"
+        PaneTitle="Settings"
         SelectionChanged="OnNavigationSelectionChanged">
         <NavigationView.Resources>
             <ResourceDictionary>
                 <ResourceDictionary.ThemeDictionaries>
                     <ResourceDictionary x:Key="Default">
                         <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="Transparent" />
+                        <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent" />
                     </ResourceDictionary>
                     <ResourceDictionary x:Key="Light">
                         <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="Transparent" />
+                        <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="Transparent" />
                     </ResourceDictionary>
                     <ResourceDictionary x:Key="HighContrast">
-                        <SolidColorBrush
-                            x:Key="NavigationViewDefaultPaneBackground"
-                            Color="{ThemeResource SystemColorWindowColor}" />
+                        <SolidColorBrush x:Key="NavigationViewDefaultPaneBackground" Color="{ThemeResource SystemColorWindowColor}" />
+                        <SolidColorBrush x:Key="NavigationViewExpandedPaneBackground" Color="{ThemeResource SystemColorWindowColor}" />
                     </ResourceDictionary>
                 </ResourceDictionary.ThemeDictionaries>
             </ResourceDictionary>
@@ -49,6 +47,9 @@
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
         </NavigationView.MenuItems>
-        <ContentControl x:Name="SettingsContent" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
+        <ContentControl
+            x:Name="SettingsContent"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch" />
     </NavigationView>
 </Window>

@@ -136,9 +136,7 @@ internal sealed partial class AppearancePage : Page {
 		TintColorPicker.IsEnabled = isEnabled;
 		TintOpacitySlider.IsEnabled = isEnabled;
 		LuminosityOpacitySlider.IsEnabled = isEnabled;
-		AdvancedControlsHint.Text = isEnabled
-			? "Custom colors are applied immediately to every open window."
-			: "Enable custom backdrop colors to edit these values.";
+
 	}
 
 	private void UpdateAppearanceSummary(EasyWindows.ThemeSettings settings) {
@@ -159,7 +157,21 @@ internal sealed partial class AppearancePage : Page {
 	};
 
 	private void UpdateResponsiveLayout(double width) {
-		bool useTwoSettingsColumns = width >= 620;
+		bool isCompactButton = width < 470;
+		RestoreDefaultsButtonText.Visibility = isCompactButton ? Visibility.Collapsed : Visibility.Visible;
+		if (isCompactButton) {
+			RestoreDefaultsIcon.FontSize = 16;
+			RestoreDefaultsButton.Width = 38;
+			RestoreDefaultsButton.Height = 38;
+			RestoreDefaultsButton.Padding = new Thickness(0);
+		} else {
+			RestoreDefaultsIcon.FontSize = 14;
+			RestoreDefaultsButton.Width = double.NaN;
+			RestoreDefaultsButton.Height = double.NaN;
+			RestoreDefaultsButton.Padding = new Thickness(11, 5, 11, 6);
+		}
+
+		bool useTwoSettingsColumns = width >= 600;
 		SettingsLeftColumn.Width = new GridLength(1, GridUnitType.Star);
 		SettingsRightColumn.Width = useTwoSettingsColumns
 			? new GridLength(1, GridUnitType.Star)

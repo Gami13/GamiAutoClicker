@@ -28,21 +28,35 @@
                 <TextBlock
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     Style="{ThemeResource CaptionTextBlockStyle}"
-                    Text="Customize the backdrop used by every open Gami AutoClicker window. Changes are applied live."
+                    Text="Customize the backdrop used by every app window."
                     TextWrapping="Wrap" />
             </StackPanel>
             <Button
+                x:Name="RestoreDefaultsButton"
                 Grid.Column="1"
+                MinWidth="0"
                 VerticalAlignment="Center"
                 Click="OnRestoreDefaultsClick"
-                Content="Restore defaults" />
+                ToolTipService.ToolTip="Restore defaults">
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <FontIcon
+                        x:Name="RestoreDefaultsIcon"
+                        FontSize="14"
+                        Glyph="&#xE72C;" />
+                    <TextBlock x:Name="RestoreDefaultsButtonText" Text="Restore defaults" />
+                </StackPanel>
+            </Button>
         </Grid>
 
         <ScrollViewer
             Grid.Row="1"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
-            <Grid Margin="24,0,24,16">
+            <Grid Margin="24,0,24,8">
                 <Grid
                     x:Name="SettingsPanel"
                     ColumnSpacing="12"
@@ -57,9 +71,7 @@
                         <RowDefinition x:Name="SettingsAdvancedRow" Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <StackPanel
-                        x:Name="PreviewCard"
-                        Style="{StaticResource CardStyle}">
+                    <StackPanel x:Name="PreviewCard" Style="{StaticResource CardStyle}">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <FontIcon
                                 VerticalAlignment="Center"
@@ -97,15 +109,14 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <StackPanel
-                        Grid.Row="1"
-                        Style="{StaticResource CardStyle}">
+                    <StackPanel Grid.Row="1" Style="{StaticResource CardStyle}">
                         <StackPanel Spacing="2">
                             <TextBlock Style="{ThemeResource BodyStrongTextBlockStyle}" Text="Base appearance" />
                             <TextBlock
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Style="{ThemeResource CaptionTextBlockStyle}"
-                                Text="Choose a material and the color mode it follows." TextWrapping="Wrap" />
+                                Text="Choose the material and theme."
+                                TextWrapping="Wrap" />
                         </StackPanel>
 
                         <ComboBox
@@ -134,7 +145,8 @@
                         <TextBlock
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Style="{ThemeResource CaptionTextBlockStyle}"
-                            Text="Default follows your Windows color mode." TextWrapping="Wrap" />
+                            Text="Default follows your Windows color mode."
+                            TextWrapping="Wrap" />
                     </StackPanel>
 
                     <StackPanel
@@ -146,7 +158,8 @@
                             <TextBlock
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Style="{ThemeResource CaptionTextBlockStyle}"
-                                Text="Override the system material defaults with custom colors." TextWrapping="Wrap" />
+                                Text="Override the system material defaults with custom colors."
+                                TextWrapping="Wrap" />
                         </StackPanel>
 
                         <ToggleSwitch
@@ -157,12 +170,6 @@
                             Toggled="OnOverridesChange" />
 
                         <StackPanel x:Name="AdvancedControlsPanel" Spacing="10">
-                            <TextBlock
-                                x:Name="AdvancedControlsHint"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Style="{ThemeResource CaptionTextBlockStyle}"
-                                Text="Enable custom backdrop colors to edit these values."
-                                TextWrapping="Wrap" />
 
                             <Grid
                                 x:Name="ColorPickersGrid"

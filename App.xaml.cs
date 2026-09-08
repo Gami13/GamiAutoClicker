@@ -47,7 +47,7 @@ namespace GamiAutoClicker {
 				IsMinimizable = true,
 				IsMaximizable = true,
 				DefaultSize = new SizeInt32(860, 600),
-				MinimumSize = new SizeInt32(370, 320),
+				MinimumSize = new SizeInt32(434, 320),
 				MaximumSize = new SizeInt32(1110, 1440),
 
 				DefaultPosition = new PointInt32(200, 200)
