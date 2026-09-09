@@ -16,12 +16,9 @@
 		<SelfContained>true</SelfContained>
 		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		
-		<!-- Packaged Visual Studio builds must remain unpackaged=false. The publish profiles
-		     enable single-file output only during an actual publish. -->
-		<PublishSingleFile>true</PublishSingleFile>
-		<WindowsPackageType>None</WindowsPackageType>
-		<IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-		<WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+		<WindowsPackageType>MSIX</WindowsPackageType>
+		<WindowsAppSDKSelfContained>false</WindowsAppSDKSelfContained>
+		<AppxBundleAutoResourcePackageQualifiers>Scale|DXFeatureLevel</AppxBundleAutoResourcePackageQualifiers>
 		<AnalysisMode>All</AnalysisMode>
 		<EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -122,12 +119,12 @@ internal static readonly string[] Tags = [@(_DistinctLanguageTag->'&quot;%(Ident
 
 	<!-- Publish Properties -->
 	<PropertyGroup>
-		<PublishReadyToRun Condition="'$(Configuration)' == 'Debug'">False</PublishReadyToRun>
-		<PublishReadyToRun Condition="'$(Configuration)' != 'Debug'">True</PublishReadyToRun>
-		<PublishTrimmed Condition="'$(Configuration)' == 'Debug'">False</PublishTrimmed>
-		<PublishTrimmed Condition="'$(Configuration)' != 'Debug'">True</PublishTrimmed>
 		<PublishAot>True</PublishAot>
+		<OptimizationPreference>Speed</OptimizationPreference>
+		<IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+		<StackTraceSupport>true</StackTraceSupport>
 		<SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
+		<SatelliteResourceLanguages>en;en-US;pl;pl-PL</SatelliteResourceLanguages>
 		<AnalysisLevel>latest-all</AnalysisLevel>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
