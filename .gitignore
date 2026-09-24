@@ -2,3 +2,5 @@ bin/
 obj/
 /.vs
 GamiAutoClicker.csproj.user
+GamiAutoClicker/AppPackages/GamiAutoClicker_1.0.0.0_x64_Test/
+GamiAutoClicker/BundleArtifacts/
