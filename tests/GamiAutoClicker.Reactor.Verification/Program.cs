@@ -41,6 +41,12 @@ sealed class VerificationRoot : Component {
 			Check(main.AppWindow.Size.Width == 370 && main.AppWindow.Size.Height == 370, "original physical window bounds");
 			var numbers = All<Microsoft.UI.Xaml.Controls.NumberBox>(root).ToArray();
 			Check(numbers.Length == 3, "three unit number boxes");
+			var mouseSelector = All<Microsoft.UI.Xaml.Controls.ComboBox>(root).Single();
+			var statusToggle = All<Microsoft.UI.Xaml.Controls.ToggleSwitch>(root).Single(toggle => AutomationProperties.GetName(toggle) == Localization.Get("Enableclicking"));
+			double timingY = numbers[0].TransformToVisual(root).TransformPoint(new Windows.Foundation.Point()).Y;
+			double inputY = mouseSelector.TransformToVisual(root).TransformPoint(new Windows.Foundation.Point()).Y;
+			double statusY = statusToggle.TransformToVisual(root).TransformPoint(new Windows.Foundation.Point()).Y;
+			Check(timingY < inputY && inputY < statusY, "extracted main sections retain their vertical layout");
 			Check(numbers.All(n => n.SpinButtonPlacementMode == NumberBoxSpinButtonPlacementMode.Inline), "inline number spinners");
 			Check(numbers[0].SmallChange == 1 && numbers[1].SmallChange == 0.001 && numbers[2].SmallChange == 1, "original number-box steps");
 			Check(((DecimalFormatter)numbers[1].NumberFormatter).FractionDigits == 3, "CPS precision");

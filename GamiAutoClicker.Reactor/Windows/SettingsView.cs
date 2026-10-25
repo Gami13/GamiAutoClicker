@@ -1,5 +1,7 @@
 using Microsoft.UI.Reactor;
 using Microsoft.UI.Reactor.Core;
+using Microsoft.UI.Xaml;
+using NativeNavigationView = Microsoft.UI.Xaml.Controls.NavigationView;
 using static Microsoft.UI.Reactor.Factories;
 using GamiToolkit.Components;
 
@@ -7,8 +9,8 @@ namespace GamiAutoClicker;
 
 internal sealed class SettingsView : Component {
 	private bool _navigationLoaded;
+
 	public override Element Render() {
-		ReactorWindow window = UseWindow()!;
 		SettingsWindowState retained = AppState.SettingsWindow;
 		var (section, setSection) = UseState(retained.SelectedSection);
 		var (paneOpen, setPaneOpen) = UseState(retained.IsPaneOpen);
@@ -17,7 +19,6 @@ internal sealed class SettingsView : Component {
 		var (_, setLanguageVersion) = UseState(0);
 
 		UseEffect(() => {
-
 			int languageVersion = 0;
 			if (section == SettingsSection.General) GeneralSettings.BeginEditing(this);
 			void LanguageChanged() {
@@ -30,8 +31,6 @@ internal sealed class SettingsView : Component {
 			return () => {
 				Localization.Changed -= LanguageChanged;
 				GeneralSettings.EndEditing(this);
-
-
 			};
 		}, []);
 
@@ -47,6 +46,39 @@ internal sealed class SettingsView : Component {
 			setSaveAttempt(saveAttempt + 1);
 		}
 
+		void ChangeSelectedTag(string? tag) =>
+			ChangeSection(tag == "general" ? SettingsSection.General : SettingsSection.Appearance);
+
+		void ChangePaneOpen(bool open) {
+			if (!_navigationLoaded) return;
+			retained.IsPaneOpen = open;
+			setPaneOpen(open);
+		}
+
+		void NavigationLoaded() {
+			_navigationLoaded = true;
+			setPaneOpen(retained.IsPaneOpen);
+		}
+
+		void ConfigureNavigation(NativeNavigationView view) {
+			if (view.Tag is not NavigationViewBehavior behavior) {
+				behavior = new NavigationViewBehavior(view, retained.IsPaneOpen, NavigationLoaded);
+				view.Tag = behavior;
+			}
+			behavior.Update(
+				Localization.Get("SettingsSaveButton.Content"),
+				Localization.Get("SettingsSaveHint.Text"),
+				Save);
+		}
+
+		void ReleaseNavigation(FrameworkElement element) {
+			if (element is NativeNavigationView view && view.Tag is NavigationViewBehavior behavior) {
+				behavior.Dispose();
+				view.Tag = null;
+				_navigationLoaded = false;
+			}
+		}
+
 		return (NavigationView([
 					NavItem(Localization.Get("SettingsWindow_GeneralNavigationItem.Content"), "Setting", "general"),
 					NavItem(Localization.Get("SettingsWindow_AppearanceNavigationItem.Content"), "Edit", "appearance")
@@ -56,13 +88,9 @@ internal sealed class SettingsView : Component {
 					(section == SettingsSection.General ? Component<GeneralPage>() : Component<AppearancePage>()).Grid(1, 0)
 				)) with {
 			SelectedTag = section == SettingsSection.General ? "general" : "appearance",
-			OnSelectedTagChanged = tag => ChangeSection(tag == "general" ? SettingsSection.General : SettingsSection.Appearance),
+			OnSelectedTagChanged = ChangeSelectedTag,
 			IsPaneOpen = paneOpen,
-			OnPaneOpenChanged = open => {
-				if (!_navigationLoaded) return;
-				retained.IsPaneOpen = open;
-				setPaneOpen(open);
-			},
+			OnPaneOpenChanged = ChangePaneOpen,
 			IsSettingsVisible = false,
 			IsBackButtonVisible = Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible.Collapsed,
 			IsTitleBarAutoPaddingEnabled = false,
@@ -72,11 +100,7 @@ internal sealed class SettingsView : Component {
 
 		})
 				.PaneTitle(Localization.Get("Settings"))
-				.Set(view => {
-					if (view.Tag is not NavigationViewBehavior behavior) { behavior = new NavigationViewBehavior(view, retained.IsPaneOpen, () => { _navigationLoaded = true; setPaneOpen(retained.IsPaneOpen); }); view.Tag = behavior; }
-					behavior.Update(Localization.Get("SettingsSaveButton.Content"), Localization.Get("SettingsSaveHint.Text"), Save);
-				}).OnUnmountAdd(element => {
-					if (element is Microsoft.UI.Xaml.Controls.NavigationView view && view.Tag is NavigationViewBehavior behavior) { behavior.Dispose(); view.Tag = null; _navigationLoaded = false; }
-				});
+				.Set(ConfigureNavigation)
+				.OnUnmountAdd(ReleaseNavigation);
 	}
 }

@@ -13,7 +13,8 @@ The Reactor dependency chain contains neither the original `EasyWindows` nor the
 ## Application layout
 
 - `Core/AppState.cs`: startup, window registrations and the application-wide click engine lifetime. Content reloads do not restart the engine.
-- `Windows/MainView.cs`: timing, button/hold settings and status. Units, precision, step sizes, cards, bottom status placement and theme brushes follow the original UI.
+- `Windows/MainView.cs`: owns the clicking UI state and event handlers, and composes the three main sections.
+- `Components/Main/TimingCard.cs`, `InputCard.cs` and `StatusBar.cs`: stateless Reactor components with typed props. Each file contains its own rendering and props record; locale is an explicit props dependency so translated text refreshes correctly. Units, precision, step sizes, cards, bottom status placement and theme brushes follow the original UI.
 - `Windows/SettingsView.cs`: retained navigation state, Save and hotkey editing scope. A real settings-window close discards unsaved changes; content reloads do not.
 - `Pages/GeneralPage.cs`: key bindings and language. Cards use two columns at a content width of 590, and Restore collapses to an icon below 470.
 - `Pages/AppearancePage.cs`: material/theme and color tuning. Advanced settings move to the right column at 590; color controls use two columns at 820.
