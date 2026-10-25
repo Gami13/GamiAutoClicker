@@ -13,6 +13,8 @@ internal sealed class ClickEngine
 {
 	internal const double MinimumIntervalMilliseconds = 15;
 	internal const double MaximumClicksPerSecond = 1000d / MinimumIntervalMilliseconds;
+	// The UI can trade a few milliseconds of hotkey latency for fewer idle wakeups.
+	public int IdlePollIntervalMilliseconds { get; set; } = 10;
 	public double IntervalMilliseconds { get; set; } = 100;
 	public double RandomOffsetMilliseconds { get; set; }
 	public bool Enabled { get; set; }
@@ -66,10 +68,10 @@ internal sealed class ClickEngine
 				}
 				wasActive = active;
 
-				// Check keys frequently even when the interval is several minutes long.
+				// Keep active-click timing independent from idle hotkey polling.
 				double delay = active
 					? Math.Clamp(nextInterval - Stopwatch.GetElapsedTime(lastClick).TotalMilliseconds, 1, 10)
-					: 10;
+					: IdlePollIntervalMilliseconds;
 				await Task.Delay(TimeSpan.FromMilliseconds(delay), cancellationToken).ConfigureAwait(true);
 			}
 		}

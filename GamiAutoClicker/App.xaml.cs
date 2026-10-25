@@ -83,6 +83,13 @@ namespace GamiAutoClicker {
 		protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args) {
 			EasyWindows.CreateWindow(WindowKey.Main);
 			_clickingTask = _engine.RunAsync(_clickingCancellation.Token);
+#if PERF_BENCHMARK
+            string? benchmarkScenario = System.Environment.GetEnvironmentVariable("GAMI_PERF_SCENARIO");
+            if (benchmarkScenario == "settings") EasyWindows.CreateWindow(WindowKey.Settings);
+            string? readyFile = System.Environment.GetEnvironmentVariable("GAMI_PERF_READY_FILE");
+            if (benchmarkScenario is "main" or "settings" && !string.IsNullOrEmpty(readyFile))
+                System.IO.File.WriteAllText(readyFile, benchmarkScenario);
+#endif
 #if RELOAD_VERIFICATION
             _ = ReloadVerification.RunAsync(_engine);
 #endif
