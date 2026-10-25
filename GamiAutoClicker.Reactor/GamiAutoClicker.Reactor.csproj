@@ -20,13 +20,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.UI.Reactor" Version="0.1.0-preview.16" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.4.0" />
-    <ProjectReference Include="..\GamiToolkit\GamiToolkit.csproj" />
+    <ProjectReference Include="..\GamiToolkit.Reactor\GamiToolkit.Reactor.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\GamiAutoClicker\Core\ClickEngine.cs" Link="Core\ClickEngine.cs" />
     <Compile Include="..\GamiAutoClicker\Core\GeneralSettings.cs" Link="Core\GeneralSettings.cs" />
     <Compile Include="..\GamiAutoClicker\Core\SettingsStore.cs" Link="Core\SettingsStore.cs" />
-    <Compile Include="..\EasyWindows\BackdropAdapter.cs" Link="Core\BackdropAdapter.cs" />
     <EmbeddedResource Include="..\GamiAutoClicker\Strings\en\Resources.resw" LogicalName="GamiAutoClicker.Reactor.Strings.en.Resources.resw" />
     <EmbeddedResource Include="..\GamiAutoClicker\Strings\pl\Resources.resw" LogicalName="GamiAutoClicker.Reactor.Strings.pl.Resources.resw" />
     <Content Include="..\GamiAutoClicker\Assets\*.png" Link="Assets\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

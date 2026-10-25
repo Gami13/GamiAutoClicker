@@ -1,27 +1,46 @@
 # Reactor port
 
-`GamiAutoClicker.Reactor` is the side-by-side Microsoft.UI.Reactor version of the app. The original `GamiAutoClicker` project remains the baseline. Both use the same click engine, general settings, protobuf settings snapshot, theme model, backdrop adapters, and English/Polish translations. The Reactor project owns its window and page components; its `ReactorAppearance` service applies the existing theme to Reactor windows.
+The application is split into the same three responsibilities as the original:
 
-## Layout
+| Project | Responsibility |
+| --- | --- |
+| `EasyWindows.Reactor` | Typed window registration, retained registration state, native window lifecycle, custom title bars, theme model, Mica/Acrylic window and flyout backdrops. |
+| `GamiToolkit.Reactor` | Protobuf persistence plus reusable settings cards, unit number boxes, color flyouts, opacity sliders, restore buttons and responsive/navigation helpers. |
+| `GamiAutoClicker.Reactor` | Clicker controls, settings navigation/pages, localization and application startup. |
 
-- `Core/AppState.cs`: startup, shared click engine, settings-window state, window opening.
-- `Core/ReactorAppearance.cs`: backdrop and theme integration for Reactor windows.
-- `Windows/MainView.cs`: clicking controls and engine lifetime.
-- `Windows/SettingsView.cs`: settings navigation, Save, and discard on close.
-- `Pages/GeneralPage.cs` and `Pages/AppearancePage.cs`: the two settings sections.
-- `Localization.cs`: reads the original `.resw` translations embedded in this assembly, so unpackaged and MSIX builds use the same language data.
+The Reactor dependency chain contains neither the original `EasyWindows` nor the original `GamiToolkit` assembly. Backend code that does not need a UI rewrite is shared as linked source: the click engine, general settings, settings snapshot/serialization, backdrop adapters and English/Polish translations. Shared persistence keeps its original format and default paths.
 
-Settings changes apply immediately. Save writes the existing `%LOCALAPPDATA%\GamiAutoClicker\settings.bin` format; closing Settings restores its last saved snapshot. The settings window remembers its selected section and pane state when reopened. The main window retains F8 toggle and hold-to-click behavior through the shared `ClickEngine`.
+## Application layout
+
+- `Core/AppState.cs`: startup, window registrations and the application-wide click engine lifetime. Content reloads do not restart the engine.
+- `Windows/MainView.cs`: timing, button/hold settings and status. Units, precision, step sizes, cards, bottom status placement and theme brushes follow the original UI.
+- `Windows/SettingsView.cs`: retained navigation state, Save and hotkey editing scope. A real settings-window close discards unsaved changes; content reloads do not.
+- `Pages/GeneralPage.cs`: key bindings and language. Cards use two columns at a content width of 590, and Restore collapses to an icon below 470.
+- `Pages/AppearancePage.cs`: material/theme and color tuning. Advanced settings move to the right column at 590; color controls use two columns at 820.
+- `Localization.cs`: reads the original `.resw` translations embedded in this assembly.
+
+The shared color control restores the alpha checkerboard, hex preview, dropdown affordance, ring picker and themed Acrylic flyout. The shared window layer renders the original 32-pixel title bar with its leading settings icon and interactive non-client region. The navigation rail uses compact inline behavior and a non-selecting accent Save footer item, including native high-contrast pane resources.
 
 ## Build and run
 
-With NuGet access and the .NET 10 / Windows App SDK toolchain:
+With the .NET 10 / Windows App SDK toolchain and NuGet access:
 
 ```powershell
 dotnet build .\GamiAutoClicker.Reactor\GamiAutoClicker.Reactor.csproj -c Release -p:Platform=x64
 dotnet run --project .\GamiAutoClicker.Reactor\GamiAutoClicker.Reactor.csproj -c Release -p:Platform=x64
 ```
 
-Use `-p:Platform=ARM64` for a native Snapdragon build, or `-p:Platform=x86` for 32-bit Windows. The default project is unpackaged and carries the Windows App Runtime in its output folder. The `win-x64`, `win-arm64`, and `win-x86` publish profiles opt into MSIX with a separate `GamiAutoClicker.Reactor` package identity, allowing installation beside the original. A signed installable package requires a matching certificate. x64 and ARM64 profiles request Native AOT; x86 uses managed code. The unsigned, managed x64 MSIX build has been verified, but Native AOT publishing could not complete in this sandbox because MSBuild could not start its x64 task host.
+Use `-p:Platform=ARM64` for Snapdragon or `-p:Platform=x86` for 32-bit builds. The default deployment is unpackaged and self-contained. Publish profiles retain the separate Reactor MSIX identity. Signing and Native AOT validation are separate deployment checks; a managed desktop run does not establish either.
 
-The Reactor dependency is pinned to `0.1.0-preview.16`. Benchmarks are in `benchmarks/` at the repository root. The port is still a preview until its packaged/AOT output and mouse injection are validated on a normal desktop outside the sandbox.
+## Verification
+
+The separate `tests/GamiAutoClicker.Reactor.Verification` executable drives native control properties on the UI thread. It checks numeric precision, color edits, responsive placement, hotkey editing scopes, theme/language updates, window reuse, navigation retention, content reload and save/discard/reload behavior. It uses an isolated settings file beside its report and leaves clicking disabled.
+
+```powershell
+New-Item -ItemType Directory -Force .\benchmarks\results | Out-Null
+$env:GAMI_VERIFICATION_REPORT = Join-Path $PWD 'benchmarks\results\reactor-parity-verification.txt'
+dotnet run --project .\tests\GamiAutoClicker.Reactor.Verification -c Release -p:Platform=x64 -p:SelfContained=false
+Get-Content $env:GAMI_VERIFICATION_REPORT
+```
+
+These checks validate code and native UI behavior. They do not replace a screenshot comparison, physical mouse-injection test or installation test. Benchmarks remain under `benchmarks/`; the Reactor idle-poll setting remains 25 ms.

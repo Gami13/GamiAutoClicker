@@ -17,7 +17,7 @@ internal sealed class SettingsData {
 // Live settings remain in GeneralSettings and EasyWindows. This snapshot changes
 // only after loading or successfully saving the complete settings file.
 internal static class SettingsStore {
-	internal static string FilePath => Path.Combine(
+	internal static string FilePath { get; set; } = Path.Combine(
 		Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "GamiAutoClicker", "settings.bin");
 	private static SettingsData? _persisted;
 
