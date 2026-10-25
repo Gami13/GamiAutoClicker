@@ -10,6 +10,15 @@ using static Microsoft.UI.Reactor.Factories;
 namespace GamiToolkit.Components;
 
 public static class SettingsControls {
+	public static Element SectionHeading(string text, string glyph) =>
+		HStack(8,
+			TextBlock(glyph).FontFamily("Segoe Fluent Icons").FontSize(18)
+				.Foreground(new ThemeRef("AccentTextFillColorPrimaryBrush")),
+			BodyStrong(text));
+
+	public static ComboBoxElement SettingsSelector(string label, string[] choices, int selectedIndex, Action<int> changed) =>
+		ComboBox(choices, selectedIndex, changed).AutomationName(label).Set(control => control.Header = label);
+
 	public static TextBlockElement SettingsCaption(string text) => Caption(text).TextWrapping(TextWrapping.Wrap);
 	public static BorderElement SettingsCard(params Element?[] content) => Border(VStack(10, content))
 		.Padding(12).Background(new ThemeRef("CardBackgroundFillColorDefaultBrush"))

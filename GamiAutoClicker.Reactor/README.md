@@ -13,11 +13,13 @@ The Reactor dependency chain contains neither the original `EasyWindows` nor the
 ## Application layout
 
 - `Core/AppState.cs`: startup, window registrations and the application-wide click engine lifetime. Content reloads do not restart the engine.
-- `Windows/MainView.cs`: owns the clicking UI state and event handlers, and composes the three main sections.
+- `Windows/MainView.cs`: composes the three main sections. `MainView.Bindings.cs` owns the clicking UI state, subscriptions and event handlers.
 - `Components/Main/TimingCard.cs`, `InputCard.cs` and `StatusBar.cs`: stateless Reactor components with typed props. Each file contains its own rendering and props record; locale is an explicit props dependency so translated text refreshes correctly. Units, precision, step sizes, cards, bottom status placement and theme brushes follow the original UI.
-- `Windows/SettingsView.cs`: retained navigation state, Save and hotkey editing scope. A real settings-window close discards unsaved changes; content reloads do not.
+- `Windows/SettingsView.cs`: composes navigation and the selected page. `SettingsView.Bindings.cs` manages retained navigation state, Save and hotkey editing scope. A real settings-window close discards unsaved changes; content reloads do not.
 - `Pages/GeneralPage.cs`: key bindings and language. Cards use two columns at a content width of 590, and Restore collapses to an icon below 470.
 - `Pages/AppearancePage.cs`: material/theme and color tuning. Advanced settings move to the right column at 590; color controls use two columns at 820.
+- `Pages/*.Bindings.cs`: page hooks and callbacks, kept beside each page so rendering reads as layout. Typed props connect these bindings to the stateless cards under `Components/Settings/`. Locale and edit versions are explicit props dependencies so translations refresh and rejected selections reset.
+- `GamiToolkit.Reactor/Components/SettingsLayout.cs`: shared settings header, scrolling and responsive breakpoints.
 - `Localization.cs`: reads the original `.resw` translations embedded in this assembly.
 
 The shared color control restores the alpha checkerboard, hex preview, dropdown affordance, ring picker and themed Acrylic flyout. The shared window layer renders the original 32-pixel title bar with its leading settings icon and interactive non-client region. The navigation rail uses compact inline behavior and a non-selecting accent Save footer item, including native high-contrast pane resources.
